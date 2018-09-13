@@ -11,12 +11,12 @@ Fast food fast is a fast food delivery application
 
 # How it Works
 
-- An admin creates food items
-- A user can view available food items 
-- A user chooses on a food item and makes an order
-- An Admin can accept or reject the order request from a user
-- A user gets notified on his/her order status
-- Accepted orders are delivered to the user
+- An admin views orders
+- A user places an order
+- An admin can delete an order
+- An admin can accept an order
+- An admin can mark order as completed
+
 
 # Prerequisite
 
