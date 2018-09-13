@@ -28,10 +28,20 @@ class NewOrder(Resource):
         help="This field cannot be left blank! " 
     )
 
+
+
+class Order(Resource):
     
+    def get(self, id):
+        ''' get a specific order '''
+        
+        order = FoodOrder().get_by_id(id)
+
+        if order:
+            return {"order":order.serialize()}
+        
+        return {'message':"Not found"}, 404
 
 
-    def get(self):
-        ''' get all orders '''
-        return {'orders': [order.serialize() for order in orders]}, 200
+   
 
