@@ -1,10 +1,15 @@
 [![Build Status](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi.svg?branch=api-v1)](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
+
+![license](https://img.shields.io/github/license/mashape/apistatus.svg)
+[![Build Status](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi.svg?branch=api-v1)](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi)
+[![Coverage Status](https://coveralls.io/repos/github/salma-nyagaka/fasrfoodfastapi/badge.svg?branch=api-v1)](https://coveralls.io/github/salma-nyagaka/fasrfoodfastapi?branch=api-v1)
+
 # Fast Food Fast
 
 Fast food fast is a fast food delivery application
 
-## How it Works
+# How it Works
 
 - An admin creates food items
 - A user can view available food items 
@@ -13,7 +18,7 @@ Fast food fast is a fast food delivery application
 - A user gets notified on his/her order status
 - Accepted orders are delivered to the user
 
-## Prerequisite
+# Prerequisite
 
 - [Python3.6](https://www.python.org/downloads/release/python-365/)
 - [Virtua Environment](https://virtualenv.pypa.io/en/stable/installation/)
@@ -25,8 +30,7 @@ Clone the repository below
 ```
 git clone https://github.com/salma-nyagaka/fasrfoodfast.git
 ```
-
-### Create a virtual environment
+# Create a virtual environment
 
     virtualenv venv --python=python3.6
 
@@ -34,13 +38,13 @@ git clone https://github.com/salma-nyagaka/fasrfoodfast.git
 
     source venv/bin/activate
 
-### Install required Dependencies
+# Install required Dependencies
 
     pip install -r requirements.txt
 
 
 
-## Endpoints Available
+# Endpoints Available
 
 | Method | Endpoint                        | Description                           |
 | ------ | ------------------------------- | ------------------------------------- |
@@ -52,7 +56,6 @@ git clone https://github.com/salma-nyagaka/fasrfoodfast.git
 
 
 
-
-### Author
+# Author
 
 Salma Nyagaka
