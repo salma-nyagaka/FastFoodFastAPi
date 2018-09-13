@@ -28,20 +28,24 @@ class NewOrder(Resource):
         help="This field cannot be left blank! " 
     )
 
-
-
-class Order(Resource):
+    def post(self):
     
-    def get(self, id):
-        ''' get a specific order '''
-        
-        order = FoodOrder().get_by_id(id)
+        data = NewOrder.parser.parse_args()
 
-        if order:
-            return {"order":order.serialize()}
-        
-        return {'message':"Not found"}, 404
+        name = data['name']
+        description = data['description']
+        price = data['price']
+
+        if not Validators().valid_food_name(name):
+            return {'message': 'Enter valid name'}, 400
+
+        if not Validators().valid_food_description(description):
+            return {'message': 'Enter valid food description'}, 400
+
+        order = FoodOrder(name, description, price)
+
+        orders.append(order)
+        return {"message":"Food order created"}, 201
 
 
-   
-
+    
