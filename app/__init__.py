@@ -16,8 +16,7 @@ def create_app(config_name):
 
         
     api.add_resource(Order, '/api/v1/orders/<int:id>')
-    api.add_resource(NewOrder, '/api/v1/orders')
-    api.add_resource(AcceptOrder, '/api/v1/orders/<int:id>')
+ 
 
 
 
