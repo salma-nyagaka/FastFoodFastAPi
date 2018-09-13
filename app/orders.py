@@ -4,7 +4,7 @@ from .model import FoodOrder, orders
 from utils.validators import Validators
 
 
-class NewOrder(Resource):
+class PlaceNewOrder(Resource):
     parser = reqparse.RequestParser()
 
     parser.add_argument(
@@ -30,7 +30,7 @@ class NewOrder(Resource):
 
     def post(self):
     
-        data = NewOrder.parser.parse_args()
+        data = PlaceNewOrder.parser.parse_args()
 
         name = data['name']
         description = data['description']
@@ -47,13 +47,15 @@ class NewOrder(Resource):
         orders.append(order)
         return {"message":"Food order created"}, 201
 
+class AllOrders(Resource):
 
     def get(self):
         ''' get all orders '''
+        
         return {'orders': [order.serialize() for order in orders]}, 200
 
 
-class Order(Resource):
+class SpecificOrder(Resource):
     
     def get(self, id):
         ''' get a specific order '''
@@ -71,14 +73,15 @@ class Order(Resource):
 
         order = FoodOrder().get_by_id(id)
 
-        if not order:
-            return {'message':"Not found"}, 404
+        if order:
+            orders.remove(order)
+            return {'message':"Deleted"}, 200
+
+
+        return {'message':"Not found"}, 404
         
-        orders.remove(order)
-        return {'message':"Deleted"}, 200
+       
 
-
-class AcceptOrder(Resource):
     def put(self, id):
         ''' Update the status of an order '''
         order = FoodOrder().get_by_id(id)
@@ -86,8 +89,15 @@ class AcceptOrder(Resource):
         if order:
             if order.status == "Pending":
                 order.status = "Accepted"
-
                 return {'message':'Order accepted'}, 200
+
+
+            if order.status == "Accepted":
+                order.status = "Completed"
+
+                return {'message':'Order completed'}, 200
+
+
 
         return {'message':"Not found"}, 404
 

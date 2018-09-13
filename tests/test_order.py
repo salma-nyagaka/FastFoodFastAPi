@@ -37,27 +37,32 @@ class TestOrders(TestCase):
         self.assertEqual(response_data['message'], "Food order created")
 
 
+
     def test_get_all_orders(self):
-        ''' test get all orders '''
+        ''' Test to get all orders '''
 
         response = self.client.get(
-            "/api/v1/orders",
-            headers={"content-type":"application/json"}
-        )
+             "/api/v1/orders", content_type='application/json')
 
-        print(response.data)
-
+        data = json.loads(response.data.decode('utf-8'))
+        print(data)
+        self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
 
+    
+  
+    
     # def test_get_specific_order(self):
-    #     ''' test to get a specific order '''
+    #     ''' Test to update a specific order '''
+
     #     response = self.client.get(
-    #         "/api/v1/orders/1",
+    #         "/api/v1/orders/2",
     #         headers={"content-type":"application/json"}
     #     )
 
     #     self.assertEqual(response.status_code, 200)
-
+    
+   
     def test_update_specific_order(self):
         ''' Test to update a specific order '''
 
@@ -79,8 +84,6 @@ class TestOrders(TestCase):
 
     
     
-
-
     def test_invalid_food_name(self):
         ''' Test invalid food name '''
 
@@ -112,8 +115,6 @@ class TestOrders(TestCase):
             "price":20
         }
 
-
-
         response = self.client.post(
             "/api/v1/orders",
             data=json.dumps(order_data),
@@ -125,17 +126,5 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data['message'], "Enter valid food description")
    
-        # def test_delete_specific_order(self):
-        #     ''' Test to delete a specific order '''
-
-        #     response = self.client.delete(
-        #         "/api/v1/orders/1",
-        #         headers = {"content-type":"application/json"}
-        #     )
-
-        #     self.assertEqual(response.status_code, 200)
-
-
         
-
     
