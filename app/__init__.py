@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_restful import  Api
-# from flask_api import FlaskAPI
-from instance.config import app_config
+from config import app_config
 
 from app.orders import SpecificOrder, AllOrders, PlaceNewOrder
 
