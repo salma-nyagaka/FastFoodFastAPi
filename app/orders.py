@@ -61,18 +61,20 @@ class SpecificOrder(Resource):
     def get(self, id):
         ''' get a specific order '''
         
-        order = FoodOrder().get_by_id(id)
+        order = FoodOrder().get_id(id)
 
         if order:
             return {"order":order.serialize()}
         
         return {'message':"Not found"}, 404
 
+    
+
 
     def delete(self, id):
         ''' Delete a specific order '''
 
-        order = FoodOrder().get_by_id(id)
+        order = FoodOrder().get_id(id)
 
         if order:
             orders.remove(order)
@@ -85,22 +87,38 @@ class SpecificOrder(Resource):
 
     def put(self, id):
         ''' Update the status of an order '''
-        order = FoodOrder().get_by_id(id)
+        order = FoodOrder().get_id(id)
 
         if order:
             if order.status == "Pending":
                 order.status = "Accepted"
                 return {'message':'Order accepted'}, 200
 
-
             if order.status == "Accepted":
                 order.status = "Completed"
 
                 return {'message':'Order completed'}, 200
 
-
-
         return {'message':"Not found"}, 404
+    
+# class NewFood(Resource):
+#     def put(self, order_id):
+
+#         data = PlaceNewOrder.parser.parse_args()
+
+#         order = next(filter(lambda x: x['order_id'] == order_id, orders), None)
+#         if order is None:
+#             order = {
+#                 'order_id': order_id,
+#                 'name': data['name'],
+#                 'type': data['type'],
+#                 'price': data['price'],
+#             }
+#             orders.append(order), 201
+#         else:
+#             order.update(data), 200
+#         return order
+
 
 
 

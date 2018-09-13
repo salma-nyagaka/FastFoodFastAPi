@@ -1,0 +1,8 @@
+[
+  "tests/test_order.py::TestOrders::test_get_all_orders",
+  "tests/test_order.py::TestOrders::test_invalid_food_description",
+  "tests/test_order.py::TestOrders::test_invalid_food_name",
+  "tests/test_order.py::TestOrders::test_none_existing_order",
+  "tests/test_order.py::TestOrders::test_place_new_order",
+  "tests/test_order.py::TestOrders::test_update_specific_order"
+]

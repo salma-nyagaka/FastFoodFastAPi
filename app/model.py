@@ -25,7 +25,7 @@ class FoodOrder:
             status=self.status
         )
 
-    def get_by_id(self, order_id):
+    def get_id(self, order_id):
         for order in orders:
             if order.id == order_id:
                 return order
