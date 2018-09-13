@@ -51,8 +51,9 @@ class AllOrders(Resource):
 
     def get(self):
         ''' get all orders '''
-        
+
         return {'orders': [order.serialize() for order in orders]}, 200
+
 
 
 class SpecificOrder(Resource):
