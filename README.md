@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi.svg?branch=api-v1)](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi)
 [![Coverage Status](https://coveralls.io/repos/github/salma-nyagaka/fasrfoodfastapi/badge.svg?branch=api-v1)](https://coveralls.io/github/salma-nyagaka/fasrfoodfastapi?branch=api-v1)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
-
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/08730d5796eb49c8a545b128b7d7b80f)](https://www.codacy.com/app/salma-nyagaka/fasrfoodfastapi?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=salma-nyagaka/fasrfoodfastapi&amp;utm_campaign=Badge_Grade)
 
 # Fast Food Fast
 
