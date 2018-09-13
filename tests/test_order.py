@@ -49,7 +49,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
 
-    
   
     
     # def test_get_specific_order(self):
