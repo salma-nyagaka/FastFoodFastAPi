@@ -28,54 +28,7 @@ class NewOrder(Resource):
         help="This field cannot be left blank! " 
     )
 
-    def post(self):
-    
-        data = NewOrder.parser.parse_args()
-
-        name = data['name']
-        description = data['description']
-        price = data['price']
-
-        if not Validators().valid_food_name(name):
-            return {'message': 'Enter valid name'}, 400
-
-        if not Validators().valid_food_description(description):
-            return {'message': 'Enter valid food description'}, 400
-
-        order = FoodOrder(name, description, price)
-
-        orders.append(order)
-        return {"message":"Food order created"}, 201
-
-
-    def get(self):
-        ''' get all orders '''
-        return {'orders': [order.serialize() for order in orders]}, 200
-
-
-class Order(Resource):
-    
-    def get(self, id):
-        ''' get a specific order '''
-        
-        order = FoodOrder().get_by_id(id)
-
-        if order:
-            return {"order":order.serialize()}
-        
-        return {'message':"Not found"}, 404
-
-
-    def delete(self, id):
-        ''' Delete a specific order '''
-
-        order = FoodOrder().get_by_id(id)
-
-        if not order:
-            return {'message':"Not found"}, 404
-        
-        orders.remove(order)
-        return {'message':"Deleted"}, 200
+   
 
 
 class AcceptOrder(Resource):
