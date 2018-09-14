@@ -63,17 +63,6 @@ class SpecificOrder(Resource):
             return {"order":order.serialize()}
         
         return {'message':"Not found"}, 404
-
-    def delete(self, id):
-        ''' Delete a specific order '''
-
-        order = FoodOrder().get_id(id)
-        if order:
-            orders.remove(order)
-            return {'message':"Deleted"}, 200
-
-
-        return {'message':"Not found"}, 404
         
     def put(self, id):
         ''' Update the status of an order '''
@@ -88,6 +77,17 @@ class SpecificOrder(Resource):
                 order.status = "Completed"
 
                 return {'message':'Order completed'}, 200
+
+        return {'message':"Not found"}, 404
+
+    def delete(self, id):
+        ''' Delete a specific order '''
+
+        order = FoodOrder().get_id(id)
+        if order:
+            orders.remove(order)
+            return {'message':"Deleted"}, 200
+
 
         return {'message':"Not found"}, 404
   

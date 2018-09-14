@@ -3,9 +3,7 @@ import unittest
 from unittest import TestCase
 from app import create_app
 
-
 class TestOrders(TestCase):
-
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
@@ -14,7 +12,6 @@ class TestOrders(TestCase):
 
     def tearDown(self):
         self.app_context.pop()
-
 
     def test_place_new_order(self):
         ''' Test place an order '''
@@ -37,7 +34,6 @@ class TestOrders(TestCase):
         self.assertEqual(response_data['message'], "Food order created")
 
 
-
     def test_get_all_orders(self):
         ''' Test to get all orders '''
 
@@ -49,7 +45,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
 
-   
     def test_update_order(self):
         ''' Test to update a specific order '''
 
@@ -70,7 +65,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 404)
 
     
-    
     def test_invalid_food_name(self):
         ''' Test invalid food name '''
 
@@ -79,7 +73,6 @@ class TestOrders(TestCase):
             "description":"Sweet empty food",
             "price":20
         }
-
 
         response = self.client.post(
             "/api/v1/orders",
@@ -91,7 +84,6 @@ class TestOrders(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data['message'], "Enter valid name")
-
 
     def test_invalid_food_description(self):
         ''' Test invalid food description '''
