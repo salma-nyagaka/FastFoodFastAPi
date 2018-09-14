@@ -1,4 +1,4 @@
-<!-- [![Build Status](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi.svg?branch=api-v1)](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi) -->
+
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 [![Build Status](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi.svg?branch=api-v1)](https://travis-ci.org/salma-nyagaka/fasrfoodfastapi)
 [![Coverage Status](https://coveralls.io/repos/github/salma-nyagaka/fasrfoodfastapi/badge.svg?branch=api-v1)](https://coveralls.io/github/salma-nyagaka/fasrfoodfastapi?branch=api-v1)
@@ -46,12 +46,12 @@ git clone https://github.com/salma-nyagaka/fasrfoodfast.git
 
 # Endpoints Available
 
-| Method | Endpoint                        | Description                           |
-| ------ | ------------------------------- | ------------------------------------- |
-| POST   | /api/v1/orders                  | Place an order                        |
-| GET    | /api/v1/orders                  | Get all orders                        |
-| PUT    | /api/v1/orders/<{id}>           | Update order status                   |
-| GET    | /api/v1/orders/<{id}>           | Get a specific order                  |
+| Method | Endpoint                            | Description                           |
+| ------ | -------------------------------     | ------------------------------------- |
+| POST   | /api/v1/orders                      | Place an order                        |
+| GET    | /api/v1/orders                      | Get all orders                        |
+| PUT    | /api/v1/orders/<{order_id}>         | Update order status                   |
+| GET    | /api/v1/orders/<{order_id}>         | Get a specific order                  |
 
 
 
