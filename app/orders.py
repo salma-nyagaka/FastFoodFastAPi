@@ -100,26 +100,7 @@ class SpecificOrder(Resource):
                 return {'message':'Order completed'}, 200
 
         return {'message':"Not found"}, 404
-    
-# class NewFood(Resource):
-#     def put(self, order_id):
-
-#         data = PlaceNewOrder.parser.parse_args()
-
-#         order = next(filter(lambda x: x['order_id'] == order_id, orders), None)
-#         if order is None:
-#             order = {
-#                 'order_id': order_id,
-#                 'name': data['name'],
-#                 'type': data['type'],
-#                 'price': data['price'],
-#             }
-#             orders.append(order), 201
-#         else:
-#             order.update(data), 200
-#         return order
-
-
+  
 
 
 
