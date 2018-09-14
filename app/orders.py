@@ -3,8 +3,7 @@ from flask_restful import Resource, Api, reqparse
 from .model import FoodOrder, orders
 from utils.validators import Validators
 
-
-class NewOrder(Resource):
+class PlaceNewOrder(Resource):
     parser = reqparse.RequestParser()
 
     parser.add_argument(
@@ -29,19 +28,17 @@ class NewOrder(Resource):
     )
 
 
-
-class Order(Resource):
-    
-    def get(self, id):
-        ''' get a specific order '''
-        
-        order = FoodOrder().get_by_id(id)
+class SpecificOrder(Resource):
+    def delete(self, id):
+        ''' Delete a specific order '''
+        order = FoodOrder().get_id(id)
 
         if order:
-            return {"order":order.serialize()}
-        
+            orders.remove(order)
+            return {'message':"Deleted"}, 200
+
         return {'message':"Not found"}, 404
+        
+       
 
-
-   
 
