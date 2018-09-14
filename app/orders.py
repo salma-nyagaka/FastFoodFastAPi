@@ -87,8 +87,6 @@ class SpecificOrder(Resource):
         if order:
             orders.remove(order)
             return {'message':"Deleted"}, 200
-
-
         return {'message':"Not found"}, 404
   
 

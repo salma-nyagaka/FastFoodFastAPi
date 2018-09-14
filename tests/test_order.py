@@ -2,6 +2,7 @@ import json
 import unittest
 from unittest import TestCase
 from app import create_app
+from flask_restful import Resource
 
 class TestOrders(TestCase):
     def setUp(self):
@@ -45,7 +46,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
-
 
     def test_update_order(self):
         ''' Test to update a specific order '''
@@ -107,6 +107,3 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data['message'], "Enter valid food description")
         self.assertNotEqual(response.status_code, 200)
-   
-        
-    
