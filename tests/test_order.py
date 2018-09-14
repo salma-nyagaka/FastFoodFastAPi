@@ -44,6 +44,8 @@ class TestOrders(TestCase):
         print(data)
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.status_code, 404)
+
 
     def test_update_order(self):
         ''' Test to update a specific order '''
@@ -54,6 +56,7 @@ class TestOrders(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.status_code, 404)
 
     def test_none_existing_order(self):
         ''' Test none existing order'''
@@ -84,6 +87,8 @@ class TestOrders(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data['message'], "Enter valid name")
+        self.assertNotEqual(response.status_code, 200)
+
 
     def test_invalid_food_description(self):
         ''' Test invalid food description '''
@@ -104,6 +109,7 @@ class TestOrders(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data['message'], "Enter valid food description")
+        self.assertNotEqual(response.status_code, 200)
    
         
     
