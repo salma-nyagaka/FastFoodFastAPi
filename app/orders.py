@@ -3,10 +3,8 @@ from flask_restful import Resource, Api, reqparse
 from .model import FoodOrder, orders
 from utils.validators import Validators
 
-
 class PlaceNewOrder(Resource):
     parser = reqparse.RequestParser()
-
     parser.add_argument(
     'name',
     type=str,
@@ -54,8 +52,6 @@ class AllOrders(Resource):
 
         return {'orders': [order.serialize() for order in orders]}, 200
 
-
-
 class SpecificOrder(Resource):
     
     def get(self, id):
@@ -67,9 +63,6 @@ class SpecificOrder(Resource):
             return {"order":order.serialize()}
         
         return {'message':"Not found"}, 404
-
-    
-
 
     def delete(self, id):
         ''' Delete a specific order '''
@@ -83,8 +76,6 @@ class SpecificOrder(Resource):
 
         return {'message':"Not found"}, 404
         
-       
-
     def put(self, id):
         ''' Update the status of an order '''
         order = FoodOrder().get_id(id)
