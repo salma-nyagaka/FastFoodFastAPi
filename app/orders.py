@@ -68,7 +68,6 @@ class SpecificOrder(Resource):
         ''' Delete a specific order '''
 
         order = FoodOrder().get_id(id)
-
         if order:
             orders.remove(order)
             return {'message':"Deleted"}, 200
