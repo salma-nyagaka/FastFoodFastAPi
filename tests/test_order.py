@@ -67,7 +67,6 @@ class TestOrders(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
-    
     def test_invalid_food_name(self):
         ''' Test invalid food name '''
 
