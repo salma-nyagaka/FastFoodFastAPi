@@ -50,7 +50,7 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 200)
 
    
-    def test_update_specific_order(self):
+    def test_update_order(self):
         ''' Test to update a specific order '''
 
         response = self.client.put(
