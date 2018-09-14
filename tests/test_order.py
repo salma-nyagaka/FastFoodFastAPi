@@ -49,18 +49,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
 
-  
-    
-    # def test_get_specific_order(self):
-    #     ''' Test to update a specific order '''
-
-    #     response = self.client.get(
-    #         "/api/v1/orders/2",
-    #         headers={"content-type":"application/json"}
-    #     )
-
-    #     self.assertEqual(response.status_code, 200)
-    
    
     def test_update_specific_order(self):
         ''' Test to update a specific order '''
