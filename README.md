@@ -8,6 +8,12 @@
 
 Fast food fast is a fast food delivery application
 
+#Heroku
+https://createorders-api.herokuapp.com
+
+#Postman documentation
+https://documenter.getpostman.com/view/4791352/RWaKT919
+
 # How it Works
 
 - An admin views orders
