@@ -64,7 +64,6 @@ class TestOrders(TestCase):
             "/api/v1/orders/1000",
             headers={"content-type":"application/json"}
         )
-
         self.assertEqual(response.status_code, 404)
 
     def test_invalid_food_name(self):
@@ -87,7 +86,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data['message'], "Enter valid name")
         self.assertNotEqual(response.status_code, 200)
-
 
     def test_invalid_food_description(self):
         ''' Test invalid food description '''
