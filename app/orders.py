@@ -27,6 +27,7 @@ class PlaceNewOrder(Resource):
     )
 
     def post(self):
+        ''' ppace new order'''
     
         data = PlaceNewOrder.parser.parse_args()
 
@@ -36,7 +37,6 @@ class PlaceNewOrder(Resource):
 
         if not Validators().valid_food_name(name):
             return {'message': 'Enter valid name'}, 400
-
         if not Validators().valid_food_description(description):
             return {'message': 'Enter valid food description'}, 400
 
