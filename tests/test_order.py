@@ -14,6 +14,10 @@ class TestOrders(TestCase):
     def tearDown(self):
         self.app_context.pop()
 
+    
+
+
+
     def test_place_new_order(self):
         ''' Test to place an order '''
 
@@ -32,7 +36,7 @@ class TestOrders(TestCase):
         response_data = json.loads(response.data.decode('utf-8'))
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response_data['message'], "Food order placed")
+        self.assertEqual(response_data['message'], "Order placed")
 
 
     def test_get_all_orders(self):
