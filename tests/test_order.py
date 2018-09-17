@@ -15,7 +15,7 @@ class TestOrders(TestCase):
         self.app_context.pop()
 
     def test_place_new_order(self):
-        ''' Test place an order '''
+        ''' Test to place an order '''
 
         order_data = {
             "name":"Burger",
@@ -32,7 +32,7 @@ class TestOrders(TestCase):
         response_data = json.loads(response.data.decode('utf-8'))
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response_data['message'], "Food order created")
+        self.assertEqual(response_data['message'], "Food order placed")
 
 
     def test_get_all_orders(self):
@@ -43,19 +43,29 @@ class TestOrders(TestCase):
 
         data = json.loads(response.data.decode('utf-8'))
         print(data)
+
+
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
+
 
     def test_update_order(self):
         ''' Test to update a specific order '''
 
         response = self.client.put(
-            "/api/v1/orders/2",
+            "/api/v1/orders/1",
             headers={"content-type":"application/json"}
         )
+        response_data = json.loads(response.data.decode('utf-8'))
+        print(response.data)
+
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_data['message'], "Order accepted")
+        self.assertEqual(response_data['message'], "Order completed")
+
+
         self.assertNotEqual(response.status_code, 404)
 
     def test_none_existing_order(self):
@@ -64,6 +74,8 @@ class TestOrders(TestCase):
             "/api/v1/orders/1000",
             headers={"content-type":"application/json"}
         )
+
+
         self.assertEqual(response.status_code, 404)
 
     def test_invalid_food_name(self):
@@ -104,6 +116,20 @@ class TestOrders(TestCase):
 
         response_data = json.loads(response.data.decode('utf-8'))
 
+
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data['message'], "Enter valid food description")
         self.assertNotEqual(response.status_code, 200)
+
+     
+
+    def test_order_by_id(self):
+        res = self.client.get(
+            "/api/v1/orders/1",
+            headers={"content-type": "application/json"}
+        )
+        print(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertNotEqual(res.status_code, 404)
+
