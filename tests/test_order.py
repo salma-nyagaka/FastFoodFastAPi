@@ -34,6 +34,7 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response_data['message'], "Food order placed")
 
+
     def test_get_all_orders(self):
         ''' Test to get all orders '''
 
