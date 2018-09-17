@@ -58,13 +58,14 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
 
-    def test_none_existing_order(self):
-        ''' Test none existing order'''
+    def test_delete_order_not_found(self):
+        ''' Test to delete order'''
         response = self.client.delete(
-            "/api/v1/orders/1000",
+            "/api/v1/orders/2",
             headers={"content-type":"application/json"}
         )
         self.assertEqual(response.status_code, 404)
+    
 
     def test_invalid_food_name(self):
         ''' Test invalid food name '''
@@ -107,3 +108,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data['message'], "Enter valid food description")
         self.assertNotEqual(response.status_code, 200)
+
+    
+    
