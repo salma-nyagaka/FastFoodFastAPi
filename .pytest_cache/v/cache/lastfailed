@@ -1,8 +1,0 @@
-{
-  "tests/test_order.py::TestOrders::test_get_all_orders": true,
-  "tests/test_order.py::TestOrders::test_invalid_food_description": true,
-  "tests/test_order.py::TestOrders::test_invalid_food_name": true,
-  "tests/test_order.py::TestOrders::test_none_existing_order": true,
-  "tests/test_order.py::TestOrders::test_place_new_order": true,
-  "tests/test_order.py::TestOrders::test_update_specific_order": true
-}
