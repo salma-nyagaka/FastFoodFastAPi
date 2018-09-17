@@ -29,7 +29,7 @@ class PlaceNewOrder(Resource):
     )
 
     def post(self):
-        ''' ppace new order'''
+        ''' Place new order'''
     
         data = PlaceNewOrder.parser.parse_args()
 
@@ -45,14 +45,17 @@ class PlaceNewOrder(Resource):
         order = FoodOrder(name, description, price)
 
         orders.append(order)
-        return {"message":"Food order placed"}, 201
+        return {"message":"Order placed"}, 201
 
 class AllOrders(Resource):
 
     def get(self):
         ''' get all orders '''
+        order = FoodOrder().get_id(id)
+        if order:
+             return {'orders': [order.serialize() for order in orders]}, 200
+        return {'message':"Not found"}, 404
 
-        return {'orders': [order.serialize() for order in orders]}, 200
 
 class SpecificOrder(Resource):
     
