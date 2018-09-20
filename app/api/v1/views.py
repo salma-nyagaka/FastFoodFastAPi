@@ -2,7 +2,11 @@ from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from .model import FoodOrder, orders
 from utils.validators import Validators
-from flask_jwt import JWT
+
+app = Flask(__name__)
+app.secret_key = 'salma'
+
+
 
 
 class PlaceNewOrder(Resource):
@@ -29,7 +33,7 @@ class PlaceNewOrder(Resource):
     )
 
     def post(self):
-        ''' ppace new order'''
+        ''' place new order'''
     
         data = PlaceNewOrder.parser.parse_args()
 
@@ -42,11 +46,12 @@ class PlaceNewOrder(Resource):
         if not Validators().valid_food_description(description):
             return {'message': 'Enter valid food description'}, 400
 
-        order = FoodOrder(name, description, price)
+        order = FoodOrder(name=name, description=description, price=price)
 
         orders.append(order)
-        return {"message":"Food order placed"}, 201
 
+        return {"message":"Food order placed"}, 201
+   
 class AllOrders(Resource):
 
     def get(self):
@@ -85,14 +90,9 @@ class SpecificOrder(Resource):
     def delete(self, id):
         ''' Delete a specific order '''
 
-        order = FoodOrder().get_id(id)
+        order = FoodOrder().get_id(order_id=id)
         if order:
             orders.remove(order)
             return {'message':"Deleted"}, 200
         return {'message':"Not found"}, 404
   
-
-
-
-
-

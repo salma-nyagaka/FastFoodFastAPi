@@ -2,7 +2,10 @@ import json
 import unittest
 from unittest import TestCase
 from app import create_app
+
+from app.api.v1.views import SpecificOrder, AllOrders, PlaceNewOrder
 from flask_restful import Resource
+
 
 class TestOrders(TestCase):
     def setUp(self):
@@ -10,9 +13,11 @@ class TestOrders(TestCase):
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
-
-    def tearDown(self):
-        self.app_context.pop()
+        self.order_data = {
+            "name":"Burger",
+            "description":"Beef burger",
+            "price":60
+        }
 
     def test_place_new_order(self):
         ''' Test to place an order '''
@@ -50,8 +55,14 @@ class TestOrders(TestCase):
     def test_update_order(self):
         ''' Test to update a specific order '''
 
+        response = self.client.post(
+            "/api/v1/orders",
+            data=json.dumps(self.order_data),
+            headers={"content-type":"application/json"}
+        )
+
         response = self.client.put(
-            "/api/v1/orders/2",
+            "/api/v1/orders/1",
             headers={"content-type":"application/json"}
         )
 
@@ -109,5 +120,38 @@ class TestOrders(TestCase):
         self.assertEqual(response_data['message'], "Enter valid food description")
         self.assertNotEqual(response.status_code, 200)
 
-    
-    
+    def test_get_specififc_order(self):
+        ''' Test to get specific order '''
+        
+        res = self.client.post(
+            "/api/v1/orders",
+            data=json.dumps(self.order_data),
+            headers={"content-type":"application/json"}
+        )
+        response = self.client.get(
+                "/api/v1/orders/1", content_type='application/json')
+
+        self.assertEqual(response.content_type, 'application/json')
+        print(res, response)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.status_code, 404)
+
+
+    def test_delete_order_found(self):
+        ''' Test to delete order'''
+
+        response = self.client.post(
+            "/api/v1/orders",
+            data=json.dumps(self.order_data),
+            headers={"content-type":"application/json"}
+        )
+        response = self.client.delete(
+            "/api/v1/orders/1",
+            headers={"content-type":"application/json"}
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.assertNotEqual(response.status_code, 404)
+
+    def tearDown(self):
+        self.app_context.pop()

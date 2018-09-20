@@ -5,6 +5,8 @@ import os
 class Config():
     '''Parent configuration class'''
     DEBUG = False
+    SECRET = os.getenv('SECRET')
+    DATABASE_URI = os.getenv('DATABASE_URL')
 
 
 class Development(Config):
