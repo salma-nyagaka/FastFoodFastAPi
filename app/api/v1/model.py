@@ -8,8 +8,6 @@ class FoodOrder:
         self.description=description
         self.status=status
         
-        # FoodOrder.order_id += 1
-
     def serialize(self):
         return dict(
             id=self.id,

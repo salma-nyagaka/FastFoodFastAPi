@@ -1,12 +1,12 @@
 from flask import Flask, request
-from flask_restful import Resource, Api, reqparse
+from flask_restful import Resource, reqparse
+
 from .model import FoodOrder, orders
 from utils.validators import Validators
 
+
 app = Flask(__name__)
 app.secret_key = 'salma'
-
-
 
 
 class PlaceNewOrder(Resource):
@@ -29,14 +29,12 @@ class PlaceNewOrder(Resource):
         'price',
         type=int,
         required=True,
-        help="This field cannot be left blank! " 
+        help="This field cannot be left blank!" 
     )
 
     def post(self):
         ''' place new order'''
-    
         data = PlaceNewOrder.parser.parse_args()
-
         name = data['name']
         description = data['description']
         price = data['price']

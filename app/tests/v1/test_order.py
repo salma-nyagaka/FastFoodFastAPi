@@ -4,7 +4,6 @@ from unittest import TestCase
 from app import create_app
 
 from app.api.v1.views import SpecificOrder, AllOrders, PlaceNewOrder
-from flask_restful import Resource
 
 
 class TestOrders(TestCase):
@@ -77,7 +76,6 @@ class TestOrders(TestCase):
         )
         self.assertEqual(response.status_code, 404)
     
-
     def test_invalid_food_name(self):
         ''' Test invalid food name '''
 
