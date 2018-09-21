@@ -29,7 +29,7 @@ class PlaceNewOrder(Resource):
         'price',
         type=int,
         required=True,
-        help="This field cannot be left blank!" 
+        help="This field cannot be left blank" 
     )
 
     def post(self):
@@ -49,6 +49,7 @@ class PlaceNewOrder(Resource):
         orders.append(order)
 
         return {"message":"Food order placed"}, 201
+        
    
 class AllOrders(Resource):
 
@@ -88,9 +89,30 @@ class SpecificOrder(Resource):
     def delete(self, id):
         ''' Delete a specific order '''
 
-        order = FoodOrder().get_id(order_id=id)
+        order = FoodOrder().get_id(id)
         if order:
-            orders.remove(order)
-            return {'message':"Deleted"}, 200
+            if order.status == "Pending":
+                order.status = "Deleted"
+                # orders.remove(order)
+                return {'message':"Deleted"}, 200
         return {'message':"Not found"}, 404
-  
+
+class GetAcceptedOrders(Resource):
+    '''Get the Orders accepted by admin'''
+    def get(self):
+        return {"orders":[order.serialize() for order in orders if order.status == "Accepted"]}
+
+class CompletedOrder(Resource):
+    def get(self):
+        return {"completed orders":[order.serialize() for order in orders if order.status == "Completed"]},200
+
+class DeclinedOrder(Resource):
+    def get(self):
+        return {"deleted orders":[order.serialize() for order in orders if order.status == "Deleted"]},200
+
+
+
+
+
+
+        
