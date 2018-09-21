@@ -3,9 +3,9 @@ import unittest
 from unittest import TestCase
 from app import create_app
 
-from app.api.v1.views import SpecificOrder, AllOrders, PlaceNewOrder
+#local imports
+from app.api.v1.views import SpecificOrder, AllOrders, PlaceNewOrder, DeclineOrder
 from flask_restful import Resource
-
 
 
 class TestOrders(TestCase):
@@ -19,6 +19,7 @@ class TestOrders(TestCase):
             "description":"Beef burger",
             "price":60
         }
+
 
     def test_place_new_order(self):
         ''' Test to place an order '''
@@ -52,6 +53,33 @@ class TestOrders(TestCase):
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
+
+
+    def test_get_all_accepted_orders(self):
+        ''' Test to get all accepted orders '''
+
+        response = self.client.get(
+             "/api/v1/accepted/orders", content_type='application/json')
+
+        data = json.loads(response.data.decode('utf-8'))
+        print(data)
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.status_code, 404)
+
+
+    def test_get_all_completed_orders(self):
+        ''' Test to get all completed orders '''
+
+        response = self.client.get(
+             "/api/v1/completed/orders", content_type='application/json')
+
+        data = json.loads(response.data.decode('utf-8'))
+        print(data)
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.status_code, 404)
+
 
     def test_update_order(self):
         ''' Test to update a specific order '''
@@ -92,6 +120,7 @@ class TestOrders(TestCase):
         self.assertEqual(response_data['message'], "Enter valid name")
         self.assertNotEqual(response.status_code, 200)
 
+
     def test_invalid_food_description(self):
         ''' Test invalid food description '''
 
@@ -113,6 +142,7 @@ class TestOrders(TestCase):
         self.assertEqual(response_data['message'], "Enter valid food description")
         self.assertNotEqual(response.status_code, 200)
 
+
     def test_get_specififc_order(self):
         ''' Test to get specific order '''
         
@@ -130,6 +160,7 @@ class TestOrders(TestCase):
         self.assertNotEqual(response.status_code, 404)
 
 
+
     def test_delete_order_not_found(self):
         ''' Test to delete order'''
 
@@ -145,6 +176,7 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.assertNotEqual(response.status_code, 404)
+
 
     def tearDown(self):
         self.app_context.pop()

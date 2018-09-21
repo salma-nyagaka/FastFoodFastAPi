@@ -1,13 +1,9 @@
 from flask import Flask, request
 from flask_restful import Resource, reqparse
 
+#local imports
 from .model import FoodOrder, orders
 from utils.validators import Validators
-
-
-app = Flask(__name__)
-app.secret_key = 'salma'
-
 
 class PlaceNewOrder(Resource):
     parser = reqparse.RequestParser()
@@ -88,27 +84,41 @@ class SpecificOrder(Resource):
 
     def delete(self, id):
         ''' Delete a specific order '''
+        order = FoodOrder().get_id(order_id=id)
+        if order:
+            orders.remove(order)
+            return {'message':"Deleted"}, 200
 
+        return {'message':"Not found"}, 404
+  
+
+class DeclineOrder(Resource):
+    '''Decline an order'''
+    def put(self, id):
+        ''' Update the status of an order '''
         order = FoodOrder().get_id(id)
+
         if order:
             if order.status == "Pending":
-                order.status = "Deleted"
-                # orders.remove(order)
-                return {'message':"Deleted"}, 200
+                order.status = "Declined"
+                return {'message':'Order declined'}, 200
+
         return {'message':"Not found"}, 404
 
 class GetAcceptedOrders(Resource):
-    '''Get the Orders accepted by admin'''
+    '''Get the Orders accepted '''
     def get(self):
         return {"orders":[order.serialize() for order in orders if order.status == "Accepted"]}
 
-class CompletedOrder(Resource):
+class CompletedOrders(Resource):
+    ''' Get all orders completed'''
     def get(self):
         return {"completed orders":[order.serialize() for order in orders if order.status == "Completed"]},200
 
-class DeclinedOrder(Resource):
+class DeclinedOrders(Resource):
+    ''' Get all orders deleted'''
     def get(self):
-        return {"deleted orders":[order.serialize() for order in orders if order.status == "Deleted"]},200
+        return {"deleted orders":[order.serialize() for order in orders if order.status == "Declined"]},200
 
 
 
