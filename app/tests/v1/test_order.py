@@ -4,6 +4,8 @@ from unittest import TestCase
 from app import create_app
 
 from app.api.v1.views import SpecificOrder, AllOrders, PlaceNewOrder
+from flask_restful import Resource
+
 
 
 class TestOrders(TestCase):
@@ -54,14 +56,14 @@ class TestOrders(TestCase):
     def test_update_order(self):
         ''' Test to update a specific order '''
 
-        response = self.client.post(
+        res = self.client.post(
             "/api/v1/orders",
             data=json.dumps(self.order_data),
             headers={"content-type":"application/json"}
         )
 
         response = self.client.put(
-            "/api/v1/orders/1",
+            "/api/v1/orders/2",
             headers={"content-type":"application/json"}
         )
 
@@ -76,6 +78,7 @@ class TestOrders(TestCase):
         )
         self.assertEqual(response.status_code, 404)
     
+
     def test_invalid_food_name(self):
         ''' Test invalid food name '''
 
@@ -135,10 +138,10 @@ class TestOrders(TestCase):
         self.assertNotEqual(response.status_code, 404)
 
 
-    def test_delete_order_found(self):
+    def test_delete_order_not_found(self):
         ''' Test to delete order'''
 
-        response = self.client.post(
+        res = self.client.post(
             "/api/v1/orders",
             data=json.dumps(self.order_data),
             headers={"content-type":"application/json"}
