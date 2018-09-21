@@ -56,7 +56,7 @@ class TestOrders(TestCase):
     def test_update_order(self):
         ''' Test to update a specific order '''
 
-        res = self.client.post(
+        response = self.client.post(
             "/api/v1/orders",
             data=json.dumps(self.order_data),
             headers={"content-type":"application/json"}
@@ -70,14 +70,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
 
-    def test_delete_order_not_found(self):
-        ''' Test to delete order'''
-        response = self.client.delete(
-            "/api/v1/orders/2",
-            headers={"content-type":"application/json"}
-        )
-        self.assertEqual(response.status_code, 404)
-    
 
     def test_invalid_food_name(self):
         ''' Test invalid food name '''
@@ -141,7 +133,7 @@ class TestOrders(TestCase):
     def test_delete_order_not_found(self):
         ''' Test to delete order'''
 
-        res = self.client.post(
+        response = self.client.post(
             "/api/v1/orders",
             data=json.dumps(self.order_data),
             headers={"content-type":"application/json"}
