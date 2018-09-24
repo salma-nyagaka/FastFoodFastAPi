@@ -3,9 +3,6 @@ from unittest import TestCase
 from app import create_app
 
 
-from app.api.v1.views import SpecificOrder, AllOrders, PlaceNewOrder, DeclineOrder
-
-
 class TestOrders(TestCase):
     def setUp(self):
         self.app = create_app("testing")
@@ -18,10 +15,8 @@ class TestOrders(TestCase):
             "price": 60
         }
         
-
     def test_place_new_order(self):
         ''' Test to place an order '''
-
         order_data = {
             "name": "Burger",
             "description": "Beef burger",
