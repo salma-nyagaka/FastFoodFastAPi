@@ -17,15 +17,6 @@ sdist/
 var/
 wheels/
 
-
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -45,6 +36,4 @@ coverage.xml
 .venv
 
 
-# mypy
-.mypy_cache/
 
