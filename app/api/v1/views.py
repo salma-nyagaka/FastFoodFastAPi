@@ -66,22 +66,6 @@ class SpecificOrder(Resource):
         
         return {'message':"Not found"}, 404
         
-    def put(self, id):
-        ''' Update the status of an order '''
-        order = FoodOrder().get_id(id)
-
-        if order:
-            if order.status == "Pending":
-                order.status = "Accepted"
-                return {'message':'Order accepted'}, 200
-
-            if order.status == "Accepted":
-                order.status = "Completed"
-
-                return {'message':'Order completed'}, 200
-
-        return {'message':"Not found"}, 404
-
     def delete(self, id):
         ''' Delete a specific order '''
         order = FoodOrder().get_id(order_id=id)
@@ -90,7 +74,47 @@ class SpecificOrder(Resource):
             return {'message':"Deleted"}, 200
 
         return {'message':"Not found"}, 404
-  
+
+class Accept(Resource):
+     def put(self, id):
+        ''' Update the status to accept '''
+        order = FoodOrder().get_id(id)
+
+        if order:
+            if order.status == "Pending":
+                order.status = "Accepted"
+                return {'message':'Order accepted'}, 200
+
+        return {'message':"Not found"}, 404
+
+class Complete(Resource):
+      def put(self, id):
+        ''' Update the status of an order to completed '''
+        order = FoodOrder().get_id(id)
+        if order:
+
+            if order.status == "Pending":
+                order.status = "Completed"
+
+                return {'message':'Order completed'}, 200
+
+        return {'message':"Not found"}, 404
+
+class Decline(Resource):
+      def put(self, id):
+        ''' Update the status of an order '''
+        order = FoodOrder().get_id(id)
+        if order:
+
+
+            if order.status == "Pending":
+                order.status = "Declined"
+
+                return {'message':'Order Declined'}, 200
+
+        return {'message':"Not found"}, 404
+
+
 
 class DeclineOrder(Resource):
     '''Decline an order'''
@@ -119,10 +143,4 @@ class DeclinedOrders(Resource):
     ''' Get all orders deleted'''
     def get(self):
         return {"deleted orders":[order.serialize() for order in orders if order.status == "Declined"]},200
-
-
-
-
-
-
-        
+  

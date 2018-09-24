@@ -59,5 +59,3 @@ git clone https://github.com/salma-nyagaka/fasrfoodfast.git
 | PUT    | /api/v1/orders/<{id}>           | Update order status                   |
 | GET    | /api/v1/orders/<{id}>           | Get a specific order                  |
 | DELETE | /api/v1/orders/<{id}>           | Delete a specific order               |
-
-
