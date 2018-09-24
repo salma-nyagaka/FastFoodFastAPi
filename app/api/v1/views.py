@@ -37,9 +37,7 @@ class AllOrders(Resource):
 
     def get(self):
         ''' get all orders '''
-        if orders:
-            return {'orders': [order.serialize() for order in orders]}, 200
-        return {'message': "No orders placed yet"}, 404
+        return {'orders': [order.serialize() for order in orders]}, 200
 
 
 class SpecificOrder(Resource):
