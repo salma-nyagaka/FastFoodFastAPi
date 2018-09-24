@@ -1,32 +1,18 @@
 from flask import Flask, request
 from flask_restful import Resource, reqparse
 
-#local imports
+
 from .model import FoodOrder, orders
 from utils.validators import Validators
 
+
 class PlaceNewOrder(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument(
-    'name',
-    type=str,
-    required=True,
-    help="This field cannot be left blank"
-    )
+    parser.add_argument('name', type=str, required=True, help="This field cannot be left blank")
 
-    parser.add_argument(
-    'description',
-    type=str,
-    required=True,
-    help="This field cannot be left blank"
-    )
+    parser.add_argument('description', type=str, required=True, help="This field cannot be left blank")
 
-    parser.add_argument(
-        'price',
-        type=int,
-        required=True,
-        help="This field cannot be left blank" 
-    )
+    parser.add_argument('price', type=int, required=True, help="This field cannot be left blank")
 
     def post(self):
         ''' place new order'''
@@ -44,51 +30,56 @@ class PlaceNewOrder(Resource):
 
         orders.append(order)
 
-        return {"message":"Food order placed"}, 201
-        
-   
+        return {"message": "Food order placed"}, 201
+
+
 class AllOrders(Resource):
 
     def get(self):
         ''' get all orders '''
+        if orders:
+            return {'orders': [order.serialize() for order in orders]}, 200
+        return {'message': "No orders placed yet"}, 404
 
-        return {'orders': [order.serialize() for order in orders]}, 200
 
 class SpecificOrder(Resource):
-    
+
     def get(self, id):
         ''' get a specific order '''
-        
+
         order = FoodOrder().get_id(id)
 
         if order:
-            return {"order":order.serialize()}
-        
-        return {'message':"Not found"}, 404
-        
+            return {"order": order.serialize()}
+        return {'message': "Not found"}, 404
+
     def delete(self, id):
         ''' Delete a specific order '''
         order = FoodOrder().get_id(order_id=id)
         if order:
             orders.remove(order)
-            return {'message':"Deleted"}, 200
+            return {'message': "Deleted"}, 200
 
-        return {'message':"Not found"}, 404
+        return {'message': "Not found"}, 404
+
 
 class Accept(Resource):
-     def put(self, id):
+
+    def put(self, id):
         ''' Update the status to accept '''
         order = FoodOrder().get_id(id)
 
         if order:
             if order.status == "Pending":
                 order.status = "Accepted"
-                return {'message':'Order accepted'}, 200
+                return {'message': 'Order accepted'}, 200
 
-        return {'message':"Not found"}, 404
+        return {'message': "Not found"}, 404
+
 
 class Complete(Resource):
-      def put(self, id):
+
+    def put(self, id):
         ''' Update the status of an order to completed '''
         order = FoodOrder().get_id(id)
         if order:
@@ -96,51 +87,61 @@ class Complete(Resource):
             if order.status == "Pending":
                 order.status = "Completed"
 
-                return {'message':'Order completed'}, 200
+                return {'message': 'Order completed'}, 200
 
-        return {'message':"Not found"}, 404
+        return {'message': "Not found"}, 404
+
 
 class Decline(Resource):
-      def put(self, id):
-        ''' Update the status of an order '''
-        order = FoodOrder().get_id(id)
-        if order:
 
-
-            if order.status == "Pending":
-                order.status = "Declined"
-
-                return {'message':'Order Declined'}, 200
-
-        return {'message':"Not found"}, 404
-
-
-
-class DeclineOrder(Resource):
-    '''Decline an order'''
     def put(self, id):
         ''' Update the status of an order '''
         order = FoodOrder().get_id(id)
+        if order:
+
+            if order.status == "Pending":
+                order.status = "Declined"
+
+                return {'message': 'Order Declined'}, 200
+
+        return {'message': "Not found"}, 404
+
+
+class DeclineOrder(Resource):
+
+    def put(self, id):
+
+        '''Decline an order'''
+
+        order = FoodOrder().get_id(id)
 
         if order:
             if order.status == "Pending":
                 order.status = "Declined"
-                return {'message':'Order declined'}, 200
+                return {'message': 'Order declined'}, 200
 
-        return {'message':"Not found"}, 404
+        return {'message': "Not found"}, 404
+
 
 class GetAcceptedOrders(Resource):
-    '''Get the Orders accepted '''
+
     def get(self):
-        return {"orders":[order.serialize() for order in orders if order.status == "Accepted"]}
+        '''Get the Orders accepted '''
+
+        return {"orders": [order.serialize() for order in orders if order.status == "Accepted"]}, 200
+
 
 class CompletedOrders(Resource):
-    ''' Get all orders completed'''
+
     def get(self):
-        return {"completed orders":[order.serialize() for order in orders if order.status == "Completed"]},200
+        ''' Get all orders completed'''
+
+        return {"completed orders": [order.serialize() for order in orders if order.status == "Completed"]}, 200
+
 
 class DeclinedOrders(Resource):
-    ''' Get all orders deleted'''
+
     def get(self):
-        return {"deleted orders":[order.serialize() for order in orders if order.status == "Declined"]},200
-  
+        ''' Get all orders deleted'''
+
+        return {"deleted orders": [order.serialize() for order in orders if order.status == "Declined"]}, 200

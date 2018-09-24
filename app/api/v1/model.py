@@ -1,15 +1,15 @@
 orders = []
+
+
 class FoodOrder:
 
-    #instance attributes
-    def __init__(self,name=None,price=None,description=None, status="Pending"):
-        self.id=len(orders)+1
-        self.name=name
-        self.price=price
-        self.description=description
-        self.status=status
+    def __init__(self, name=None, price=None, description=None, status="Pending"):
+        self.id = len(orders)+1
+        self.name = name
+        self.price = price
+        self.description = description
+        self.status = status
 
-    #instance method
     def serialize(self):
         return dict(
             id=self.id,
