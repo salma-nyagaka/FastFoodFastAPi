@@ -72,7 +72,7 @@ class Accept(Resource):
                 order.status = "Accepted"
                 return {'message': 'Order accepted'}, 200
 
-        return {'message': "Not found"}, 404
+        return {'message': "Not found"}
 
 
 class Complete(Resource):
@@ -87,7 +87,7 @@ class Complete(Resource):
 
                 return {'message': 'Order completed'}, 200
 
-        return {'message': "Not found"}, 404
+        return {'message': "Not found"}
 
 
 class Decline(Resource):
@@ -102,7 +102,7 @@ class Decline(Resource):
 
                 return {'message': 'Order Declined'}, 200
 
-        return {'message': "Not found"}, 404
+        return {'message': "Not found"}
 
 
 class DeclineOrder(Resource):
@@ -125,8 +125,10 @@ class GetAcceptedOrders(Resource):
 
     def get(self):
         '''Get the Orders accepted '''
+        if orders:
+            return {"orders": [order.serialize() for order in orders if order.status == "Accepted"]}, 200
 
-        return {"orders": [order.serialize() for order in orders if order.status == "Accepted"]}, 200
+        return {'message': "Not found"}
 
 
 class CompletedOrders(Resource):

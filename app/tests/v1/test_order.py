@@ -1,11 +1,9 @@
 import json
-import unittest
 from unittest import TestCase
 from app import create_app
 
 
 from app.api.v1.views import SpecificOrder, AllOrders, PlaceNewOrder, DeclineOrder
-from flask_restful import Resource
 
 
 class TestOrders(TestCase):
@@ -19,6 +17,7 @@ class TestOrders(TestCase):
             "description": "Beef burger",
             "price": 60
         }
+        
 
     def test_place_new_order(self):
         ''' Test to place an order '''
@@ -50,18 +49,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
 
-    def test_get_all_accepted_orders(self):
-        ''' Test to get all accepted orders '''
-
-        response = self.client.get(
-             "/api/v1/accepted/orders", content_type='application/json')
-
-        data = json.loads(response.data.decode('utf-8'))
-        print(data)
-        self.assertEqual(response.content_type, 'application/json')
-        self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(response.status_code, 404)
-
     def test_get_all_completed_orders(self):
         ''' Test to get all completed orders '''
 
@@ -78,6 +65,18 @@ class TestOrders(TestCase):
         ''' Test to get all accepted orders '''
 
         response = self.client.get(
+             "/api/v1/accepted/orders", content_type='application/json')
+
+        data = json.loads(response.data.decode('utf-8'))
+        print(data)
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.status_code, 404)
+
+    def test_get_all_declined_orders(self):
+        ''' Test to get all declined orders '''
+
+        response = self.client.get(
              "/api/v1/declined/orders", content_type='application/json')
 
         data = json.loads(response.data.decode('utf-8'))
@@ -86,7 +85,8 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
 
-    def test_update_order(self):
+
+    def test_accept_order(self):
         ''' Test to update a specific order '''
         response = self.client.put(
             "/api/v1/accept/orders/1",
@@ -108,15 +108,17 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
 
-    def test_update_order(self):
+    def test_decline_order(self):
         ''' Test to update a specific order '''
-
-        response = self.client.put("/api/v1/decline/orders/1", data=json.dumps(self.order_data),
-        headers={"content-type": "application/json"}
+        response = self.client.put(
+            "/api/v1/decline/orders/1",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json"}
         )
 
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
+
 
     def test_invalid_food_name(self):
         ''' Test invalid food name '''
