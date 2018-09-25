@@ -14,6 +14,12 @@ class TestOrders(TestCase):
             "description": "Beef burger",
             "price": 60
         }
+        self.order = {
+            "name": "Burger",
+            "description": "Beef burger",
+            "price": 60
+        }
+
 
     def test_place_new_order(self):
         ''' Test to place an order '''
@@ -175,6 +181,8 @@ class TestOrders(TestCase):
 
         response = self.client.delete(
             "/api/v1/orders/1",
+            data=json.dumps(self.order),
+
             headers={"content-type": "application/json"}
         )
         self.assertEqual(response.status_code, 200)
