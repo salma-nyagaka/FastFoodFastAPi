@@ -172,12 +172,7 @@ class TestOrders(TestCase):
 
     def test_delete_order(self):
         ''' Test to delete order'''
-
-        response = self.client.post(
-            "/api/v1/orders",
-            data=json.dumps(self.order_data),
-            headers={"content-type":"application/json"}
-        )
+        
         response = self.client.delete(
             "/api/v1/orders/1",
             headers={"content-type":"application/json"}
