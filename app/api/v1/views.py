@@ -38,8 +38,9 @@ class AllOrders(Resource):
     def get(self):
         ''' get all orders '''
         if orders:
-             return {'orders': [order.serialize() for order in orders]}, 200
+            return {'orders': [order.serialize() for order in orders]}, 200
         return {'message': "Not found"}
+
 
 class SpecificOrder(Resource):
 
@@ -129,7 +130,7 @@ class CompletedOrders(Resource):
     def get(self):
         ''' Get all orders completed'''
         if orders:
-              return {"completed orders": [order.serialize() for order in orders if order.status == "Completed"]}, 200
+            return {"completed orders": [order.serialize() for order in orders if order.status == "Completed"]}, 200
         return {'message': "Not found"}
 
 
@@ -138,6 +139,5 @@ class DeclinedOrders(Resource):
     def get(self):
         ''' Get all orders deleted'''
         if orders:
-              return {"deleted orders": [order.serialize() for order in orders if order.status == "Declined"]}, 200
+            return {"deleted orders": [order.serialize() for order in orders if order.status == "Declined"]}, 200
         return {'message': "Not found"}
-
