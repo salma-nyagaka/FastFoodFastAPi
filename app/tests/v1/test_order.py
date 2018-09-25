@@ -1,6 +1,9 @@
 import json
 from unittest import TestCase
+
+
 from app import create_app
+from app.api.v1.views import SpecificOrder, AllOrders, Accept, Complete, Decline, PlaceNewOrder, DeclineOrder, GetAcceptedOrders, CompletedOrders, DeclinedOrders
 
 
 class TestOrders(TestCase):
@@ -14,7 +17,7 @@ class TestOrders(TestCase):
             "description": "Beef burger",
             "price": 60
         }
-       
+
     def test_place_new_order(self):
         ''' Test to place an order '''
         order_data = {
@@ -34,7 +37,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response_data['message'], "Food order placed")
 
-         
     def test_name_in_order(self):
         ''' Test to place an order '''
         data = {
@@ -83,7 +85,7 @@ class TestOrders(TestCase):
 
     def test_get_specififc_order(self):
         ''' Test to get specific order '''
-        
+
         response = self.client.get(
                 "/api/v1/orders/1", content_type='application/json')
 
@@ -130,7 +132,6 @@ class TestOrders(TestCase):
         ''' Test to update a specific order '''
         response = self.client.put(
             "/api/v1/accept/orders/1",
-            data=json.dumps(self.order_data),
             headers={"content-type": "application/json"}
         )
 
@@ -141,7 +142,6 @@ class TestOrders(TestCase):
 
         response = self.client.put(
             "/api/v1/complete/orders/1",
-            data=json.dumps(self.order_data),
             headers={"content-type": "application/json"}
         )
 
@@ -152,7 +152,6 @@ class TestOrders(TestCase):
         ''' Test to update a specific order '''
         response = self.client.put(
             "/api/v1/decline/orders/1",
-            data=json.dumps(self.order_data),
             headers={"content-type": "application/json"}
         )
 
@@ -203,10 +202,9 @@ class TestOrders(TestCase):
 
     def test_delete_order(self):
         ''' Test to delete order'''
-        
         response = self.client.delete(
             "/api/v1/orders/1",
-            headers={"content-type":"application/json"}
+            headers={"content-type": "application/json"}
         )
         self.assertEqual(response.status_code, 200)
 
