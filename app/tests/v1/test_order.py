@@ -53,7 +53,7 @@ class TestOrders(TestCase):
 
         self.assertTrue(response_data['message'], "Enter valid name")
 
-    def test_descriptiom_in_order(self):
+    def test_description_in_order(self):
         ''' Test to place an order '''
         data = {
             "name": "Burger",
@@ -83,18 +83,12 @@ class TestOrders(TestCase):
 
     def test_get_specififc_order(self):
         ''' Test to get specific order '''
-        res = self.client.post(
-            "/api/v1/orders",
-            data=json.dumps(self.order_data),
-            headers={"content-type": "application/json"}
-        )
+        
         response = self.client.get(
                 "/api/v1/orders/1", content_type='application/json')
 
         self.assertEqual(response.content_type, 'application/json')
-        print(res, response)
         self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(response.status_code, 404)
 
     def test_get_all_completed_orders(self):
         ''' Test to get all completed orders '''
