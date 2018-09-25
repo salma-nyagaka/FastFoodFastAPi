@@ -8,33 +8,27 @@
 # Fast Food Fast
 
 Fast food fast is a fast food delivery application
-<!-- 
-#Heroku
-https://createorders-api.herokuapp.com
-
-#Postman documentation
-https://documenter.getpostman.com/view/4791352/RWaKT919 -->
 
 # How it Works
 
 - An admin views orders
-- A user places an order
+- A admin places an order
 - An admin can delete an order
 - An admin can accept an order
 - An admin can mark order as completed
-
+- An admin can mark order as declined
 
 # Prerequisite
 
 - [Python3.6](https://www.python.org/downloads/release/python-365/)
-- [Virtua Environment](https://virtualenv.pypa.io/en/stable/installation/)
+- [Virtual Environment](https://virtualenv.pypa.io/en/stable/installation/)
 
 # Installation and Setup
 
 Clone the repository below
 
 ```
-git clone https://github.com/salma-nyagaka/fasrfoodfast.git
+git clone -b api-v1 https://github.com/salma-nyagaka/fasrfoodfast.git
 ```
 # Create a virtual environment
 
@@ -48,14 +42,15 @@ git clone https://github.com/salma-nyagaka/fasrfoodfast.git
 
     pip install -r requirements.txt
 
-
-
 # Endpoints Available
 
 | Method | Endpoint                        | Description                           |
 | ------ | ------------------------------- | ------------------------------------- |
 | POST   | /api/v1/orders                  | Place an order                        |
 | GET    | /api/v1/orders                  | Get all orders                        |
-| PUT    | /api/v1/orders/<{id}>           | Update order status                   |
 | GET    | /api/v1/orders/<{id}>           | Get a specific order                  |
+| PUT    | /api/v1/accept/orders/<{id}>    | Accept an order                       |
+| PUT    | /api/v1/complete/orders/<{id}>  | Complete an order                     |
+| PUT    | /api/v1/decline/orders/<{id}>   | Decline an order                      |
+| DELETE | /api/v1/orders/<{id}>           | Delete a specific order               |
 | DELETE | /api/v1/orders/<{id}>           | Delete a specific order               |

@@ -1,5 +1,7 @@
 import json
 from unittest import TestCase
+
+
 from app import create_app
 
 
@@ -14,7 +16,7 @@ class TestOrders(TestCase):
             "description": "Beef burger",
             "price": 60
         }
-       
+
     def test_place_new_order(self):
         ''' Test to place an order '''
         order_data = {
@@ -34,6 +36,43 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response_data['message'], "Food order placed")
 
+    def test_name_in_order(self):
+        ''' Test to place an order '''
+        data = {
+            "name": "  ",
+            "description": "Beef burger",
+            "price": 60
+        }
+
+        response = self.client.post(
+            "/api/v1/orders",
+            data=json.dumps(data),
+            headers={"content-type": "application/json"}
+        )
+
+        response_data = json.loads(response.data.decode('utf-8'))
+
+        self.assertTrue(response_data['message'], "Enter valid name")
+
+    def test_description_in_order(self):
+        ''' Test to place an order '''
+        data = {
+            "name": "Burger",
+            "description": " ",
+            "price": 60
+        }
+
+        response = self.client.post(
+            "/api/v1/orders",
+            data=json.dumps(data),
+            headers={"content-type": "application/json"}
+        )
+
+        response_data = json.loads(response.data.decode('utf-8'))
+
+        self.assertTrue(response_data['message'],
+                        "Enter valid food description")
+
     def test_get_all_orders(self):
         ''' Test to get all orders '''
 
@@ -46,18 +85,12 @@ class TestOrders(TestCase):
 
     def test_get_specififc_order(self):
         ''' Test to get specific order '''
-        res = self.client.post(
-            "/api/v1/orders",
-            data=json.dumps(self.order_data),
-            headers={"content-type": "application/json"}
-        )
+
         response = self.client.get(
                 "/api/v1/orders/1", content_type='application/json')
 
         self.assertEqual(response.content_type, 'application/json')
-        print(res, response)
         self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(response.status_code, 404)
 
     def test_get_all_completed_orders(self):
         ''' Test to get all completed orders '''
@@ -99,7 +132,6 @@ class TestOrders(TestCase):
         ''' Test to update a specific order '''
         response = self.client.put(
             "/api/v1/accept/orders/1",
-            data=json.dumps(self.order_data),
             headers={"content-type": "application/json"}
         )
 
@@ -110,7 +142,6 @@ class TestOrders(TestCase):
 
         response = self.client.put(
             "/api/v1/complete/orders/1",
-            data=json.dumps(self.order_data),
             headers={"content-type": "application/json"}
         )
 
@@ -121,7 +152,6 @@ class TestOrders(TestCase):
         ''' Test to update a specific order '''
         response = self.client.put(
             "/api/v1/decline/orders/1",
-            data=json.dumps(self.order_data),
             headers={"content-type": "application/json"}
         )
 
@@ -167,20 +197,15 @@ class TestOrders(TestCase):
         response_data = json.loads(response.data.decode('utf-8'))
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response_data['message'], "Enter valid food description")
+        self.assertEqual(response_data['message'],
+                         "Enter valid food description")
         self.assertNotEqual(response.status_code, 200)
 
     def test_delete_order(self):
         ''' Test to delete order'''
-
-        response = self.client.post(
-            "/api/v1/orders",
-            data=json.dumps(self.order_data),
-            headers={"content-type":"application/json"}
-        )
         response = self.client.delete(
             "/api/v1/orders/1",
-            headers={"content-type":"application/json"}
+            headers={"content-type": "application/json"}
         )
         self.assertEqual(response.status_code, 200)
 

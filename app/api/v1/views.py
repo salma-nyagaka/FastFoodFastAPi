@@ -8,11 +8,14 @@ from utils.validators import Validators
 
 class PlaceNewOrder(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('name', type=str, required=True, help="This field cannot be left blank")
+    parser.add_argument('name', type=str, required=True,
+                        help="This field cannot be left blank")
 
-    parser.add_argument('description', type=str, required=True, help="This field cannot be left blank")
+    parser.add_argument('description', type=str, required=True,
+                        help="This field cannot be left blank")
 
-    parser.add_argument('price', type=int, required=True, help="This field cannot be left blank")
+    parser.add_argument('price', type=int, required=True,
+                        help="This field cannot be left blank")
 
     def post(self):
         ''' place new order'''
@@ -29,8 +32,8 @@ class PlaceNewOrder(Resource):
         order = FoodOrder(name=name, description=description, price=price)
 
         orders.append(order)
-
-        return {"message": "Food order placed"}, 201
+        return {'Order created successfully': [order.serialize()
+                for order in orders]}, 201
 
 
 class AllOrders(Resource):
@@ -38,8 +41,10 @@ class AllOrders(Resource):
     def get(self):
         ''' get all orders '''
         if orders:
-             return {'orders': [order.serialize() for order in orders]}, 200
+            return {'These are all the orders': [order.serialize()
+                    for order in orders]}, 200
         return {'message': "Not found"}
+
 
 class SpecificOrder(Resource):
 
@@ -49,7 +54,7 @@ class SpecificOrder(Resource):
         order = FoodOrder().get_id(id)
 
         if order:
-            return {"order": order.serialize()}, 200
+            return {"Order": order.serialize()}, 200
         return {'message': "Not found"}, 404
 
     def delete(self, id):
@@ -120,7 +125,8 @@ class GetAcceptedOrders(Resource):
     def get(self):
         '''Get the Orders accepted '''
         if orders:
-            return {"orders": [order.serialize() for order in orders if order.status == "Accepted"]}, 200
+            return {"Accepted orders": [order.serialize() for order in orders
+                                        if order.status == "Accepted"]}, 200
         return {'message': "Not found"}
 
 
@@ -129,7 +135,8 @@ class CompletedOrders(Resource):
     def get(self):
         ''' Get all orders completed'''
         if orders:
-              return {"completed orders": [order.serialize() for order in orders if order.status == "Completed"]}, 200
+            return {"Completed orders": [order.serialize() for order in orders
+                                         if order.status == "Completed"]}, 200
         return {'message': "Not found"}
 
 
@@ -138,6 +145,6 @@ class DeclinedOrders(Resource):
     def get(self):
         ''' Get all orders deleted'''
         if orders:
-              return {"deleted orders": [order.serialize() for order in orders if order.status == "Declined"]}, 200
+            return {"Deleted orders": [order.serialize() for order in orders
+                                       if order.status == "Declined"]}, 200
         return {'message': "Not found"}
-

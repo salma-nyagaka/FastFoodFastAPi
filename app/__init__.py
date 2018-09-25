@@ -3,7 +3,7 @@ from flask_restful import Api
 
 
 import config
-from app.api.v1.views import SpecificOrder, AllOrders, Accept, Complete, Decline, PlaceNewOrder, DeclineOrder, GetAcceptedOrders, CompletedOrders, DeclinedOrders
+from app.api.v1.views import *
 
 
 def create_app(config_name):
