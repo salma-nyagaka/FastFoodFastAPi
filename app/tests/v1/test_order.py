@@ -14,7 +14,7 @@ class TestOrders(TestCase):
             "description": "Beef burger",
             "price": 60
         }
-        
+
     def test_place_new_order(self):
         ''' Test to place an order '''
         order_data = {
@@ -80,7 +80,6 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
 
-
     def test_accept_order(self):
         ''' Test to update a specific order '''
         response = self.client.put(
@@ -113,7 +112,6 @@ class TestOrders(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
-
 
     def test_invalid_food_name(self):
         ''' Test invalid food name '''
@@ -175,18 +173,11 @@ class TestOrders(TestCase):
     def test_delete_order_not_found(self):
         ''' Test to delete order'''
 
-        response = self.client.post(
-            "/api/v1/orders",
-            data=json.dumps(self.order_data),
-            headers={"content-type": "application/json"}
-        )
         response = self.client.delete(
             "/api/v1/orders/1",
             headers={"content-type": "application/json"}
         )
         self.assertEqual(response.status_code, 200)
-
-        self.assertNotEqual(response.status_code, 404)
 
     def tearDown(self):
         self.app_context.pop()
