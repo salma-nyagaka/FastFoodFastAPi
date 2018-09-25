@@ -1,5 +1,5 @@
-from flask import request
 from flask_restful import Resource, reqparse
+from flask import Flask, request
 
 
 from .model import FoodOrder, orders
@@ -37,8 +37,9 @@ class AllOrders(Resource):
 
     def get(self):
         ''' get all orders '''
-        return {'orders': [order.serialize() for order in orders]}, 200
-
+        if orders:
+             return {'orders': [order.serialize() for order in orders]}, 200
+        return {'message': "Not found"}
 
 class SpecificOrder(Resource):
 
@@ -48,7 +49,7 @@ class SpecificOrder(Resource):
         order = FoodOrder().get_id(id)
 
         if order:
-            return {"order": order.serialize()}
+            return {"order": order.serialize()}, 200
         return {'message': "Not found"}, 404
 
     def delete(self, id):
@@ -57,8 +58,7 @@ class SpecificOrder(Resource):
         if order:
             orders.remove(order)
             return {'message': "Deleted"}, 200
-
-        return {'message': "Not found"}, 404
+        return {'message': "Not found"}
 
 
 class Accept(Resource):
@@ -71,7 +71,6 @@ class Accept(Resource):
             if order.status == "Pending":
                 order.status = "Accepted"
                 return {'message': 'Order accepted'}, 200
-
         return {'message': "Not found"}
 
 
@@ -86,7 +85,6 @@ class Complete(Resource):
                 order.status = "Completed"
 
                 return {'message': 'Order completed'}, 200
-
         return {'message': "Not found"}
 
 
@@ -96,12 +94,10 @@ class Decline(Resource):
         ''' Update the status of an order '''
         order = FoodOrder().get_id(id)
         if order:
-
             if order.status == "Pending":
                 order.status = "Declined"
 
                 return {'message': 'Order Declined'}, 200
-
         return {'message': "Not found"}
 
 
@@ -112,12 +108,10 @@ class DeclineOrder(Resource):
         '''Decline an order'''
 
         order = FoodOrder().get_id(id)
-
         if order:
             if order.status == "Pending":
                 order.status = "Declined"
                 return {'message': 'Order declined'}, 200
-
         return {'message': "Not found"}, 404
 
 
@@ -127,7 +121,6 @@ class GetAcceptedOrders(Resource):
         '''Get the Orders accepted '''
         if orders:
             return {"orders": [order.serialize() for order in orders if order.status == "Accepted"]}, 200
-
         return {'message': "Not found"}
 
 
@@ -135,7 +128,6 @@ class CompletedOrders(Resource):
 
     def get(self):
         ''' Get all orders completed'''
-
         return {"completed orders": [order.serialize() for order in orders if order.status == "Completed"]}, 200
 
 
@@ -143,5 +135,4 @@ class DeclinedOrders(Resource):
 
     def get(self):
         ''' Get all orders deleted'''
-
         return {"deleted orders": [order.serialize() for order in orders if order.status == "Declined"]}, 200
