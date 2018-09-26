@@ -1,14 +1,18 @@
 from flask import Flask
 from flask_restful import Api
+from flask_jwt_extended import JWTManager
 
 
 import config
 from app.api.v1.views import SpecificOrder, AllOrders, Accept, Complete, Decline, PlaceNewOrder, DeclineOrder, GetAcceptedOrders, CompletedOrders, DeclinedOrders
 
+jwt=JWTManager()
 
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config)
+
+    jwt.init_app(app)
 
     api = Api(app)
     api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>')
