@@ -2,7 +2,10 @@ import datetime
 from werkzeug.security import safe_str_cmp, check_password_hash
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token
+
+
 from ..model import User
+
 
 class SignUp(Resource):
     parser = reqparse.RequestParser()
@@ -30,13 +33,11 @@ class SignUp(Resource):
         user = User()
 
         if user.get_by_username(username):
-            return {'message':'User exists'}, 400
-        
+            return {'message': 'User exists'}, 400
         if user.get_by_email(email):
-            return {'message':'User exists'}, 400
-
+            return {'message': 'User exists'}, 400
         if not safe_str_cmp(password, confirm_password):
-            return {'message':'passwords do not match'}, 400
+            return {'message': 'passwords do not match'}, 400
 
         user = User(username, email, password, confirm_password)
 
@@ -44,7 +45,7 @@ class SignUp(Resource):
 
         return {'message': 'successfully created a new account'}, 201
 
-    
+
 class Login(Resource):
 
     def post(self):
@@ -57,12 +58,11 @@ class Login(Resource):
         user = User()
 
         if not user.get_by_username(username):
-            return {'message':'user does not exist'}, 404
+            return {'message': 'user does not exist'}, 404
 
         if not check_password_hash(user.password, password):
-            return {'message':'Wrong password'}, 400
+            return {'message': 'Wrong password'}, 400
 
         token = create_access_token(
             user.username)
         return{'token': token, 'meassage': f'Successfully login in{username}'}, 200
-        

@@ -1,6 +1,8 @@
 import psycopg2
+from datetime import datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash
+
 
 class DatabaseConnection:
     def __init__(self):
@@ -40,14 +42,13 @@ class User(DatabaseConnection):
         ''' create users table '''
         self.cur.execute(
             '''
-            CREATE TABLE users IF NOT EXIST(
+            CREATE TABLE IF NOT EXIST users(
                 id serial PRIMARY KEY,
                 username VARCHAR (200) NOT NULL,
                 email VARCHAR (200) NOT NULL,
                 password VARCHAR (200) NOT NULL,
                 confirm_password VARCHAR (200) NOT NULL
-            ) 
-            '''
+            )'''
         )
         self.save()
 
@@ -55,17 +56,19 @@ class User(DatabaseConnection):
         ''' add user to the users table'''
         self.cur.execute(
             '''
-            INSERT INTO users(username, email, password, confirm_password, is_admin)
+            INSERT INTO users(username, email,
+            password, confirm_password, is_admin)
             VALUES(%s, %s, %s, %s, %s)
             '''
-            (self.username, self.email, self.password, self.confirm_password, self.is_admin)
-        )    
+            (self.username, self.email, self.password,
+             self.confirm_password, self.is_admin)
+        )
         self.save()
 
     def get_by_username(self, username):
         ''' Get user by username '''
         self.cur.execute(
-            "SELECT * FROM users WHERE username=%s",(username,)
+            "SELECT * FROM users WHERE username=%s", (username,)
         )
 
         user = self.cur.fetchone()
@@ -79,7 +82,7 @@ class User(DatabaseConnection):
     def get_by_email(self, email):
         ''' Get user by email '''
         self.cur.execute(
-            "SELECT * FROM users WHERE email=%s",(email,)
+            "SELECT * FROM users WHERE email=%s", (email,)
         )
 
         user = self.cur.fetchone()
@@ -99,3 +102,140 @@ class User(DatabaseConnection):
             is_admin=self.is_admin
         )
 
+
+class FoodOrders(DatabaseConnection):
+
+    def __init__(self, name=None,
+                 destination=None, status=None,
+                 ordered_by=None, date=None):
+        super().__init__()
+        self.name = name
+        self.destination = destination
+        self.status = status
+        self.ordered_by = ordered_by
+        self.date = datetime.now().replace(second=0, microsecond=0)
+
+    def create_table(self):
+        ''' create orders table '''
+        self.cur.execute(
+            '''
+            CREATE TABLE IF NOT EXIST foodorders(
+                id serial PRIMARY KEY,
+                name VARCHAR (200) NOT NULL,
+                destination VARCHAR(200) NOT NULL,
+                status VARCHAR (200) NOT NULL,
+                ordered_by VARCHAR(200) NOT NULL,
+                date TIMESTAMP
+            )'''
+        )
+        self.save()
+
+    def add(self):
+        ''' add user to the users table'''
+        self.cur.execute(
+            '''
+            INSERT INTO foodorders(name, destination, status, ordered_by, date)
+            VALUES(%s, %s, %s, %s, %s, %s)
+            '''
+            (self.name, self.destination, self.status,
+             self.ordered_by, self.date)
+        )
+        self.save()
+
+    def get_by_id(self, order_id):
+        ''' Get user by username '''
+        self.cur.execute(
+            "SELECT * FROM foodorders WHERE id=%s", (order_id,)
+        )
+
+        user = self.cur.fetchone()
+
+        self.save()
+
+        if user:
+            return user
+        return None
+
+    def serialize(self):
+        return dict(
+            name=self.name,
+            destination=self.destination,
+            status=self.status,
+            ordered_by=self.ordered_by,
+            date=self.date
+        )
+
+
+class FoodMenu(DatabaseConnection):
+
+    def __init__(self, name=None, price=None,
+                 description=None, date=None):
+        super().__init__()
+        self.name = name
+        self.price = price
+        self.description = description
+        self.date = datetime.now().replace(second=0, microsecond=0)
+
+    def create_table(self):
+        ''' create orders table '''
+        self.cur.execute(
+            '''
+            CREATE TABLE IF NOT EXIST foodmenu(
+                id serial PRIMARY KEY,
+                name VARCHAR (200) NOT NULL,
+                price NUMERIC NOT NULL,
+                description VARCHAR(200) NOT NULL,
+                date TIMESTAMP
+            )'''
+        )
+        self.save()
+
+    def add(self):
+        ''' add user to the users table'''
+        self.cur.execute(
+            '''
+            INSERT INTO foodmenu(name, price, description, date)
+            VALUES(%s, %s, %s, %s)
+            '''
+            (self.name, self.price, self.description, self.date)
+        )
+        self.save()
+        
+    def get_by_id(self, item_id):
+        ''' Get user by username '''
+        self.cur.execute(
+            "SELECT * FROM foodmenu WHERE id=%s", (item_id,)
+        )
+
+        item = self.cur.fetchone()
+
+        self.save()
+
+        if item:
+            return item
+        return None
+        
+    def get_all(self):
+        """ get all available food items """
+        self.cur.execute("SELECT * FROM foodmenu")
+        foodmenu = self.cur.fetchall()
+
+        self.save()
+
+        if foodmenu:
+            return foodmenu
+        return None
+
+    def delete(self, menu_id):
+        ''' delete a menu '''
+        self.cur.execute("DELETE FROM foodmenu WHERE id=%s", (menu_id,))
+
+        self.save()
+    
+    def serialize(self):
+        return dict(
+            name=self.name,
+            price=self.price,
+            description=self.description,
+            date=self.date
+        )
