@@ -11,11 +11,13 @@ class Config():
 class Development(Config):
     '''Configuration for development environment'''
     DEBUG = True
+    DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 class Testing(Config):
     '''Configuration for testing environment'''
     DEBUG = True
+    DATABASE_URL = os.getenv('DATABASE_TEST_URL')
 
 
 class Production(Config):

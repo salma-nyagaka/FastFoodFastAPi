@@ -9,7 +9,6 @@
 
 Fast food fast is a fast food delivery application
 
-
 # How it Works
 
 - An admin views orders
@@ -18,8 +17,6 @@ Fast food fast is a fast food delivery application
 - An admin can accept an order
 - An admin can mark order as completed
 - An admin can mark order as declined
-
-
 
 # Prerequisite
 
@@ -44,8 +41,6 @@ git clone -b api-v1 https://github.com/salma-nyagaka/fasrfoodfast.git
 # Install required Dependencies
 
     pip install -r requirements.txt
-
-
 
 # Endpoints Available
 

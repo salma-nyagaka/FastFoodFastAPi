@@ -8,11 +8,14 @@ from utils.validators import Validators
 
 class PlaceNewOrder(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('name', type=str, required=True, help="This field cannot be left blank")
+    parser.add_argument('name', type=str, required=True,
+                        help="This field cannot be left blank")
 
-    parser.add_argument('description', type=str, required=True, help="This field cannot be left blank")
+    parser.add_argument('description', type=str, required=True,
+                        help="This field cannot be left blank")
 
-    parser.add_argument('price', type=int, required=True, help="This field cannot be left blank")
+    parser.add_argument('price', type=int, required=True,
+                        help="This field cannot be left blank")
 
     def post(self):
         ''' place new order'''
@@ -121,7 +124,8 @@ class GetAcceptedOrders(Resource):
     def get(self):
         '''Get the Orders accepted '''
         if orders:
-            return {"orders": [order.serialize() for order in orders if order.status == "Accepted"]}, 200
+            return {"orders": [order.serialize() for order in orders
+                               if order.status == "Accepted"]}, 200
         return {'message': "Not found"}
 
 
@@ -130,7 +134,8 @@ class CompletedOrders(Resource):
     def get(self):
         ''' Get all orders completed'''
         if orders:
-            return {"completed orders": [order.serialize() for order in orders if order.status == "Completed"]}, 200
+            return {"completed orders": [order.serialize() for order in orders
+                                         if order.status == "Completed"]}, 200
         return {'message': "Not found"}
 
 
@@ -139,5 +144,6 @@ class DeclinedOrders(Resource):
     def get(self):
         ''' Get all orders deleted'''
         if orders:
-            return {"deleted orders": [order.serialize() for order in orders if order.status == "Declined"]}, 200
+            return {"deleted orders": [order.serialize() for order in orders
+                                       if order.status == "Declined"]}, 200
         return {'message': "Not found"}

@@ -3,7 +3,6 @@ from unittest import TestCase
 
 
 from app import create_app
-from app.api.v1.views import SpecificOrder, AllOrders, Accept, Complete, Decline, PlaceNewOrder, DeclineOrder, GetAcceptedOrders, CompletedOrders, DeclinedOrders
 
 
 class TestOrders(TestCase):
@@ -71,7 +70,8 @@ class TestOrders(TestCase):
 
         response_data = json.loads(response.data.decode('utf-8'))
 
-        self.assertTrue(response_data['message'], "Enter valid food description")
+        self.assertTrue(response_data['message'],
+                        "Enter valid food description")
 
     def test_get_all_orders(self):
         ''' Test to get all orders '''
@@ -197,7 +197,8 @@ class TestOrders(TestCase):
         response_data = json.loads(response.data.decode('utf-8'))
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response_data['message'], "Enter valid food description")
+        self.assertEqual(response_data['message'],
+                         "Enter valid food description")
         self.assertNotEqual(response.status_code, 200)
 
     def test_delete_order(self):
