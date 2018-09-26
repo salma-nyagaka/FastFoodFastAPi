@@ -42,7 +42,7 @@ class SignUp(Resource):
 
         user.add()
 
-        return {'message': 'successfully created a new account'}, 200
+        return {'message': 'successfully created a new account'}, 201
 
     
 class Login(Resource):
