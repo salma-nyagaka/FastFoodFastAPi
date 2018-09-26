@@ -1,10 +1,11 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from app.api.v2.auth import Login, SignUp
 
 
 import config
-from app.api.v1.views import SpecificOrder, AllOrders, Accept, Complete, Decline, PlaceNewOrder, DeclineOrder, GetAcceptedOrders, CompletedOrders, DeclinedOrders
+from app.api.v1.views import *
 
 jwt=JWTManager()
 
@@ -15,6 +16,15 @@ def create_app(config_name):
     jwt.init_app(app)
 
     api = Api(app)
+
+    from .api.v2.auth import auth_blueprint 
+    auth = Api(auth_blueprint)
+    app.register_blueprint(auth_blueprint, url_prefix="/api/v2/auth")
+
+
+    auth.add_resource(SignUp, '/signup')
+    auth.add_resource(Login, '/login')
+    
     api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>')
     api.add_resource(AllOrders, '/api/v1/orders')
     api.add_resource(PlaceNewOrder, '/api/v1/orders')
