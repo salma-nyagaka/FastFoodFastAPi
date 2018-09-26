@@ -11,13 +11,6 @@ Fast food fast is a fast food delivery application
 
 # How it Works
 
-- An admin views orders
-- A admin places an order
-- An admin can delete an order
-- An admin can accept an order
-- An admin can mark order as completed
-- An admin can mark order as declined
-
 # Prerequisite
 
 - [Python3.6](https://www.python.org/downloads/release/python-365/)
@@ -28,7 +21,7 @@ Fast food fast is a fast food delivery application
 Clone the repository below
 
 ```
-git clone -b api-v1 https://github.com/salma-nyagaka/fasrfoodfast.git
+git clone -b api-v2 https://github.com/salma-nyagaka/fasrfoodfast.git
 ```
 # Create a virtual environment
 
@@ -44,13 +37,3 @@ git clone -b api-v1 https://github.com/salma-nyagaka/fasrfoodfast.git
 
 # Endpoints Available
 
-| Method | Endpoint                        | Description                           |
-| ------ | ------------------------------- | ------------------------------------- |
-| POST   | /api/v1/orders                  | Place an order                        |
-| GET    | /api/v1/orders                  | Get all orders                        |
-| GET    | /api/v1/orders/<{id}>           | Get a specific order                  |
-| PUT    | /api/v1/accept/orders/<{id}>    | Accept an order                       |
-| PUT    | /api/v1/complete/orders/<{id}>  | Complete an order                     |
-| PUT    | /api/v1/decline/orders/<{id}>   | Decline an order                      |
-| DELETE | /api/v1/orders/<{id}>           | Delete a specific order               |
-| DELETE | /api/v1/orders/<{id}>           | Delete a specific order               |
