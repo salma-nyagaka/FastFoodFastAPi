@@ -103,69 +103,6 @@ class User(DatabaseConnection):
         )
 
 
-class FoodOrders(DatabaseConnection):
-
-    def __init__(self, name=None,
-                 destination=None, status=None,
-                 ordered_by=None, date=None):
-        super().__init__()
-        self.name = name
-        self.destination = destination
-        self.status = status
-        self.ordered_by = ordered_by
-        self.date = datetime.now().replace(second=0, microsecond=0)
-
-    def create_table(self):
-        ''' create orders table '''
-        self.cur.execute(
-            '''
-            CREATE TABLE IF NOT EXIST foodorders(
-                id serial PRIMARY KEY,
-                name VARCHAR (200) NOT NULL,
-                destination VARCHAR(200) NOT NULL,
-                status VARCHAR (200) NOT NULL,
-                ordered_by VARCHAR(200) NOT NULL,
-                date TIMESTAMP
-            )'''
-        )
-        self.save()
-
-    def add(self):
-        ''' add user to the users table'''
-        self.cur.execute(
-            '''
-            INSERT INTO foodorders(name, destination, status, ordered_by, date)
-            VALUES(%s, %s, %s, %s, %s, %s)
-            '''
-            (self.name, self.destination, self.status,
-             self.ordered_by, self.date)
-        )
-        self.save()
-
-    def get_by_id(self, order_id):
-        ''' Get user by username '''
-        self.cur.execute(
-            "SELECT * FROM foodorders WHERE id=%s", (order_id,)
-        )
-
-        user = self.cur.fetchone()
-
-        self.save()
-
-        if user:
-            return user
-        return None
-
-    def serialize(self):
-        return dict(
-            name=self.name,
-            destination=self.destination,
-            status=self.status,
-            ordered_by=self.ordered_by,
-            date=self.date
-        )
-
-
 class FoodMenu(DatabaseConnection):
 
     def __init__(self, name=None, price=None,
@@ -237,5 +174,68 @@ class FoodMenu(DatabaseConnection):
             name=self.name,
             price=self.price,
             description=self.description,
+            date=self.date
+        )
+
+
+class FoodOrders(DatabaseConnection):
+
+    def __init__(self, name=None,
+                 destination=None, status=None,
+                 ordered_by=None, date=None):
+        super().__init__()
+        self.name = name
+        self.destination = destination
+        self.status = status
+        self.ordered_by = ordered_by
+        self.date = datetime.now().replace(second=0, microsecond=0)
+
+    def create_table(self):
+        ''' create orders table '''
+        self.cur.execute(
+            '''
+            CREATE TABLE IF NOT EXIST foodorders(
+                id serial PRIMARY KEY,
+                name VARCHAR (200) NOT NULL,
+                destination VARCHAR(200) NOT NULL,
+                status VARCHAR (200) NOT NULL,
+                ordered_by VARCHAR(200) NOT NULL,
+                date TIMESTAMP
+            )'''
+        )
+        self.save()
+
+    def add(self):
+        ''' add orders to the foodorders table'''
+        self.cur.execute(
+            '''
+            INSERT INTO foodorders(name, destination, status, ordered_by, date)
+            VALUES(%s, %s, %s, %s, %s, %s)
+            '''
+            (self.name, self.destination, self.status,
+             self.ordered_by, self.date)
+        )
+        self.save()
+
+    def get_by_id(self, order_id):
+        ''' Get order by id '''
+        self.cur.execute(
+            "SELECT * FROM foodorders WHERE id=%s", (order_id,)
+        )
+
+        order = self.cur.fetchone()
+
+        self.save()
+
+        if order:
+            return order
+        return None
+
+    def serialize(self):
+        return dict(
+            name=self.name,
+            destination=self.destination,
+            status=self.status,
+            ordered_by=self.ordered_by,
             date=self.date
         )
