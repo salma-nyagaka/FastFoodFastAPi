@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required
 
 
+from utils.validators import Validators
 from ..model import FoodMenu
 
 
@@ -22,6 +23,12 @@ class PlaceNewMenu(Resource):
         name = data['name']
         description = data['description']
         price = data['price']
+
+        if not Validators().valid_food_name(name):
+            return {'message': 'Enter valid name'}, 400
+        if not Validators().valid_food_description(description):
+            return {'message': 'Enter valid de'}, 400
+
 
         menu = FoodMenu(name=name, description=description, price=price)
 
