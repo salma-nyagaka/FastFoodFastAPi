@@ -10,7 +10,7 @@ class Validators:
         regex = "^[a-zA-Z0-9_]+$"
         return re.match(regex, description)
 
-    def valid_food_destination(self, destination):
+    def valid_destination(self, destination):
         regex = "^[a-zA-Z0-9_]+$"
         return re.match(regex, destination)
 
