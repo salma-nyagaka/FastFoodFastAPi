@@ -178,7 +178,7 @@ class FoodMenu(DatabaseConnection):
         )
 
 
-class FoodOrders(DatabaseConnection):
+class FoodOrder(DatabaseConnection):
 
     def __init__(self, name=None,
                  destination=None, status=None,
@@ -207,8 +207,7 @@ class FoodOrders(DatabaseConnection):
 
     def add(self):
         ''' add orders to the foodorders table'''
-        self.cur.execute(
-            '''
+        self.cur.execute('''
             INSERT INTO foodorders(name, destination, status, ordered_by, date)
             VALUES(%s, %s, %s, %s, %s, %s)
             '''
@@ -217,10 +216,36 @@ class FoodOrders(DatabaseConnection):
         )
         self.save()
 
-    def get_by_id(self, order_id):
-        ''' Get order by id '''
+    def get_all(self):
+        """ get all available food items """
+        self.cur.execute("SELECT * FROM foodorders")
+        foodorder = self.cur.fetchall()
+
+        self.save()
+
+        if foodorder:
+            return foodorder
+        return None
+
+
+    def get_by_id(self, item_id):
+        ''' Get food item by ID '''
         self.cur.execute(
-            "SELECT * FROM foodorders WHERE id=%s", (order_id,)
+            "SELECT * FROM foodmenu WHERE id=%s", (item_id,)
+        )
+
+        item = self.cur.fetchone()
+
+        self.save()
+
+        if item:
+            return item
+        return None
+    
+    def get_id(self, order_id):
+        ''' Get order by ID '''
+        self.cur.execute(
+            "SELECT * FROM foodorder WHERE id=%s", (order_id,)
         )
 
         order = self.cur.fetchone()
@@ -230,7 +255,7 @@ class FoodOrders(DatabaseConnection):
         if order:
             return order
         return None
-
+        
     def serialize(self):
         return dict(
             name=self.name,
