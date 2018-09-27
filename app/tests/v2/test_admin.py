@@ -26,7 +26,7 @@ class TestOrders(TestCase):
         }
 
         response = self.client.post(
-            "/api/v1/orders",
+            "/api/v2/menu",
             data=json.dumps(order_data),
             headers={"content-type": "application/json"}
         )
@@ -45,7 +45,7 @@ class TestOrders(TestCase):
         }
 
         response = self.client.post(
-            "/api/v1/orders",
+            "/api/v2/menu",
             data=json.dumps(data),
             headers={"content-type": "application/json"}
         )
@@ -63,7 +63,7 @@ class TestOrders(TestCase):
         }
 
         response = self.client.post(
-            "/api/v1/orders",
+            "/api/v2/menu",
             data=json.dumps(data),
             headers={"content-type": "application/json"}
         )
@@ -73,11 +73,11 @@ class TestOrders(TestCase):
         self.assertTrue(response_data['message'],
                         "Enter valid food description")
 
-    def test_get_all_orders(self):
+    def test_get_menu(self):
         ''' Test to get all orders '''
 
         response = self.client.get(
-             "/api/v1/orders", content_type='application/json')
+             "/api/v2/menu", content_type='application/json')
 
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
@@ -91,39 +91,13 @@ class TestOrders(TestCase):
 
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
-
-    def test_get_all_completed_orders(self):
-        ''' Test to get all completed orders '''
-
-        response = self.client.get(
-             "/api/v1/completed/orders", content_type='application/json')
-
-        data = json.loads(response.data.decode('utf-8'))
-        print(data)
-        self.assertEqual(response.content_type, 'application/json')
-        self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(response.status_code, 404)
-
-    def test_get_all_accepted_orders(self):
-        ''' Test to get all accepted orders '''
+    
+    def test_get_all_orders(self):
+        ''' Test to get all orders '''
 
         response = self.client.get(
-             "/api/v1/accepted/orders", content_type='application/json')
+             "/api/v2/orders", content_type='application/json')
 
-        data = json.loads(response.data.decode('utf-8'))
-        print(data)
-        self.assertEqual(response.content_type, 'application/json')
-        self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(response.status_code, 404)
-
-    def test_get_all_declined_orders(self):
-        ''' Test to get all declined orders '''
-
-        response = self.client.get(
-             "/api/v1/declined/orders", content_type='application/json')
-
-        data = json.loads(response.data.decode('utf-8'))
-        print(data)
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.status_code, 404)
@@ -131,7 +105,7 @@ class TestOrders(TestCase):
     def test_accept_order(self):
         ''' Test to update a specific order '''
         response = self.client.put(
-            "/api/v1/accept/orders/1",
+            "/api/v2/orders/1/accept",
             headers={"content-type": "application/json"}
         )
 
@@ -141,7 +115,7 @@ class TestOrders(TestCase):
         ''' Test to update a specific order '''
 
         response = self.client.put(
-            "/api/v1/complete/orders/1",
+            "/api/v2/orders/1/complete",
             headers={"content-type": "application/json"}
         )
 
@@ -151,7 +125,7 @@ class TestOrders(TestCase):
     def test_decline_order(self):
         ''' Test to update a specific order '''
         response = self.client.put(
-            "/api/v1/decline/orders/1",
+            "/api/v2/orders/1/decline",
             headers={"content-type": "application/json"}
         )
 
@@ -168,7 +142,7 @@ class TestOrders(TestCase):
         }
 
         response = self.client.post(
-            "/api/v1/orders",
+            "/api/v2/menu",
             data=json.dumps(order_data),
             headers={"content-type": "application/json"}
         )
@@ -189,7 +163,7 @@ class TestOrders(TestCase):
         }
 
         response = self.client.post(
-            "/api/v1/orders",
+            "/api/v2/menu",
             data=json.dumps(order_data),
             headers={"content-type": "application/json"}
         )
@@ -204,7 +178,7 @@ class TestOrders(TestCase):
     def test_delete_order(self):
         ''' Test to delete order'''
         response = self.client.delete(
-            "/api/v1/orders/1",
+            "/api/v2/menu/1",
             headers={"content-type": "application/json"}
         )
         self.assertEqual(response.status_code, 200)
