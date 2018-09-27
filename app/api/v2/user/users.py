@@ -2,7 +2,8 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required
 
 
-from ..model import FoodOrder
+from ..model import FoodOrder, FoodMenu
+from utils.validators import Validators
 
 
 class PlaceNewOrder(Resource):
@@ -16,12 +17,22 @@ class PlaceNewOrder(Resource):
     parser.add_argument('ordered_by', type=str, required=True,
                         help="This field cannot be left blank")
 
-    def post(self):
+    def post(self, id):
         ''' place new menu'''
         data = PlaceNewOrder.parser.parse_args()
         name = data['name']
         destination = data['destination']
         ordered_by = data['ordered_by']
+
+        if not Validators().valid_name(name):
+            return {'message': 'Enter valid name'}, 400
+        if not Validators().valid_food_destination(destination):
+            return {'message': 'Enter valid destination'}, 400
+
+        menu = FoodMenu().get_by_id(id)
+
+        if not menu:
+            return {"message": "Food does not exist"}, 404
 
         order = FoodOrder(name=name, destination=destination, ordered_by=ordered_by)
 
