@@ -24,6 +24,30 @@ def create_app(config_name):
 
     auth.add_resource(SignUp, '/signup')
     auth.add_resource(Login, '/login')
+
+    from .api.v2.user import user_blueprint 
+    user = Api(user_blueprint)
+    app.register_blueprint(auth_blueprint, url_prefix="/api/v2/user")
+
+
+    user.add_resource(PlaceNewOrder, '/orders')
+    user.add_resource(AllOrders, '/orders')
+
+    from .api.v2.admin import admin_blueprint 
+    admin = Api(admin_blueprint)
+    app.register_blueprint(admin_blueprint, url_prefix="/api/v2/")
+
+
+    admin.add_resource(PlaceNewMenu, '/menu')
+    admin.add_resource(AllMenu, '/menu')
+    admin.add_resource(SpecificMenu, '/orders/<int:id>')
+    admin.add_resource(Accept, '/orders/<int:id>/accept')
+    admin.add_resource(Complete, '/orders/<int:id>/complete')
+    admin.add_resource(Decline, '/orders/<int:id>/decline')
+
+
+
+
     
     api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>')
     api.add_resource(AllOrders, '/api/v1/orders')
