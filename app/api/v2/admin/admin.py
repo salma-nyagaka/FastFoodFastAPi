@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required
 
 
 from utils.validators import Validators
-from ..model import FoodMenu
+from ..model import FoodMenu, FoodOrder
 
 
 class PlaceNewMenu(Resource):
@@ -50,15 +50,6 @@ class AllMenu(Resource):
 
 class SpecificMenu(Resource):
 
-    def get(self, id):
-        ''' get a specific menu '''
-
-        menu = FoodMenu().get_by_id(id)
-
-        if menu:
-            return {"Menu": menu.serialize()}, 200
-        return {'message': "Not found"}, 404
-
     def delete(self, id):
         ''' Delete a specific menu '''
 
@@ -67,3 +58,72 @@ class SpecificMenu(Resource):
             menu.delete(id)
             return {'message': "Deleted"}, 200
         return {'message': "Not found"}, 404
+
+
+
+class AllOrders(Resource):
+
+    def get(self):
+        ''' get all food orders '''
+
+        foodorder = FoodOrder()
+        
+        if foodorder.get_all():
+            return {'Food Orders': [foodorder.serialize() for foodorder
+                            in foodorder.get_all()]}, 200
+        return {'message': "Not found"}, 404
+
+
+
+class SpecificOrder(Resource):
+
+    def get(self, id):
+        ''' get a specific menu '''
+
+        order = FoodOrder().get_id(id)
+
+        if order:
+            return {"Menu": order.serialize()}, 200
+        return {'message': "Not found"}, 404
+
+
+
+class Accept(Resource):
+
+    def put(self, id):
+        ''' Update the status to accept '''
+        order = FoodOrder().get_id(id)
+
+        if order:
+            if order.status == "Pending":
+                order.status = "Accepted"
+                return {'message': 'Order accepted'}, 200
+        return {'message': "Not found"}
+
+
+class Complete(Resource):
+
+    def put(self, id):
+        ''' Update the status of an order to completed '''
+        order = FoodOrder().get_id(id)
+        if order:
+
+            if order.status == "Pending":
+                order.status = "Completed"
+
+                return {'message': 'Order completed'}, 200
+        return {'message': "Not found"}
+
+
+class Decline(Resource):
+
+    def put(self, id):
+        ''' Update the status of an order '''
+        order = FoodOrder().get_id(id)
+        if order:
+            if order.status == "Pending":
+                order.status = "Declined"
+
+                return {'message': 'Order Declined'}, 200
+        return {'message': "Not found"}
+
