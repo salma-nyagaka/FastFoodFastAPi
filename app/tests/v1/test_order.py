@@ -30,16 +30,16 @@ class TestOrders(TestCase):
             data=json.dumps(order_data),
             headers={"content-type": "application/json"}
         )
+        print(response.data)
 
         response_data = json.loads(response.data.decode('utf-8'))
 
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response_data['message'], "Food order placed")
+        self.assertEqual(response_data['message'], "Food order placed", 201)
 
     def test_name_in_order(self):
         ''' Test to place an order '''
         data = {
-            "name": "",
+            "name": "  ",
             "description": "Beef burger",
             "price": 60
         }
@@ -58,7 +58,7 @@ class TestOrders(TestCase):
         ''' Test to place an order '''
         data = {
             "name": "Burger",
-            "description": "",
+            "description": " ",
             "price": 60
         }
 
