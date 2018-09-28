@@ -63,6 +63,3 @@ class Login(Resource):
         if not check_password_hash(user.password, password):
             return {'message': 'Wrong password'}, 400
 
-        token = create_access_token(
-            user.username)
-        return{'token': token, 'meassage': 'Successfully login in' }, 200

@@ -41,15 +41,7 @@ class TestOrders(TestCase):
             headers={"content-type": "application/json"}
         )
         return response
-        
-    def token(self):
-        ''' Function to get token '''
-        self.signup()
-        response = self.login()
-        token = json.loads(response.data).get('token', None)
-
-        return token
-
+  
     def test_signup(self):
         ''' Test for user signup '''
         response = self.signup()
@@ -66,10 +58,4 @@ class TestOrders(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['message'], "Successfully login in Salma123")
 
-    def test_token(self):
-        ''' test user get token '''
-        self.signup()
-        response = self.login()
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('token', json.loads(response.data))
+   

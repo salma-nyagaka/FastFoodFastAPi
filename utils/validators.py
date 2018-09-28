@@ -3,7 +3,7 @@ import re
 
 class Validators:
     def valid_food_name(self, name):
-        regex = "^[a-zA-Z1_]+$"
+        regex = "^[a-zA-Z_]+$"
         return re.match(regex, name)
 
     def valid_food_description(self, description):

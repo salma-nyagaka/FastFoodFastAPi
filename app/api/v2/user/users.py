@@ -61,3 +61,4 @@ class AllMenu(Resource):
             return {'Menus': [menu.serialize() for menu
                               in menu.get_all()]}, 200
         return {'message': "Not found"}, 404
+        
