@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required
 
 
 from utils.validators import Validators
-from ..model import FoodMenu, FoodOrder
+from app.api.v2.model import FoodOrder, FoodMenu
 
 
 class PlaceNewMenu(Resource):
@@ -27,7 +27,7 @@ class PlaceNewMenu(Resource):
         if not Validators().valid_food_name(name):
             return {'message': 'Enter valid name'}, 400
         if not Validators().valid_food_description(description):
-            return {'message': 'Enter valid de'}, 400
+            return {'message': 'Enter valid description'}, 400
 
 
         menu = FoodMenu(name=name, description=description, price=price)

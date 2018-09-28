@@ -4,7 +4,7 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token
 
 
-from ..model import User
+from app.api.v2.model import User
 
 
 class SignUp(Resource):
@@ -65,4 +65,4 @@ class Login(Resource):
 
         token = create_access_token(
             user.username)
-        return{'token': token, 'meassage': f'Successfully login in{username}'}, 200
+        return{'token': token, 'meassage': 'Successfully login in' }, 200

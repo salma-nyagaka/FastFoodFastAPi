@@ -7,26 +7,20 @@ from werkzeug.security import generate_password_hash
 class DatabaseConnection:
     def __init__(self):
         try:
-            self.connection = psycopg2.connect(
-                current_app.config.get('DATABASE_URL')
-            )
+            self.connection = psycopg2.connect(database = "fast_food_db", user = "fast_food_user", password = "salma", host = "localhost")
 
-            self.cur = self.connection.cursor()
+            self.cursor = self.connection.cursor()
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-    def init_app(self, app):
-        self.connection = psycopg2.connect(
-                current_app.config.get('DATABASE_URL')
-            )
-
     def save(self):
-        self.cur.close()
+        self.cursor.close()
         self.connection.commit()
 
 
 class User(DatabaseConnection):
+    
 
     def __init__(self, username=None, email=None,
                  password=None, confirm_password=None, is_admin=False):
@@ -38,42 +32,54 @@ class User(DatabaseConnection):
         self.confirm_password = confirm_password
         self.is_admin = is_admin
 
+    
     def create_table(self):
         ''' create users table '''
-        self.cur.execute(
-            '''
-            CREATE TABLE IF NOT EXIST users(
-                id serial PRIMARY KEY,
-                username VARCHAR (200) NOT NULL,
-                email VARCHAR (200) NOT NULL,
-                password VARCHAR (200) NOT NULL,
-                confirm_password VARCHAR (200) NOT NULL
-            )'''
-        )
-        self.save()
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS users(
+                    id serial PRIMARY KEY,
+                    username VARCHAR (200) NOT NULL,
+                    email VARCHAR (200) NOT NULL,
+                    password VARCHAR (200) NOT NULL,
+                    confirm_password VARCHAR (200) NOT NULL
+                )'''
+            )
+        except:
+            print("Error!")
+
+        self.connection.commit()
+        self.connection.close()
+        self.cursor.close()
 
     def add(self):
         ''' add user to the users table'''
-        self.cur.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             '''
             INSERT INTO users(username, email,
             password, confirm_password, is_admin)
             VALUES(%s, %s, %s, %s, %s)
-            '''
+            ''',
             (self.username, self.email, self.password,
              self.confirm_password, self.is_admin)
         )
-        self.save()
+        self.connection.commit()
+        cursor.close()
 
     def get_by_username(self, username):
         ''' Get user by username '''
-        self.cur.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             "SELECT * FROM users WHERE username=%s", (username,)
         )
 
-        user = self.cur.fetchone()
+        user = cursor.fetchone()
 
-        self.save()
+        self.connection.commit()
+        cursor.close()
 
         if user:
             return user
@@ -81,13 +87,15 @@ class User(DatabaseConnection):
 
     def get_by_email(self, email):
         ''' Get user by email '''
-        self.cur.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             "SELECT * FROM users WHERE email=%s", (email,)
         )
 
-        user = self.cur.fetchone()
+        user = cursor.fetchone()
 
-        self.save()
+        self.connection.commit()
+        cursor.close()
 
         if user:
             return user
@@ -105,19 +113,19 @@ class User(DatabaseConnection):
 
 class FoodMenu(DatabaseConnection):
 
-    def __init__(self, name=None, price=None,
-                 description=None, date=None):
-        super().__init__()
+    def __init__(self, name=None, price=None, description=None, date=None):
         self.name = name
         self.price = price
         self.description = description
         self.date = datetime.now().replace(second=0, microsecond=0)
+        super().__init__()
+
 
     def create_table(self):
         ''' create orders table '''
-        self.cur.execute(
-            '''
-            CREATE TABLE IF NOT EXIST foodmenu(
+        cursor = self.connection.cursor()
+        cursor.execute(            '''
+            CREATE TABLE IF NOT EXISTS foodmenu(
                 id serial PRIMARY KEY,
                 name VARCHAR (200) NOT NULL,
                 price NUMERIC NOT NULL,
@@ -125,28 +133,33 @@ class FoodMenu(DatabaseConnection):
                 date TIMESTAMP
             )'''
         )
-        self.save()
+        cursor.close()
+        self.connection.commit()
 
     def add(self):
         ''' add user to the users table'''
-        self.cur.execute(
-            '''
+        cursor = self.connection.cursor()
+        cursor.execute(             '''
             INSERT INTO foodmenu(name, price, description, date)
             VALUES(%s, %s, %s, %s)
-            '''
+            ''',
             (self.name, self.price, self.description, self.date)
         )
-        self.save()
+        cursor.close()
+        self.connection.commit()
+
         
     def get_by_id(self, item_id):
         ''' Get user by username '''
-        self.cur.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(   
             "SELECT * FROM foodmenu WHERE id=%s", (item_id,)
         )
 
-        item = self.cur.fetchone()
+        item = cursor.fetchone()
 
-        self.save()
+        cursor.close()
+        self.connection.commit()
 
         if item:
             return item
@@ -154,10 +167,12 @@ class FoodMenu(DatabaseConnection):
         
     def get_all(self):
         """ get all available food items """
-        self.cur.execute("SELECT * FROM foodmenu")
-        foodmenu = self.cur.fetchall()
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM foodmenu")
+        foodmenu = cursor.fetchall()
 
-        self.save()
+        cursor.close()
+        self.connection.commit()
 
         if foodmenu:
             return foodmenu
@@ -165,9 +180,11 @@ class FoodMenu(DatabaseConnection):
 
     def delete(self, menu_id):
         ''' delete a menu '''
-        self.cur.execute("DELETE FROM foodmenu WHERE id=%s", (menu_id,))
+        cursor = self.connection.cursor()
+        cursor.execute("DELETE FROM foodmenu WHERE id=%s", (menu_id,))
 
-        self.save()
+        cursor.close()
+        self.connection.commit()
     
     def serialize(self):
         return dict(
@@ -180,48 +197,52 @@ class FoodMenu(DatabaseConnection):
 
 class FoodOrder(DatabaseConnection):
 
-    def __init__(self, name=None,
-                 destination=None, status=None,
-                 ordered_by=None, date=None):
-        super().__init__()
+    def __init__(self, name=None, destination=None, status=None,
+                 date=None):
         self.name = name
         self.destination = destination
         self.status = status
-        self.ordered_by = ordered_by
         self.date = datetime.now().replace(second=0, microsecond=0)
+        super().__init__()
+
 
     def create_table(self):
         ''' create orders table '''
-        self.cur.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             '''
-            CREATE TABLE IF NOT EXIST foodorders(
+            CREATE TABLE IF NOT EXISTS foodorders(
                 id serial PRIMARY KEY,
                 name VARCHAR (200) NOT NULL,
                 destination VARCHAR(200) NOT NULL,
                 status VARCHAR (200) NOT NULL,
-                ordered_by VARCHAR(200) NOT NULL,
                 date TIMESTAMP
             )'''
         )
-        self.save()
-
+        cursor.close()
+        self.connection.commit()
+    
     def add(self):
         ''' add orders to the foodorders table'''
-        self.cur.execute('''
-            INSERT INTO foodorders(name, destination, status, ordered_by, date)
+        cursor = self.connection.cursor()
+        cursor.execute('''
+            INSERT INTO foodorders(name, destination, status,date)
             VALUES(%s, %s, %s, %s, %s, %s)
-            '''
+            ''',
             (self.name, self.destination, self.status,
-             self.ordered_by, self.date)
+             self.date)
         )
-        self.save()
+        cursor.close()
+        self.connection.commit()
 
     def get_all(self):
         """ get all available food items """
-        self.cur.execute("SELECT * FROM foodorders")
-        foodorder = self.cur.fetchall()
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM foodorders")
+        foodorder = cursor.fetchall()
 
-        self.save()
+        cursor.close()
+        self.connection.commit()
 
         if foodorder:
             return foodorder
@@ -230,13 +251,15 @@ class FoodOrder(DatabaseConnection):
 
     def get_by_id(self, item_id):
         ''' Get food item by ID '''
-        self.cur.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             "SELECT * FROM foodmenu WHERE id=%s", (item_id,)
         )
 
-        item = self.cur.fetchone()
+        item = cursor.fetchone()
 
-        self.save()
+        cursor.close()
+        self.connection.commit()
 
         if item:
             return item
@@ -244,13 +267,15 @@ class FoodOrder(DatabaseConnection):
     
     def get_id(self, order_id):
         ''' Get order by ID '''
-        self.cur.execute(
+        cursor = self.connection.cursor()
+        cursor.execute(
             "SELECT * FROM foodorder WHERE id=%s", (order_id,)
         )
 
-        order = self.cur.fetchone()
+        order = cursor.fetchone()
 
-        self.save()
+        cursor.close()
+        self.connection.commit()
 
         if order:
             return order
@@ -261,6 +286,14 @@ class FoodOrder(DatabaseConnection):
             name=self.name,
             destination=self.destination,
             status=self.status,
-            ordered_by=self.ordered_by,
             date=self.date
         )
+
+foodorder = FoodOrder()
+foodorder.create_table()
+
+foodmenu = FoodMenu()
+foodmenu.create_table()
+
+user= User()
+user.create_table()

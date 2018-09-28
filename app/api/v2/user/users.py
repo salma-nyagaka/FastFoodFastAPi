@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required
 
 
-from ..model import FoodOrder, FoodMenu
+from app.api.v2.model import FoodOrder, FoodMenu
 from utils.validators import Validators
 
 
@@ -22,7 +22,6 @@ class PlaceNewOrder(Resource):
         data = PlaceNewOrder.parser.parse_args()
         name = data['name']
         destination = data['destination']
-        ordered_by = data['ordered_by']
 
         if not Validators().valid_name(name):
             return {'message': 'Enter valid name'}, 400
@@ -34,7 +33,7 @@ class PlaceNewOrder(Resource):
         if not menu:
             return {"message": "Food does not exist"}, 404
 
-        order = FoodOrder(name=name, destination=destination, ordered_by=ordered_by)
+        order = FoodOrder(name=name, destination=destination)
 
         order.add()
         return {"message": "Order placed"}, 201

@@ -1,24 +1,24 @@
 '''Set up environment specific configurations'''
 import os
 
-
 class Config():
     '''Parent configuration class'''
     DEBUG = False
     SECRET = os.getenv('SECRET')
 
+    
 
 class Development(Config):
     '''Configuration for development environment'''
     DEBUG = True
     DATABASE_URL = os.getenv('DATABASE_URL')
 
+   
 
 class Testing(Config):
     '''Configuration for testing environment'''
     DEBUG = True
-    DATABASE_URL = os.getenv('DATABASE_TEST_URL')
-
+   
 
 class Production(Config):
     '''Configuration for production environment'''
@@ -30,3 +30,5 @@ app_config = {
     'testing': Testing,
     'production': Production
 }
+
+

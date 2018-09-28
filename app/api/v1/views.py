@@ -6,8 +6,8 @@ from .model import FoodOrder, orders
 from utils.validators import Validators
 
 
-class PlaceNewOrder(Resource):
-    parser = reqparse.RequestParser()
+class PlaceNewOrder(Resource):   #something the api can returnn and create
+    parser = reqparse.RequestParser()  # this resource os accessed thru post method
     parser.add_argument('name', type=str, required=True,
                         help="This field cannot be left blank")
 
@@ -54,7 +54,7 @@ class SpecificOrder(Resource):
 
         if order:
             return {"order": order.serialize()}, 200
-        return {'message': "Not found"}, 404
+        return {'message': "Not found"}
 
     def delete(self, id):
         ''' Delete a specific order '''
@@ -62,7 +62,7 @@ class SpecificOrder(Resource):
         if order:
             orders.remove(order)
             return {'message': "Deleted"}, 200
-        return {'message': "Not found"}
+        return {'message': "Not found"}, 404
 
 
 class Accept(Resource):
@@ -125,7 +125,7 @@ class GetAcceptedOrders(Resource):
         '''Get the Orders accepted '''
         if orders:
             return {"orders": [order.serialize() for order in orders
-                               if order.status == "Accepted"]}, 200
+                               if order.status== "Accepted"]}, 200
         return {'message': "Not found"}
 
 

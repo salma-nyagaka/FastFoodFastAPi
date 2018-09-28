@@ -1,21 +1,23 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from app.api.v2.auth import Login, SignUp
 
+from app.api.v2.admin import PlaceNewMenu, AllMenu, SpecificMenu, Accept, Complete, Decline
+from app.api.v2.auth import Login, SignUp
+from app.api.v2.user.users import PlaceNewOrder, AllOrders, AllMenu
 
 import config
 from app.api.v1.views import *
 
 jwt=JWTManager()
 
-def create_app(config_name):
-    app = Flask(__name__)
+def create_app(config_name):  #wraps creation of new flask obj and returns it after its loaded with 
+    app = Flask(__name__)     #config settings
     app.config.from_object(config)
 
     jwt.init_app(app)
 
-    api = Api(app)
+    api = Api(app)  #imported from flask resftul to easily add resources
 
     from .api.v2.auth import auth_blueprint 
     auth = Api(auth_blueprint)
@@ -25,17 +27,20 @@ def create_app(config_name):
     auth.add_resource(SignUp, '/signup')
     auth.add_resource(Login, '/login')
 
-    from .api.v2.user import user_blueprint 
+    from .api.v2.user import user_blueprint
     user = Api(user_blueprint)
-    app.register_blueprint(auth_blueprint, url_prefix="/api/v2/user")
-
+    app.register_blueprint(user_blueprint, url_prefix="/api/v2/user")
 
     user.add_resource(PlaceNewOrder, '/orders')
-    user.add_resource(AllOrders, '/orders')
+    user.add_resource(AllOrders, '/users/orders')
+    user.add_resource(AllMenu, '/menu')
 
+
+
+   
     from .api.v2.admin import admin_blueprint 
     admin = Api(admin_blueprint)
-    app.register_blueprint(admin_blueprint, url_prefix="/api/v2/")
+    app.register_blueprint(admin_blueprint, url_prefix="/api/v2")
 
 
     admin.add_resource(PlaceNewMenu, '/menu')
@@ -49,8 +54,8 @@ def create_app(config_name):
 
 
     
-    api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>')
-    api.add_resource(AllOrders, '/api/v1/orders')
+    api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>') #resource is accessible thru api
+    api.add_resource(AllOrders, '/api/v1/orders')                   #the int id checks the paraameter
     api.add_resource(PlaceNewOrder, '/api/v1/orders')
     api.add_resource(Accept, '/api/v1/accept/orders/<int:id>')
     api.add_resource(Decline, '/api/v1/decline/orders/<int:id>')
