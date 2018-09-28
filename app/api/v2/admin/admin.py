@@ -57,7 +57,7 @@ class SpecificMenu(Resource):
         if menu:
             menu.delete(id)
             return {'message': "Deleted"}, 200
-        return {'message': "Not found"}, 404
+        return {'message': "Not found"}
 
 
 
@@ -126,4 +126,4 @@ class Decline(Resource):
 
                 return {'message': 'Order Declined'}, 200
         return {'message': "Not found"}
-
+        

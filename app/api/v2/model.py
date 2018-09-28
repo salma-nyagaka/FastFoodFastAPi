@@ -2,22 +2,7 @@ import psycopg2
 from datetime import datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash
-
-
-class DatabaseConnection:
-    def __init__(self):
-        try:
-            self.connection = psycopg2.connect(database = "fast_food_db", user = "fast_food_user", password = "salma", host = "localhost")
-
-            self.cursor = self.connection.cursor()
-
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
-
-    def save(self):
-        self.cursor.close()
-        self.connection.commit()
-
+from database import DatabaseConnection
 
 class User(DatabaseConnection):
     
@@ -124,7 +109,8 @@ class FoodMenu(DatabaseConnection):
     def create_table(self):
         ''' create orders table '''
         cursor = self.connection.cursor()
-        cursor.execute(            '''
+        try:
+            cursor.execute(            '''
             CREATE TABLE IF NOT EXISTS foodmenu(
                 id serial PRIMARY KEY,
                 name VARCHAR (200) NOT NULL,
@@ -133,13 +119,18 @@ class FoodMenu(DatabaseConnection):
                 date TIMESTAMP
             )'''
         )
-        cursor.close()
+      
+        except:
+            print("Error!")
+
         self.connection.commit()
+        self.connection.close()
+        self.cursor.close()
 
     def add(self):
         ''' add user to the users table'''
         cursor = self.connection.cursor()
-        cursor.execute(             '''
+        cursor.execute('''
             INSERT INTO foodmenu(name, price, description, date)
             VALUES(%s, %s, %s, %s)
             ''',
@@ -209,7 +200,8 @@ class FoodOrder(DatabaseConnection):
     def create_table(self):
         ''' create orders table '''
         cursor = self.connection.cursor()
-        cursor.execute(
+        try:
+            cursor.execute(
             '''
             CREATE TABLE IF NOT EXISTS foodorders(
                 id serial PRIMARY KEY,
@@ -219,8 +211,13 @@ class FoodOrder(DatabaseConnection):
                 date TIMESTAMP
             )'''
         )
-        cursor.close()
+      
+        except:
+            print("Error!")
+
         self.connection.commit()
+        self.connection.close()
+        self.cursor.close()
     
     def add(self):
         ''' add orders to the foodorders table'''

@@ -18,7 +18,7 @@ class SignUp(Resource):
     parser.add_argument('password', type=str, required=True,
                         help="This field cannot be left blank")
 
-    parser.add_argument('confirm_password', type=str, required=True,
+    parser.add_argument('confirmpassword', type=str, required=True,
                         help="This field cannot be left blank")
 
     def post(self):
@@ -28,7 +28,7 @@ class SignUp(Resource):
         username = data['username']
         email = data['email']
         password = data['password']
-        confirm_password = data['confirm_password']
+        confirmpassword = data['confirmpassword']
 
         user = User()
 
@@ -36,10 +36,10 @@ class SignUp(Resource):
             return {'message': 'User exists'}, 400
         if user.get_by_email(email):
             return {'message': 'User exists'}, 400
-        if not safe_str_cmp(password, confirm_password):
+        if not safe_str_cmp(password, confirmpassword):
             return {'message': 'passwords do not match'}, 400
 
-        user = User(username, email, password, confirm_password)
+        user = User(username, email, password, confirmpassword)
 
         user.add()
 
@@ -62,4 +62,3 @@ class Login(Resource):
 
         if not check_password_hash(user.password, password):
             return {'message': 'Wrong password'}, 400
-
