@@ -126,4 +126,3 @@ class Decline(Resource):
 
                 return {'message': 'Order Declined'}, 200
         return {'message': "Not found"}
-        

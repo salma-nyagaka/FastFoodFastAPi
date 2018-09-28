@@ -6,8 +6,8 @@ from .model import FoodOrder, orders
 from utils.validators import Validators
 
 
-class PlaceNewOrder(Resource):   #something the api can returnn and create
-    parser = reqparse.RequestParser()  # this resource os accessed thru post method
+class PlaceNewOrder(Resource):
+    parser = reqparse.RequestParser()
     parser.add_argument('name', type=str, required=True,
                         help="This field cannot be left blank")
 
@@ -58,11 +58,11 @@ class SpecificOrder(Resource):
 
     def delete(self, id):
         ''' Delete a specific order '''
-        order = FoodOrder().get_id(order_id=id)
+        order = FoodOrder().get_id(id)
         if order:
             orders.remove(order)
             return {'message': "Deleted"}, 200
-        return {'message': "Not found"}, 404
+        return {'message': "Not found"}
 
 
 class Accept(Resource):

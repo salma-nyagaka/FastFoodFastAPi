@@ -11,14 +11,13 @@ from app.api.v1.views import *
 
 jwt=JWTManager()
 
-def create_app(config_name):  #wraps creation of new flask obj and returns it after its loaded with 
-    app = Flask(__name__)     #config settings
+def create_app(config_name):
+    app = Flask(__name__)
     app.config.from_object(config)
 
     jwt.init_app(app)
 
-    api = Api(app)  #imported from flask resftul to easily add resources
-
+    api = Api(app)
     from .api.v2.auth import auth_blueprint 
     auth = Api(auth_blueprint)
     app.register_blueprint(auth_blueprint, url_prefix="/api/v2/auth")
@@ -54,8 +53,8 @@ def create_app(config_name):  #wraps creation of new flask obj and returns it af
 
 
     
-    api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>') #resource is accessible thru api
-    api.add_resource(AllOrders, '/api/v1/orders')                   #the int id checks the paraameter
+    api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>')
+    api.add_resource(AllOrders, '/api/v1/orders')
     api.add_resource(PlaceNewOrder, '/api/v1/orders')
     api.add_resource(Accept, '/api/v1/accept/orders/<int:id>')
     api.add_resource(Decline, '/api/v1/decline/orders/<int:id>')

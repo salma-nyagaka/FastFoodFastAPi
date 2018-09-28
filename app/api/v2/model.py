@@ -2,7 +2,7 @@ import psycopg2
 from datetime import datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash
-from database import DatabaseConnection
+from app.api.v2.database import DatabaseConnection
 
 class User(DatabaseConnection):
     
