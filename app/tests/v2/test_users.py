@@ -19,14 +19,9 @@ class TestOrders(TestCase):
 
     def test_place_new_order(self):
         ''' Test to place an order '''
-        order_data = {
-             "destination": "Kasarani",
-             "name": "Salma"
-        }
 
         response = self.client.post(
             "/api/v2/user/orders",
-            data=json.dumps(order_data),
             headers={"content-type": "application/json"}
         )
 

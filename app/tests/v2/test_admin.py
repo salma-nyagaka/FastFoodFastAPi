@@ -19,15 +19,8 @@ class TestOrders(TestCase):
 
     def test_place_new_order(self):
         ''' Test to place an order '''
-        order_data = {
-            "name": "Burger",
-            "description": "Beef burger",
-            "price": 60
-        }
-
         response = self.client.post(
             "/api/v2/menu",
-            data=json.dumps(order_data),
             headers={"content-type": "application/json"}
         )
 
@@ -39,7 +32,7 @@ class TestOrders(TestCase):
     def test_name_in_order(self):
         ''' Test to place an order '''
         data = {
-            "name": "  ",
+            "name": "",
             "description": "Beef burger",
             "price": 60
         }

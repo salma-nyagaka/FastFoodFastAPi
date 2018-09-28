@@ -11,11 +11,6 @@ class TestOrders(TestCase):
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
-        self.order_data = {
-            "name": "Burger",
-            "description": "Beef burger",
-            "price": 60
-        }
 
     def signup(self):
         ''' Function for sign up '''
