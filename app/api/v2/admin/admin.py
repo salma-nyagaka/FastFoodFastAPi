@@ -14,9 +14,10 @@ class PlaceNewMenu(Resource):
     parser.add_argument('description', type=str, required=True,
                         help="This field cannot be left blank")
 
-    parser.add_argument('price', type=int, required=True,
+    parser.add_argument('price', type=float, required=True,
                         help="This field cannot be left blank")
 
+    @jwt_required
     def post(self):
         ''' place new menu'''
         data = PlaceNewMenu.parser.parse_args()
@@ -25,9 +26,9 @@ class PlaceNewMenu(Resource):
         price = data['price']
 
         if not Validators().valid_food_name(name):
-            return {'message': 'Enter valid name'}, 400
+            return {'message': 'Enter valid food name'}, 400
         if not Validators().valid_food_description(description):
-            return {'message': 'Enter valid description'}, 400
+            return {'message': 'Enter valid food description'}, 400
 
 
         menu = FoodMenu(name=name, description=description, price=price)
@@ -38,18 +39,17 @@ class PlaceNewMenu(Resource):
 
 class AllMenu(Resource):
 
+    @jwt_required
     def get(self):
-        ''' get all menu '''
-
-        menu = FoodMenu()
-        if menu.get_all():
-            return {'Menus': [menu.serialize() for menu
-                              in menu.get_all()]}, 200
-        return {'message': "Not found"}, 404
-
+        """ Get all food items """
+        FoodMenus = FoodMenu().get_all()
+        if FoodMenus:
+            return {"Food menu": [foodmenu.serialize() for foodmenu in FoodMenus]}, 200
+        return {"message": "No food items available for now"}, 404
 
 class SpecificMenu(Resource):
 
+    @jwt_required
     def delete(self, id):
         ''' Delete a specific menu '''
 
@@ -59,10 +59,19 @@ class SpecificMenu(Resource):
             return {'message': "Deleted"}, 200
         return {'message': "Not found"}
 
+    @jwt_required
+    def get(self, id):
+        menu = FoodMenu().get_by_id(id)
+
+        if menu:
+            return {"Menu": menu.serialize()}, 200
+        return {'message': "Not found"}, 404
 
 
-class AllOrders(Resource):
 
+class AllUserOrders(Resource):
+
+    @jwt_required
     def get(self):
         ''' get all food orders '''
 
@@ -75,12 +84,13 @@ class AllOrders(Resource):
 
 
 
-class SpecificOrder(Resource):
+class GetSpecificOrder(Resource):
 
+    @jwt_required
     def get(self, id):
         ''' get a specific menu '''
 
-        order = FoodOrder().get_id(id)
+        order = FoodOrder().get_by_id(id)
 
         if order:
             return {"Menu": order.serialize()}, 200
@@ -88,41 +98,57 @@ class SpecificOrder(Resource):
 
 
 
-class Accept(Resource):
+class AcceptOrder(Resource):
 
+    @jwt_required
     def put(self, id):
         ''' Update the status to accept '''
-        order = FoodOrder().get_id(id)
+        order = FoodOrder().get_by_id(id)
+        
+        if not order:
+            return {'message': "Not found"}, 404
 
-        if order:
-            if order.status == "Pending":
-                order.status = "Accepted"
-                return {'message': 'Order accepted'}, 200
-        return {'message': "Not found"}
+        if order.status != "pending":
+            return {'message':'Order already {}'.format(order.status)}
 
+        order.accept_order(id)
+        return {'message': 'Order accepted'}, 200
+        
 
-class Complete(Resource):
+class CompleteOrder(Resource):
 
+    @jwt_required
     def put(self, id):
         ''' Update the status of an order to completed '''
-        order = FoodOrder().get_id(id)
-        if order:
+        order = FoodOrder().get_by_id(id)
 
-            if order.status == "Pending":
-                order.status = "Completed"
-
-                return {'message': 'Order completed'}, 200
-        return {'message': "Not found"}
+        if not order:
+            return {'message': "Not found"}, 404
 
 
-class Decline(Resource):
+        if order.status != "accepted":
+            return {'message':'Order already {}'.format(order.status)}
 
+        order.complete_accepted_order(id)
+        return {'message': 'Order completed'}, 200
+       
+
+
+class DeclineOrder(Resource):
+
+    @jwt_required
     def put(self, id):
         ''' Update the status of an order '''
-        order = FoodOrder().get_id(id)
-        if order:
-            if order.status == "Pending":
-                order.status = "Declined"
+        order = FoodOrder().get_by_id(id)
 
-                return {'message': 'Order Declined'}, 200
-        return {'message': "Not found"}
+        
+        if not order:
+            return {'message': "Not found"}, 404
+
+
+        if order.status != "pending":
+            return {'message':'Order already {}'.format(order.status)}
+
+        order.complete_accepted_order(id)
+        return {'message': 'Order declined'}, 200
+       
