@@ -1,5 +1,5 @@
 import datetime
-from werkzeug.security import safe_str_cmp, check_password_hash
+from werkzeug.security import check_password_hash
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token
 
@@ -30,14 +30,11 @@ class SignUp(Resource):
         password = data['password']
         confirmpassword = data['confirmpassword']
 
-        user = User()
 
-        if user.get_by_username(username):
+        if User().get_by_username(username):
             return {'message': 'User exists'}, 400
-        if user.get_by_email(email):
+        if User().get_by_email(email):
             return {'message': 'User exists'}, 400
-        if not safe_str_cmp(password, confirmpassword):
-            return {'message': 'passwords do not match'}, 400
 
         user = User(username, email, password, confirmpassword)
 
@@ -47,18 +44,33 @@ class SignUp(Resource):
 
 
 class Login(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('username', type=str, required=True,
+                        help="This field cannot be left blank")
+
+
+    parser.add_argument('password', type=str, required=True,
+                        help="This field cannot be left blank")
 
     def post(self):
         ''' login a user '''
-        data = SignUp.parser.parse_args()
+        data = Login.parser.parse_args()
 
         username = data['username']
         password = data['password']
 
-        user = User()
+        user = User().get_by_username(username)
 
-        if not user.get_by_username(username):
+        if not user:
             return {'message': 'user does not exist'}, 404
 
         if not check_password_hash(user.password, password):
             return {'message': 'Wrong password'}, 400
+
+        token = create_access_token(
+            identity=user.serialize())
+
+        return {
+            'token':token,
+            'message': 'successfully logged in'
+            }, 200
