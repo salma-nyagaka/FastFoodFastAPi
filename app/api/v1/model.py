@@ -3,8 +3,8 @@ orders = []
 
 class FoodOrder:
 
-    def __init__(self, name=None, price=None,  
-                 description=None, status="Pending"): 
+    def __init__(self, name=None, price=None,
+                 description=None, status="Pending"):
         self.id = len(orders)+1
         self.name = name
         self.price = price

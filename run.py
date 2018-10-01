@@ -3,7 +3,7 @@ import click
 from app import create_app
 
 
-config = os.getenv('APP_SETTINGS')
+config = os.getenv('APP_SETTINGS' or 'default')
 app = create_app(config)
 
 

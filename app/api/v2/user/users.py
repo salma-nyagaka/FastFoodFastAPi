@@ -7,10 +7,8 @@ from utils.validators import Validators
 
 class PlaceOrder(Resource):
     parser = reqparse.RequestParser()
-
     parser.add_argument('destination', type=str, required=True,
                         help="This field cannot be left blank")
-    
     
     @jwt_required
     def post(self, id):
@@ -45,5 +43,5 @@ class GetOrders(Resource):
         orders = FoodOrder().get_all()
         if orders:
             return {'Orders': [order.serialize() for order
-                              in orders]}, 200
+                    in orders]}, 200
         return {'message': "Not found"}, 404

@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .users import AllOrders, PlaceNewOrder, AllMenu
+from .users import GetOrders, PlaceOrder
 
 
 user_blueprint = Blueprint('user', __name__)

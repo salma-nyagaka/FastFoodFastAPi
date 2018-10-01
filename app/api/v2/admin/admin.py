@@ -29,10 +29,7 @@ class PlaceNewMenu(Resource):
             return {'message': 'Enter valid food name'}, 400
         if not Validators().valid_food_description(description):
             return {'message': 'Enter valid food description'}, 400
-
-
         menu = FoodMenu(name=name, description=description, price=price)
-
         menu.add()
         return {"message": "Food order placed"}, 201
 
@@ -44,8 +41,10 @@ class AllMenu(Resource):
         """ Get all food items """
         FoodMenus = FoodMenu().get_all()
         if FoodMenus:
-            return {"Food menu": [foodmenu.serialize() for foodmenu in FoodMenus]}, 200
+            return {"Food menu": [foodmenu.serialize()
+                    for foodmenu in FoodMenus]}, 200
         return {"message": "No food items available for now"}, 404
+
 
 class SpecificMenu(Resource):
 
@@ -68,7 +67,6 @@ class SpecificMenu(Resource):
         return {'message': "Not found"}, 404
 
 
-
 class AllUserOrders(Resource):
 
     @jwt_required
@@ -76,12 +74,10 @@ class AllUserOrders(Resource):
         ''' get all food orders '''
 
         foodorder = FoodOrder()
-        
         if foodorder.get_all():
             return {'Food Orders': [foodorder.serialize() for foodorder
-                            in foodorder.get_all()]}, 200
+                    in foodorder.get_all()]}, 200
         return {'message': "Not found"}, 404
-
 
 
 class GetSpecificOrder(Resource):
@@ -97,23 +93,20 @@ class GetSpecificOrder(Resource):
         return {'message': "Not found"}, 404
 
 
-
 class AcceptOrder(Resource):
 
     @jwt_required
     def put(self, id):
         ''' Update the status to accept '''
         order = FoodOrder().get_by_id(id)
-        
         if not order:
             return {'message': "Not found"}, 404
-
         if order.status != "pending":
-            return {'message':'Order already {}'.format(order.status)}
+            return {'message': 'Order is {}'.format(order.status)}
 
         order.accept_order(id)
         return {'message': 'Order accepted'}, 200
-        
+
 
 class CompleteOrder(Resource):
 
@@ -124,14 +117,11 @@ class CompleteOrder(Resource):
 
         if not order:
             return {'message': "Not found"}, 404
-
-
         if order.status != "accepted":
-            return {'message':'Order already {}'.format(order.status)}
+            return {'message': 'Order  is{}'.format(order.status)}
 
         order.complete_accepted_order(id)
         return {'message': 'Order completed'}, 200
-       
 
 
 class DeclineOrder(Resource):
@@ -140,15 +130,9 @@ class DeclineOrder(Resource):
     def put(self, id):
         ''' Update the status of an order '''
         order = FoodOrder().get_by_id(id)
-
-        
         if not order:
             return {'message': "Not found"}, 404
-
-
         if order.status != "pending":
-            return {'message':'Order already {}'.format(order.status)}
-
+            return {'message': 'Order  is{}'.format(order.status)}
         order.complete_accepted_order(id)
         return {'message': 'Order declined'}, 200
-       

@@ -5,6 +5,7 @@ from flask_jwt_extended import create_access_token
 
 
 from app.api.v2.model import User
+from utils.validators import Validators
 
 
 class SignUp(Resource):
@@ -30,11 +31,18 @@ class SignUp(Resource):
         password = data['password']
         confirmpassword = data['confirmpassword']
 
+        if not Validators().valid_username(username):
+            return {'message': 'Enter valid username'}, 400
+        if not Validators().valid_password(password):
+            return {'message': 'Enter valid password'}, 400
+        # if not Validators().valid_email(email):
+        #     return {'message': 'Enter valid email'}, 400
+
 
         if User().get_by_username(username):
-            return {'message': 'User exists'}, 400
+            return {'message': 'Username exists'}, 400
         if User().get_by_email(email):
-            return {'message': 'User exists'}, 400
+            return {'message': 'Email address exists'}, 400
 
         user = User(username, email, password, confirmpassword)
 
@@ -47,8 +55,6 @@ class Login(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('username', type=str, required=True,
                         help="This field cannot be left blank")
-
-
     parser.add_argument('password', type=str, required=True,
                         help="This field cannot be left blank")
 
@@ -71,6 +77,6 @@ class Login(Resource):
             identity=user.serialize())
 
         return {
-            'token':token,
+            'token': token,
             'message': 'successfully logged in'
             }, 200
