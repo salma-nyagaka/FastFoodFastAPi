@@ -1,3 +1,4 @@
+'''module imports'''
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -6,12 +7,12 @@ from utils.validators import Validators
 
 
 class PlaceOrder(Resource):
+    ''' enable a user to place a new order'''
     parser = reqparse.RequestParser()
     parser.add_argument('destination', type=str, required=True,
                         help="This field cannot be left blank")
-    
     @jwt_required
-    def post(self, id):
+    def post(self, _id):
         ''' place new order'''
 
         menu = FoodMenu().get_by_id(id)
@@ -35,7 +36,7 @@ class PlaceOrder(Resource):
 
 
 class GetOrders(Resource):
-
+    '''enable a user to get order history'''
     @jwt_required
     def get(self):
         ''' get all orders '''
@@ -43,5 +44,5 @@ class GetOrders(Resource):
         orders = FoodOrder().get_all()
         if orders:
             return {'Orders': [order.serialize() for order
-                    in orders]}, 200
+                               in orders]}, 200
         return {'message': "Not found"}, 404
