@@ -1,12 +1,14 @@
+''' module imports'''
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required
-
-
 from utils.validators import Validators
+
+
 from app.api.v2.model import FoodOrder, FoodMenu
 
 
 class PlaceNewMenu(Resource):
+    '''class  for posting a new menu'''
     parser = reqparse.RequestParser()
     parser.add_argument('name', type=str, required=True,
                         help="This field cannot be left blank")
@@ -35,21 +37,23 @@ class PlaceNewMenu(Resource):
 
 
 class AllMenu(Resource):
+    ''' class for getting all the menu'''
 
     @jwt_required
     def get(self):
         """ Get all food items """
-        FoodMenus = FoodMenu().get_all()
-        if FoodMenus:
+        food_menus = FoodMenu().get_all()
+        if food_menus:
             return {"Food menu": [foodmenu.serialize()
-                    for foodmenu in FoodMenus]}, 200
+                                  for foodmenu in food_menus]}, 200
         return {"message": "No food items available for now"}, 404
 
 
 class SpecificMenu(Resource):
+    ''' class for getting a specific menu'''
 
     @jwt_required
-    def delete(self, id):
+    def delete(self, _id):
         ''' Delete a specific menu '''
 
         menu = FoodMenu().get_by_id(id)
@@ -59,7 +63,8 @@ class SpecificMenu(Resource):
         return {'message': "Not found"}, 404
 
     @jwt_required
-    def get(self, id):
+    def get(self, _id):
+        ''' get specific menu'''
         menu = FoodMenu().get_by_id(id)
 
         if menu:
@@ -68,7 +73,7 @@ class SpecificMenu(Resource):
 
 
 class AllUserOrders(Resource):
-
+    ''' class for getting all the orders from the users'''
     @jwt_required
     def get(self):
         ''' get all food orders '''
@@ -76,14 +81,14 @@ class AllUserOrders(Resource):
         foodorder = FoodOrder()
         if foodorder.get_all():
             return {'Food Orders': [foodorder.serialize() for foodorder
-                    in foodorder.get_all()]}, 200
+                                    in foodorder.get_all()]}, 200
         return {'message': "Not found"}, 404
 
 
 class GetSpecificOrder(Resource):
-
+    ''' class for getting a specific user order'''
     @jwt_required
-    def get(self, id):
+    def get(self, _id):
         ''' get a specific menu '''
 
         order = FoodOrder().get_by_id(id)
@@ -94,9 +99,9 @@ class GetSpecificOrder(Resource):
 
 
 class AcceptOrder(Resource):
-
+    '''class for updating status to accept'''
     @jwt_required
-    def put(self, id):
+    def put(self, _id):
         ''' Update the status to accept '''
         order = FoodOrder().get_by_id(id)
         if not order:
@@ -109,9 +114,9 @@ class AcceptOrder(Resource):
 
 
 class CompleteOrder(Resource):
-
+    '''class for updating status to complete'''
     @jwt_required
-    def put(self, id):
+    def put(self, _id):
         ''' Update the status of an order to completed '''
         order = FoodOrder().get_by_id(id)
 
@@ -125,9 +130,9 @@ class CompleteOrder(Resource):
 
 
 class DeclineOrder(Resource):
-
+    '''class for updating status to decline'''
     @jwt_required
-    def put(self, id):
+    def put(self, _id):
         ''' Update the status of an order '''
         order = FoodOrder().get_by_id(id)
         if not order:

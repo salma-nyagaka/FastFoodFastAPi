@@ -1,8 +1,8 @@
+''' module imports'''
 from flask import Blueprint
-from flask import Blueprint
+
+from .admin import (PlaceNewMenu, AllMenu, SpecificMenu, AllUserOrders,
+                    GetSpecificOrder, AcceptOrder, CompleteOrder, DeclineOrder)
 
 
-from .admin import *
-
-
-admin_blueprint = Blueprint('admin', __name__)
+ADMIN_BLUEPRINT = Blueprint('admin', __name__)
