@@ -14,45 +14,38 @@ class TestOrders(TestCase):
             drop()
             create()
             create_admin()
-        self.order_data = {
-            "name": "Burger",
-            "description": "Beef burger",
-            "price": 60
-        }
-
-        self.user_orders = {
-            "destination": "juja",
-            "status": "pending",
-            "name": "Burger",
-            
-        }
+        self.signup_response = self.signup()
+        
+    def tearDown(self):
+        """Method to clear all test side effects before the next test"""
+        with self.app.app_context():
+            drop()
 
     def signup(self):
-        """ test for signing up"""
+        """ function for signing up"""
         signup_data = {
-            "username": "salma123",
+            "username": "salma",
             "email": "salma@gmail.com",
             "password": "Password123",
             "confirmpassword": "Password123"
         }
 
         response = self.client.post(
-            "api/v2/auth/signup",
+            "/api/v2/auth/signup",
             data=json.dumps(signup_data),
             headers={'content-type': 'application/json'}
         )
-        response_data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(response_data['message'], "successfully created a new account", 201)
+        return response
 
     def login(self):
-        """ test for loggin in """
+        """ function for loggin in """
         login_data = {
             "username": "salma",
-            "password": "salma123"
+            "password": "Password123"
         }
 
         response = self.client.post(
-            "api/v2/auth/login",
+            "/api/v2/auth/login",
             data=json.dumps(login_data),
             headers={'content-type': 'application/json'}
         )
@@ -63,44 +56,46 @@ class TestOrders(TestCase):
         """ function to get user token """
 
         response = self.login()
+        
         token = json.loads(response.data.decode('utf-8')).get('token', None)
 
-        return token
+
+        return "Bearer {}".format(token)
+
+    def test_signup(self):
+        """ test for signing up"""
+        # signup_data = {
+        #     "username": "salma",
+        #     "email": "salma@gmail.com",
+        #     "password": "Password123",
+        #     "confirmpassword": "Password123"
+        # }
+
+        # response = self.client.post(
+        #     "/api/v2/auth/signup",
+        #     data=json.dumps(signup_data),
+        #     headers={'content-type': 'application/json'}
+        # )
+        import pdb
+        pdb.set_trace()
+        response = self.signup_response
+        self.assertEqual(response.status_code, 201)
 
     def test_place_an_order(self):
         '''Test for a user to place an order'''
+        
+
         token = self.get_token()
+        order_data = {
+            "destination": "Kabarak"
+        }
 
-
-        response = self.client.get(
+        response = self.client.post(
             "/api/v2/users/menu/1/orders",
+            data  = json.dumps(order_data),
             headers={"content-type": "application/json",
-                     'Authorization': 'Bearer {}'.format(token)
+                     'Authorization': token
                  }
          )
-
-        return(response.status_code, 201)
-
-   
-    def test_all_menu(self):
-        '''Test get all menu'''
-
-        token = self.get_token()
-        response = self.client.post(
-            "/api/v2/menu",
-            data=json.dumps(self.order_data),
-            headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
-        response = self.client.get(
-            "/api/v2/allmenu",
-            data=json.dumps(self.order_data),
-            headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
-
-    
-    def tearDown(self):
-        drop()
+        
+        self.assertEqual(response.status_code, 201)
