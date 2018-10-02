@@ -1,4 +1,4 @@
-import datetime
+'''import modules'''
 from werkzeug.security import check_password_hash
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token
@@ -9,6 +9,7 @@ from utils.validators import Validators
 
 
 class SignUp(Resource):
+    ''' method for signing up a user'''
     parser = reqparse.RequestParser()
     parser.add_argument('username', type=str, required=True,
                         help="This field cannot be left blank")
@@ -35,10 +36,6 @@ class SignUp(Resource):
             return {'message': 'Enter valid username'}, 400
         if not Validators().valid_password(password):
             return {'message': 'Enter valid password'}, 400
-        # if not Validators().valid_email(email):
-        #     return {'message': 'Enter valid email'}, 400
-
-
         if User().get_by_username(username):
             return {'message': 'Username exists'}, 400
         if User().get_by_email(email):
@@ -52,6 +49,7 @@ class SignUp(Resource):
 
 
 class Login(Resource):
+    ''' method for a user to login'''
     parser = reqparse.RequestParser()
     parser.add_argument('username', type=str, required=True,
                         help="This field cannot be left blank")
