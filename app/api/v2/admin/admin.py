@@ -1,14 +1,12 @@
-''' module imports'''
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import (jwt_required, get_jwt_identity)
+
+
 from utils.validators import Validators
-
-
 from app.api.v2.model import FoodOrder, FoodMenu
 
 
 class PlaceNewMenu(Resource):
-    '''class  for posting a new menu'''
     parser = reqparse.RequestParser()
     parser.add_argument('name', type=str, required=True,
                         help="This field cannot be left blank")
@@ -22,49 +20,57 @@ class PlaceNewMenu(Resource):
     @jwt_required
     def post(self):
         ''' place new menu'''
-        data = PlaceNewMenu.parser.parse_args()
-        name = data['name']
-        description = data['description']
-        price = data['price']
+        current_user = get_jwt_identity()
+        print(current_user)
 
-        if not Validators().valid_food_name(name):
-            return {'message': 'Enter valid food name'}, 400
-        if not Validators().valid_food_description(description):
-            return {'message': 'Enter valid food description'}, 400
-        menu = FoodMenu(name=name, description=description, price=price)
-        menu.add()
-        return {"message": "Food order placed"}, 201
+        if(current_user["is_admin"]):
+            data = PlaceNewMenu.parser.parse_args()
+            name = data['name']
+            description = data['description']
+            price = data['price']
+
+            if not Validators().valid_food_name(name):
+                return {'message': 'Enter valid food name'}, 400
+            if not Validators().valid_food_description(description):
+                return {'message': 'Enter valid food description'}, 400
+            menu = FoodMenu(name=name, description=description, price=price)
+            menu.add()
+            return {"message": "Food order placed"}, 201
+        return {"message": "You are not authorized to create a new menu"}, 403
 
 
 class AllMenu(Resource):
-    ''' class for getting all the menu'''
 
     @jwt_required
     def get(self):
         """ Get all food items """
-        food_menus = FoodMenu().get_all()
-        if food_menus:
-            return {"Food menu": [foodmenu.serialize()
-                                  for foodmenu in food_menus]}, 200
+        data = FoodMenu().get_all()
+
+        food_menus = []
+
+        if data:
+            for food_menu in data:
+                food_menus.append(food_menu.serialize())
+
+            return {"Food menu": food_menus}, 200
+
         return {"message": "No food items available for now"}, 404
 
 
 class SpecificMenu(Resource):
-    ''' class for getting a specific menu'''
 
     @jwt_required
-    def delete(self, _id):
+    def delete(self, id):
         ''' Delete a specific menu '''
 
         menu = FoodMenu().get_by_id(id)
         if menu:
             menu.delete(id)
             return {'message': "Deleted"}, 200
-        return {'message': "Not found"}, 404
+        return {'message': "Not found"}
 
     @jwt_required
-    def get(self, _id):
-        ''' get specific menu'''
+    def get(self, id):
         menu = FoodMenu().get_by_id(id)
 
         if menu:
@@ -73,7 +79,7 @@ class SpecificMenu(Resource):
 
 
 class AllUserOrders(Resource):
-    ''' class for getting all the orders from the users'''
+
     @jwt_required
     def get(self):
         ''' get all food orders '''
@@ -81,14 +87,14 @@ class AllUserOrders(Resource):
         foodorder = FoodOrder()
         if foodorder.get_all():
             return {'Food Orders': [foodorder.serialize() for foodorder
-                                    in foodorder.get_all()]}, 200
+                    in foodorder.get_all()]}, 200
         return {'message': "Not found"}, 404
 
 
 class GetSpecificOrder(Resource):
-    ''' class for getting a specific user order'''
+
     @jwt_required
-    def get(self, _id):
+    def get(self, id):
         ''' get a specific menu '''
 
         order = FoodOrder().get_by_id(id)
@@ -99,45 +105,62 @@ class GetSpecificOrder(Resource):
 
 
 class AcceptOrder(Resource):
-    '''class for updating status to accept'''
-    @jwt_required
-    def put(self, _id):
-        ''' Update the status to accept '''
-        order = FoodOrder().get_by_id(id)
-        if not order:
-            return {'message': "Not found"}, 404
-        if order.status != "pending":
-            return {'message': 'Order is {}'.format(order.status)}
+    
 
-        order.accept_order(id)
-        return {'message': 'Order accepted'}, 200
+    @jwt_required
+    def put(self, id):
+        ''' Update the status to accept '''
+        current_user = get_jwt_identity()
+        print(current_user)
+
+        if(current_user["is_admin"]):
+            order = FoodOrder().get_by_id(id)
+            if not order:
+                return {'message': "Not found"}, 404
+            if order.status != "pending":
+                return {'message': 'Order is {}'.format(order.status)}
+
+            order.accept_order(id)
+            return {'message': 'Order accepted'}, 200
+        return {"message": "You are not authorized to mark order as accepted"}, 403
 
 
 class CompleteOrder(Resource):
-    '''class for updating status to complete'''
+
     @jwt_required
-    def put(self, _id):
+    def put(self, id):
         ''' Update the status of an order to completed '''
-        order = FoodOrder().get_by_id(id)
+        current_user = get_jwt_identity()
+        print(current_user)
 
-        if not order:
-            return {'message': "Not found"}, 404
-        if order.status != "accepted":
-            return {'message': 'Order  is{}'.format(order.status)}
+        if(current_user["is_admin"]):
+            order = FoodOrder().get_by_id(id)
 
-        order.complete_accepted_order(id)
-        return {'message': 'Order completed'}, 200
+            if not order:
+                return {'message': "Not found"}, 404
+            if order.status != "accepted":
+                return {'message': 'Order  is{}'.format(order.status)}
+
+            order.complete_accepted_order(id)
+            return {'message': 'Order completed'}, 200
+        return {"message": "You are not authorized to mark order as completed"}, 403
 
 
 class DeclineOrder(Resource):
-    '''class for updating status to decline'''
+
     @jwt_required
-    def put(self, _id):
+    def put(self, id):
         ''' Update the status of an order '''
-        order = FoodOrder().get_by_id(id)
-        if not order:
-            return {'message': "Not found"}, 404
-        if order.status != "pending":
-            return {'message': 'Order  is{}'.format(order.status)}
-        order.complete_accepted_order(id)
-        return {'message': 'Order declined'}, 200
+        current_user = get_jwt_identity()
+        print(current_user)
+        
+        if(current_user["is_admin"]):
+            order = FoodOrder().get_by_id(id)
+            if not order:
+                return {'message': "Not found"}, 404
+            if order.status != "pending":
+                return {'message': 'Order  is{}'.format(order.status)}
+            order.complete_accepted_order(id)
+            return {'message': 'Order declined'}, 200
+        return {"message": "You are not authorized to decline an order"}, 403
+

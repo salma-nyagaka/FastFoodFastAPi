@@ -30,7 +30,7 @@ class SignUp(Resource):
         username = data['username']
         email = data['email']
         password = data['password']
-        confirmpassword = data['confirmpassword']
+        confirm_password = data['confirm_password']
 
         if not Validators().valid_username(username):
             return {'message': 'Enter valid username'}, 400
@@ -41,7 +41,7 @@ class SignUp(Resource):
         if User().get_by_email(email):
             return {'message': 'Email address exists'}, 400
 
-        user = User(username, email, password, confirmpassword)
+        user = User(username, email, password, confirm_password)
 
         user.add()
 

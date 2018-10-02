@@ -1,3 +1,4 @@
+'''import module'''
 import psycopg2
 from datetime import datetime
 from flask import current_app
@@ -20,21 +21,22 @@ class User(DatabaseConnection):
         ''' create users table '''
         cursor = self.connection.cursor()
         cursor.execute(
-                '''
-                CREATE TABLE IF NOT EXISTS users(
-                    id serial PRIMARY KEY,
-                    username VARCHAR (200) NOT NULL,
-                    email VARCHAR (200) NOT NULL,
-                    password VARCHAR (200) NOT NULL,
-                    confirm_password VARCHAR (200) NOT NULL,
-                    is_admin BOOL NOT NULL
-                )'''
+            '''
+            CREATE TABLE IF NOT EXISTS users(
+                id serial PRIMARY KEY,
+                username VARCHAR (200) NOT NULL,
+                email VARCHAR (200) NOT NULL,
+                password VARCHAR (200) NOT NULL,
+                confirm_password VARCHAR (200) NOT NULL,
+                is_admin BOOL NOT NULL
+            )'''
             )
         self.connection.commit()
         self.connection.close()
         self.cursor.close()
 
     def drop_tables(self):
+        self.drop_table = "foodname"
         ''' Drop tables'''
         cursor = self.connection.cursor()
         cursor.execute(
@@ -118,7 +120,6 @@ class FoodMenu(DatabaseConnection):
         self.price = price
         self.description = description
         self.date = datetime.now().replace(second=0, microsecond=0)
-    
     def create_table(self):
         ''' create orders table '''
         cursor = self.connection.cursor()
@@ -131,7 +132,7 @@ class FoodMenu(DatabaseConnection):
                 description VARCHAR(200) NOT NULL,
                 date TIMESTAMP
             )'''
-        )
+            )
         self.connection.commit()
         self.connection.close()
         self.cursor.close()
@@ -172,7 +173,7 @@ class FoodMenu(DatabaseConnection):
         if item:
             return self.obectify_fooditem(item)
         return None
-        
+    
     def get_all(self):
         """ get all available food in the menu"""
         cur = self.connection.cursor()
@@ -195,7 +196,7 @@ class FoodMenu(DatabaseConnection):
 
         cursor.close()
         self.connection.commit()
-    
+        
     def serialize(self):
         return dict(
             id=self.id,
@@ -237,7 +238,7 @@ class FoodOrder(DatabaseConnection):
                 status VARCHAR (200) NOT NULL,
                 date TIMESTAMP
             )'''
-        )
+            )
         self.connection.commit()
         self.connection.close()
         self.cursor.close()
@@ -341,12 +342,11 @@ class FoodOrder(DatabaseConnection):
         )
 
     def objectify_foodorder(self, data):
-        ''' Map a user to an object '''
+        ''' Map a foodorder to an object '''
         order = FoodOrder(
-            requester=data[1], name=data[2], destination=data[3])
+          name=data[1], destination=data[2])
         order.id = data[0]
-        order.status = data[4]
-        order.date = data[5]
-        self = order
+        order.status = data[3]
+        order.date = data[4]
 
-        return self
+        return order
