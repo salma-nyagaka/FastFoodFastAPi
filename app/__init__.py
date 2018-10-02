@@ -42,7 +42,7 @@ def create_app(config_name):
 
 
     admin.add_resource(PlaceNewMenu, '/menu')
-    admin.add_resource(AllMenu, '/menu')
+    admin.add_resource(AllMenu, '/allmenu')
     admin.add_resource(SpecificMenu, '/menu/<int:id>')
     admin.add_resource(GetSpecificOrder, '/orders/<int:id>')
     admin.add_resource(AcceptOrder, '/orders/<int:id>/accept')

@@ -49,7 +49,6 @@ class TestOrders(TestCase):
             headers={'content-type': 'application/json'}
         )
 
-        response_data = json.loads(response.data.decode('utf-8'))
         return response
 
     def get_token(self):
@@ -79,8 +78,62 @@ class TestOrders(TestCase):
         )
     
         response_data = json.loads(response.data.decode('utf-8'))
-        # self.assertEqual(response.status_code, 201)
         self.assertEqual(response_data['message'], "Food order placed", 201)
+    
+    def test_all_menu(self):
+        '''Test get all menu'''
+
+        token = self.get_token()
+        response = self.client.post(
+            "/api/v2/menu",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+        response = self.client.get(
+            "/api/v2/allmenu",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_specific_menu(self):
+        '''Test to get a specific menu'''
+        token = self.get_token()
+        response = self.client.post(
+            "/api/v2/menu",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+        response= self.client.get(
+             "/api/v2/menu/1",
+             data=json.dumps(self.order_data),
+             headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_users_orders(self):
+        '''Test to get all orders from users'''
+
+        token = self.get_token()
+
+        response = self.client.get(
+            "/api/v2/orders",
+            headers = {"contemt-type": "Application.json",
+                        "Authorization": "Bearer{}".format(token)
+                        }
+
+        )
+        self.assertEqual(response.status_code, 200)
+
 
     def tearDown(self):
         drop()
