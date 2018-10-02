@@ -37,9 +37,9 @@ class SignUp(Resource):
         if not Validators().valid_password(password):
             return {'message': 'Enter valid password'}, 400
         if User().get_by_username(username):
-            return {'message': 'Username exists'}, 400
+            return {'message': 'Username exists'}, 409
         if User().get_by_email(email):
-            return {'message': 'Email address exists'}, 400
+            return {'message': 'Email address exists'}, 409
 
         user = User(username, email, password, confirm_password)
 
