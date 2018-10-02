@@ -4,7 +4,7 @@ from flask import current_app
 
 
 class DatabaseConnection:
-    '''create a connection to the database'''
+    '''creates a connection to the database'''
     def __init__(self):
         try:
             self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
@@ -16,6 +16,6 @@ class DatabaseConnection:
             print(error)
 
     def save(self):
-        ''' closes the cursor and makes commits to the database'''
+        ''' closes the cursor  and makes commits to the database'''
         self.cursor.close()
         self.connection.commit()
