@@ -1,4 +1,4 @@
-import psycopg2
+'''import modules'''
 from datetime import datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash
@@ -6,8 +6,10 @@ from app.api.v2.database import DatabaseConnection
 
 
 class User(DatabaseConnection):
+    '''create an instance of the class'''
     def __init__(self, username=None, email=None,
-                 password=None, confirm_password=None, is_admin=False):
+                 password=None, confirm_password=None,
+                 is_admin=False):
         super().__init__()
         self.username = username
         self.email = email
@@ -17,23 +19,23 @@ class User(DatabaseConnection):
         self.is_admin = is_admin
 
     def create_table(self):
-        ''' create users table '''
+        '''create users table'''
         self.drop_tables
         self.cursor.execute(
-                '''
-                CREATE TABLE IF NOT EXISTS users(
-                    id serial PRIMARY KEY,
-                    username VARCHAR (200) NOT NULL,
-                    email VARCHAR (200) NOT NULL,
-                    password VARCHAR (200) NOT NULL,
-                    confirm_password VARCHAR (200) NOT NULL,
-                    is_admin BOOL NOT NULL
-                )'''
+            '''
+            CREATE TABLE IF NOT EXISTS users(
+                id serial PRIMARY KEY,
+                username VARCHAR (200) NOT NULL,
+                email VARCHAR (200) NOT NULL,
+                password VARCHAR (200) NOT NULL,
+                confirm_password VARCHAR (200) NOT NULL,
+                is_admin BOOL NOT NULL
+            )'''
             )
         self.save()
 
     def drop_tables(self):
-        ''' Drop tables'''
+        '''Drop tables'''
         self.drop_tables
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS users'''
@@ -84,6 +86,7 @@ class User(DatabaseConnection):
         return None
 
     def serialize(self):
+        '''converts an object to a dictionary'''
         return dict(
             username=self.username,
             email=self.email,
@@ -94,7 +97,7 @@ class User(DatabaseConnection):
 
     def objectify_user(self, data):
         ''' Map a user to an object '''
-        self.id = data[0]
+        self._id = data[0]
         self.username = data[1]
         self.email = data[2]
         self.password = data[3]
@@ -104,6 +107,7 @@ class User(DatabaseConnection):
 
 
 class FoodMenu(DatabaseConnection):
+    ''' instance of the FoodMenu class'''
     def __init__(self, name=None, price=None, description=None):
         super().__init__()
         self.name = name
@@ -122,7 +126,7 @@ class FoodMenu(DatabaseConnection):
                 description VARCHAR(200) NOT NULL,
                 date_created TIMESTAMP
             )'''
-        )
+            )
         self.save()
 
 
@@ -138,8 +142,7 @@ class FoodMenu(DatabaseConnection):
         self.cursor.execute('''
             INSERT INTO foodmenu(name, price, description, date_created)
             VALUES(%s, %s, %s, %s)
-            ''', (self.name, self.price, self.description, self.date_created)
-        )
+            ''', (self.name, self.price, self.description, self.date_created))
         
         self.save()
 
@@ -195,8 +198,8 @@ class FoodMenu(DatabaseConnection):
 
         self.save()
 
-    
     def serialize(self):
+        ''' return a dictionary from the object'''
         return dict(
             id=self.id,
             name=self.name,
@@ -236,19 +239,17 @@ class FoodOrder(DatabaseConnection):
                 status VARCHAR (200) NOT NULL,
                 date TIMESTAMP
             )'''
-        )
+            )
         self.save()
 
     def get_by_destination(self, destination):
         ''' Get user by food id '''
         self.cursor.execute(   
-            "SELECT * FROM foodorders WHERE destination=%s", (destination,)
-        )
+            "SELECT * FROM foodorders WHERE destination=%s", (destination,))
 
         FoodOrder = self.cursor.fetchone()
 
         self.save()
-
 
         if FoodOrder:
             return self.objectify_foodorder(FoodOrder)
@@ -269,8 +270,7 @@ class FoodOrder(DatabaseConnection):
             INSERT INTO foodorders(requester, name, destination, status, date)
             VALUES(%s, %s, %s, %s, %s)
             ''', (self.requester, self.name, self.destination,
-                  self.status, self.date_created)
-        )
+                  self.status, self.date_created))
         self.save()
 
     def get_all(self):
@@ -289,7 +289,7 @@ class FoodOrder(DatabaseConnection):
     def get_by_id(self, order_id):
         ''' Get order by ID '''
         self.cursor.execute(
-            "SELECT * FROM foodorders WHERE id=%s", (order_id,)
+            "SELECT * FROM foodorders WHERE _id=%s", (order_id,)
         )
 
         order = self.cursor.fetchone()
@@ -302,7 +302,7 @@ class FoodOrder(DatabaseConnection):
     def accept_order(self, order_id):
         """ Accept an order """
         self.cursor.execute("""
-        UPDATE foodorders SET status=%s WHERE id=%s
+        UPDATE foodorders SET status=%s WHERE _id=%s
                     """, ('accepted', order_id))
         self.save()
 
@@ -321,9 +321,17 @@ class FoodOrder(DatabaseConnection):
                     """, ('completed', order_id))
         self.save()
 
+    def update_order(self, order_id):
+        """ Update an accepted order """
+        self.cursor.execute("""
+        UPDATE foodorders SET status=%s WHERE id=%s
+                    """, ('completed', order_id))
+        self.save()
+
     def serialize(self):
+        ''' returns a dictioanry from the object'''
         return dict(
-            id=self.id,
+            id=self._id,
             name=self.name,
             destination=self.destination,
             status=self.status,
@@ -334,7 +342,7 @@ class FoodOrder(DatabaseConnection):
         ''' Map a foodorder to an object '''
         order = FoodOrder(
             requester=data[1], name=data[2], destination=data[3])
-        order.id = data[0]
+        order._id = data[0]
         order.status = data[4]
         order.date_created = data[5]
         self = order

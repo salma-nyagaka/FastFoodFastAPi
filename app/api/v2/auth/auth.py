@@ -1,3 +1,4 @@
+'''import modules'''
 import datetime
 from werkzeug.security import check_password_hash
 from flask_restful import Resource, reqparse
@@ -9,6 +10,7 @@ from utils.validators import Validators
 
 
 class SignUp(Resource):
+    '''sigmup a user'''
     parser = reqparse.RequestParser()
     parser.add_argument('username', type=str, required=True,
                         help="This field cannot be left blank")
@@ -19,8 +21,8 @@ class SignUp(Resource):
     parser.add_argument('password', type=str, required=True,
                         help="This field cannot be left blank")
 
-    parser.add_argument('confirmpassword', type=str, required=True,
-                        help="This field cannot be left blank")
+    parser.add_argument('confirmpassword', type=str,
+                        required=True, help="This field cannot be left blank")
 
     def post(self):
         ''' Add a new user '''
@@ -41,7 +43,6 @@ class SignUp(Resource):
             return {'message': 'Enter valid password'}, 400
         if not Validators().valid_email(email):
             return {'message': 'Enter valid email'}, 400
-       
         if User().get_by_username(username):
             return {'message': 'Username exists'}, 409
         if User().get_by_email(email):
@@ -55,6 +56,7 @@ class SignUp(Resource):
 
 
 class Login(Resource):
+    '''login a user'''
     parser = reqparse.RequestParser()
     parser.add_argument('username', type=str, required=True,
                         help="This field cannot be left blank")
@@ -77,9 +79,8 @@ class Login(Resource):
             return {'message': 'Wrong password'}, 401
         expires = datetime.timedelta(minutes=60)
 
-        token = create_access_token(
-            identity=user.serialize(), expires_delta=expires )
-
+        token = create_access_token(identity=user.serialize(),
+                                    expires_delta=expires)
         return {
             'token': token,
             'message': 'successfully logged in'
