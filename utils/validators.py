@@ -26,3 +26,11 @@ class Validators:
         """ valid password """
         regex = "^[a-zA-Z0-9_ ]+$"
         return re.match(regex, password)
+
+    def valid_email(self, email):
+        """valid email"""
+        regex = "^[a-zA-Z0-9_+-]+@[a-zA-Z-]+\.[a-zA-Z0-]+$"
+        return re.match(regex, email)
+    
+
+

@@ -26,6 +26,7 @@ def create_app(config_name):
 
     auth.add_resource(SignUp, '/signup')
     auth.add_resource(Login, '/login')
+    
 
 
     from .api.v2.user import user_blueprint
@@ -34,6 +35,8 @@ def create_app(config_name):
 
     user.add_resource(PlaceOrder, '/<int:id>/orders')
     user.add_resource(GetOrders, '/orders')
+    user.add_resource(AllMenu, '/allmenu')
+
 
 
     from .api.v2.admin import admin_blueprint 
@@ -42,7 +45,7 @@ def create_app(config_name):
 
 
     admin.add_resource(PlaceNewMenu, '/menu')
-    admin.add_resource(AllMenu, '/menu')
+    admin.add_resource(AllMenu, '/allmenu')
     admin.add_resource(SpecificMenu, '/menu/<int:id>')
     admin.add_resource(GetSpecificOrder, '/orders/<int:id>')
     admin.add_resource(AcceptOrder, '/orders/<int:id>/accept')

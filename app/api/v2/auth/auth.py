@@ -31,18 +31,21 @@ class SignUp(Resource):
         password = data['password']
         confirmpassword = data['confirmpassword']
 
+        if password != confirmpassword:
+            return {'message': 'Password do not match'}, 400
+
+
         if not Validators().valid_username(username):
             return {'message': 'Enter valid username'}, 400
         if not Validators().valid_password(password):
             return {'message': 'Enter valid password'}, 400
-        # if not Validators().valid_email(email):
-        #     return {'message': 'Enter valid email'}, 400
-
-
+        if not Validators().valid_email(email):
+            return {'message': 'Enter valid email'}, 400
+       
         if User().get_by_username(username):
-            return {'message': 'Username exists'}, 400
+            return {'message': 'Username exists'}, 409
         if User().get_by_email(email):
-            return {'message': 'Email address exists'}, 400
+            return {'message': 'Email address exists'}, 409
 
         user = User(username, email, password, confirmpassword)
 
@@ -71,12 +74,14 @@ class Login(Resource):
             return {'message': 'user does not exist'}, 404
 
         if not check_password_hash(user.password, password):
-            return {'message': 'Wrong password'}, 400
+            return {'message': 'Wrong password'}, 401
+        expires = datetime.timedelta(minutes=60)
 
         token = create_access_token(
-            identity=user.serialize())
+            identity=user.serialize(), expires_delta=expires )
 
         return {
             'token': token,
             'message': 'successfully logged in'
             }, 200
+       
