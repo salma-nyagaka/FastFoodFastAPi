@@ -6,7 +6,6 @@ def drop():
     FoodOrder().drop_tables()
     FoodMenu().drop_tables()
 
-
 def create():
 
     foodorder = FoodOrder()
@@ -17,6 +16,7 @@ def create():
 
     user= User()
     user.create_table()
+
 
 def create_admin():
     admin = User(username='Admin', email='admin@gmail.com',
