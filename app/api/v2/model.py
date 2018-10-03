@@ -117,7 +117,7 @@ class FoodMenu(DatabaseConnection):
         self.name = name
         self.price = price
         self.description = description
-        self.date = datetime.now().replace(second=0, microsecond=0)
+        self.date_created = datetime.now().replace(second=0, microsecond=0)
     
     def create_table(self):
         ''' create orders table '''
@@ -129,7 +129,7 @@ class FoodMenu(DatabaseConnection):
                 name VARCHAR (200) NOT NULL,
                 price INTEGER NOT NULL,
                 description VARCHAR(200) NOT NULL,
-                date TIMESTAMP
+                date_created TIMESTAMP
             )'''
         )
         self.connection.commit()
@@ -152,7 +152,7 @@ class FoodMenu(DatabaseConnection):
         cursor.execute('''
             INSERT INTO foodmenu(name, price, description, date)
             VALUES(%s, %s, %s, %s)
-            ''', (self.name, self.price, self.description, self.date)
+            ''', (self.name, self.price, self.description, self.date_created)
         )
         cursor.close()
         self.connection.commit()
@@ -202,14 +202,14 @@ class FoodMenu(DatabaseConnection):
             name=self.name,
             price=self.price,
             description=self.description,
-            date=str(self.date)
+            date=str(self.date_created)
         )
 
     def obectify_fooditem(self, data):
         ''' Map a user to an object '''
         item = FoodMenu(name=data[1], description=data[2], price=data[3])
         item.id = data[0]
-        item.date = data[4]
+        item.date_created = data[4]
         self = item
         return self
 
@@ -222,7 +222,7 @@ class FoodOrder(DatabaseConnection):
         self.name = name
         self.destination = destination
         self.status = 'pending'
-        self.date = datetime.now().replace(second=0, microsecond=0)
+        self.date_created = datetime.now().replace(second=0, microsecond=0)
 
     def create_table(self):
         ''' create orders table '''
@@ -259,7 +259,7 @@ class FoodOrder(DatabaseConnection):
             INSERT INTO foodorders(requester, name, destination, status, date)
             VALUES(%s, %s, %s, %s, %s)
             ''', (self.requester, self.name, self.destination,
-                  self.status, self.date)
+                  self.status, self.date_created)
         )
         cursor.close()
         self.connection.commit()
@@ -337,15 +337,16 @@ class FoodOrder(DatabaseConnection):
             name=self.name,
             destination=self.destination,
             status=self.status,
-            date=str(self.date)
+            date=str(self.date_created)
         )
 
     def objectify_foodorder(self, data):
         ''' Map a foodorder to an object '''
         order = FoodOrder(
-              name=data[1], destination=data[2])
+            requester=data[1], name=data[2], destination=data[3])
         order.id = data[0]
-        order.status = data[3]
-        order.date = data[4]
+        order.status = data[4]
+        order.date_created = data[5]
+        self = order
 
-        return order
+        return self
