@@ -29,9 +29,7 @@ class User(DatabaseConnection):
                     is_admin BOOL NOT NULL
                 )'''
             )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
 
     def drop_tables(self):
         ''' Drop tables'''
@@ -39,9 +37,7 @@ class User(DatabaseConnection):
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS users'''
         )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
 
     def add(self):
         ''' add user to the users table'''
@@ -62,10 +58,10 @@ class User(DatabaseConnection):
             "SELECT * FROM users WHERE username=%s", (username,)
         )
 
-        user = cursor.fetchone()
+        user = self.cursor.fetchone()
 
-        self.connection.commit()
-        cursor.close()
+        self.save()
+
 
         if user:
             return self.objectify_user(user)
@@ -77,10 +73,10 @@ class User(DatabaseConnection):
             "SELECT * FROM users WHERE email=%s", (email,)
         )
 
-        user = cursor.fetchone()
+        user = self.cursor.fetchone()
 
-        self.connection.commit()
-        cursor.close()
+        self.save()
+
 
         if user:
             return self.objectify_user(user)
@@ -126,18 +122,15 @@ class FoodMenu(DatabaseConnection):
                 date_created TIMESTAMP
             )'''
         )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
+
 
     def drop_tables(self):
         ''' Drop tables'''
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS foodmenu'''
         )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
 
     def add(self):
         ''' add orders to the food orders table'''
@@ -146,8 +139,8 @@ class FoodMenu(DatabaseConnection):
             VALUES(%s, %s, %s, %s)
             ''', (self.name, self.price, self.description, self.date_created)
         )
-        cursor.close()
-        self.connection.commit()
+        self.save()
+
 
     def get_by_id(self, item_id):
         ''' Get user by food id '''
@@ -155,10 +148,10 @@ class FoodMenu(DatabaseConnection):
             "SELECT * FROM foodmenu WHERE id=%s", (item_id,)
         )
 
-        item = cursor.fetchone()
+        item = self.cursor.fetchone()
 
-        cursor.close()
-        self.connection.commit()
+        self.save()
+
 
         if item:
             return self.obectify_fooditem(item)
@@ -166,13 +159,13 @@ class FoodMenu(DatabaseConnection):
         
     def get_all(self):
         """ get all available food in the menu"""
-        self.cur.execute("SELECT * FROM foodmenu")
+        self.cursor.execute("SELECT * FROM foodmenu")
 
-        FoodMenu = cur.fetchall()
+        FoodMenu = self.cursor.fetchall()
         print(FoodMenu)
 
-        self.connection.commit()
-        cur.close()
+        self.save()
+
 
         if FoodMenu:
             return [self.obectify_fooditem(foodmenu) for foodmenu in FoodMenu]
@@ -182,8 +175,8 @@ class FoodMenu(DatabaseConnection):
         ''' delete a menu '''
         self.cursor.execute("DELETE FROM foodmenu WHERE id=%s", (menu_id,))
 
-        cursor.close()
-        self.connection.commit()
+        self.save()
+
     
     def serialize(self):
         return dict(
@@ -226,18 +219,15 @@ class FoodOrder(DatabaseConnection):
                 date TIMESTAMP
             )'''
         )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
+
 
     def drop_tables(self):
         ''' Drop tables'''
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS foodorders'''
         )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
     
     def add(self):
         ''' add orders to the foodorders table'''
@@ -247,17 +237,15 @@ class FoodOrder(DatabaseConnection):
             ''', (self.requester, self.name, self.destination,
                   self.status, self.date_created)
         )
-        cursor.close()
-        self.connection.commit()
+        self.save()
 
     def get_all(self):
         """ get all available food items """
         self.cursor.execute("SELECT * FROM foodorders")
 
-        Foodorders = cursor.fetchall()
+        Foodorders = self.cursor.fetchall()
 
-        cursor.close()
-        self.connection.commit()
+        self.save()
 
         if Foodorders:
             return [self.objectify_foodorder(foodorder)
@@ -270,11 +258,9 @@ class FoodOrder(DatabaseConnection):
             "SELECT * FROM foodorders WHERE id=%s", (order_id,)
         )
 
-        order = cursor.fetchone()
+        order = self.cursor.fetchone()
 
-        cursor.close()
-        self.connection.commit()
-
+        self.save()
         if order:
             return self.objectify_foodorder(order)
         return None
@@ -284,32 +270,30 @@ class FoodOrder(DatabaseConnection):
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, ('accepted', order_id))
-        cursor.close()
-        self.connection.commit()
+        self.save()
 
     def decline_order(self, order_id):
         """ Decline an order """
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, ('declined', order_id))
-        cursor.close()
-        self.connection.commit()
+        
+        self.save()
 
     def complete_accepted_order(self, order_id):
         """ Complete an accepted order """
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, ('completed', order_id))
-        cursor.close()
-        self.connection.commit()
+        self.save()
 
     def comete_accepted_order(self, order_id):
         """ Complete an accepted order """
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, ('completed', order_id))
-        cursor.close()
-        self.connection.commit()
+       
+        self.save()
 
     def serialize(self):
         return dict(
