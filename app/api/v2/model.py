@@ -151,7 +151,7 @@ class FoodMenu(DatabaseConnection):
         ''' add orders to the food orders table'''
         cursor = self.connection.cursor()
         cursor.execute('''
-            INSERT INTO foodmenu(name, price, description, date)
+            INSERT INTO foodmenu(name, price, description, date_created)
             VALUES(%s, %s, %s, %s)
             ''', (self.name, self.price, self.description, self.date_created)
         )
