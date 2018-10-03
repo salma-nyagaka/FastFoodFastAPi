@@ -18,6 +18,7 @@ class User(DatabaseConnection):
 
     def create_table(self):
         ''' create users table '''
+        self.drop_tables
         self.cursor.execute(
                 '''
                 CREATE TABLE IF NOT EXISTS users(
@@ -139,6 +140,7 @@ class FoodMenu(DatabaseConnection):
             VALUES(%s, %s, %s, %s)
             ''', (self.name, self.price, self.description, self.date_created)
         )
+        
         self.save()
 
 
@@ -156,6 +158,37 @@ class FoodMenu(DatabaseConnection):
         if item:
             return self.obectify_fooditem(item)
         return None
+
+    def get_by_name(self, name):
+        ''' Get user by food id '''
+        self.cursor.execute(   
+            "SELECT * FROM foodmenu WHERE name=%s", (name,)
+        )
+
+        item = self.cursor.fetchone()
+
+        self.save()
+
+
+        if item:
+            return self.obectify_fooditem(item)
+        return None
+
+    # def get_menu(self):
+    #     ''' Get user by food id '''
+    #     self.cursor.execute(   
+    #         "SELECT * FROM foodmenu"
+    #     )
+
+    #     item = self.cursor.fetchall()
+
+    #     self.save()
+
+
+    #     if item:
+    #         return self.obectify_fooditem(item)
+    #     return None
+        
         
     def get_all(self):
         """ get all available food in the menu"""
@@ -169,6 +202,21 @@ class FoodMenu(DatabaseConnection):
 
         if FoodMenu:
             return [self.obectify_fooditem(foodmenu) for foodmenu in FoodMenu]
+        return None
+
+    def get_by_destination(self, destination):
+        ''' Get user by food id '''
+        self.cursor.execute(   
+            "SELECT * FROM foodmenu WHERE destination=%s", (destination,)
+        )
+
+        FoodMenu = self.cursor.fetchone()
+
+        self.save()
+
+
+        if FoodMenu:
+            return self.obectify_fooditem(FoodMenu)
         return None
 
     def delete(self, menu_id):
@@ -189,7 +237,7 @@ class FoodMenu(DatabaseConnection):
 
     def obectify_fooditem(self, data):
         ''' Map a fooditem to an object '''
-        item = FoodMenu(name=data[1], description=data[2], price=data[3])
+        item = FoodMenu(name=data[1], description=data[3], price=data[2])
         item.id = data[0]
         item.date_created = data[4]
         self = item

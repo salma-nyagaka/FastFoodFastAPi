@@ -71,7 +71,7 @@ class Login(Resource):
         user = User().get_by_username(username)
 
         if not user:
-            return {'message': 'user does not exist'}, 404
+            return {'message': 'user does not exist'}, 401
 
         if not check_password_hash(user.password, password):
             return {'message': 'Wrong password'}, 401

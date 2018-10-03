@@ -35,7 +35,8 @@ class PlaceNewMenu(Resource):
                 return {'message': 'Enter valid food description'}, 400
             menu = FoodMenu(name=name, description=description, price=price)
             menu.add()
-            return {"message": "Food menu created"}, 201
+            meal = FoodMenu().get_by_name(name)
+            return {"message": "Food menu created", "meal":meal.serialize()}, 201
         return {"message": "You are not authorized to create a new menu"}, 403
 
 
@@ -165,4 +166,5 @@ class DeclineOrder(Resource):
             order.complete_accepted_order(id)
             return {'message': 'Order declined'}, 200
         return {"message": "You are not authorized to decline an order"}, 403
+
 

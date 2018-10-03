@@ -31,11 +31,11 @@ def create_app(config_name):
 
     from .api.v2.user import user_blueprint
     user = Api(user_blueprint)
-    app.register_blueprint(user_blueprint, url_prefix="/api/v2/users/menu")
+    app.register_blueprint(user_blueprint, url_prefix="/api/v2/users")
 
-    user.add_resource(PlaceOrder, '/<int:id>/orders')
+    user.add_resource(PlaceOrder, '/orders/<int:id>')
     user.add_resource(GetOrders, '/orders')
-    user.add_resource(AllMenu, '/allmenu')
+    user.add_resource(AllMenu, '/menu')
 
 
 
@@ -45,7 +45,7 @@ def create_app(config_name):
 
 
     admin.add_resource(PlaceNewMenu, '/menu')
-    admin.add_resource(AllMenu, '/allmenu')
+    admin.add_resource(AllMenu, '/menu')
     admin.add_resource(SpecificMenu, '/menu/<int:id>')
     admin.add_resource(GetSpecificOrder, '/orders/<int:id>')
     admin.add_resource(AcceptOrder, '/orders/<int:id>/accept')
