@@ -1,4 +1,4 @@
-import re 
+import re
 
 
 class Validators:
@@ -6,10 +6,6 @@ class Validators:
         regex = "^[a-zA-Z0-9_ ]+$"
         return re.match(regex, name)
 
-
     def valid_food_description(self, description):
         regex = "^[a-zA-Z0-9_ ]+$"
         return re.match(regex, description)
-
-
-
