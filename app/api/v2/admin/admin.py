@@ -56,7 +56,7 @@ class SpecificMenu(Resource):
         if menu:
             menu.delete(id)
             return {'message': "Deleted"}, 200
-        return {'message': "Not found"}
+        return {'message': "Not found"}, 404
 
     @jwt_required
     def get(self, id):

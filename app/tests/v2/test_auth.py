@@ -1,62 +1,64 @@
-# import json
-# from unittest import TestCase
+
+import json
+from unittest import TestCase
+from manage import drop, create, create_admin
+
+from app import create_app
 
 
-# from app import create_app
+class TestOrders(TestCase):
+    def setUp(self):
+        self.app = create_app("testing")
+        self.client = self.app.test_client()
+        with self.app.app_context():
+            drop()
+            create()
+            create_admin()
+        self.order_data = {
+            "name": "Burger",
+            "description": "Beef burger",
+            "price": 60
+        }
 
+        self.user_orders = {
+            "destination": "juja",
+            "status": "pending",
+            "name": "Burger",
+            
+        }
 
-# class TestOrders(TestCase):
-#     def setUp(self):
-#         self.app = create_app("testing")
-#         self.client = self.app.test_client()
-#         self.app_context = self.app.app_context()
-#         self.app_context.push()
-#         url = os.getenv('')
+    def signup(self):
+        """ test for signing up"""
+        signup_data = {
+            "username": "salma123",
+            "email": "salma@gmail.com",
+            "password": "Password123",
+            "confirmpassword": "Password123"
+        }
 
-#     def signup(self):
-#         ''' Function for sign up '''
-#         data = {
-#             'username': 'Salma123',
-#             'email': 'salma@gmail.com',
-#             'password': 'Password123',
-#             'confirm_password': 'Password123'
-#         }
+        response = self.client.post(
+            "api/v2/auth/signup",
+            data=json.dumps(signup_data),
+            headers={'content-type': 'application/json'}
+        )
+        response_data = json.loads(response.data.decode('utf-8'))
+        self.assertEqual(response_data['message'], "successfully created a new account", 201)
 
-#         response = self.client.==post(
-#             "/api/v2/auth/signup",
-#             data=json.dumps(data),
-#             headers={"content-type": "application/json"}
-#         )
-#         return response
+    def login(self):
+        """ test for loggin in """
+        login_data = {
+            "username": "Salma",
+            "password": "salma123"
+        }
 
-#     def login(self):
-#         ''' Function for login '''
-#         data = {
-#             'username': 'Salma123',
-#             'password': 'Password123'
-#         }
+        response = self.client.post(
+            "api/v2/auth/login",
+            data=json.dumps(login_data),
+            headers={'content-type': 'application/json'}
+        )
 
-#         response = self.client.post(
-#             "/api/v2/auth/login",
-#             data=json.dumps(data),
-#             headers={"content-type": "application/json"}
-#         )
-#         return response
-  
-#     def test_signup(self):
-#         ''' Test for user signup '''
-#         response = self.signup()
+        return response
 
-#         self.assertEqual(response.status_code, 201)
-#         self.assertEqual(response.data['message'], "successfully created a new account")
-
-#     def test_login(self):
-#         ''' Test for user login '''
-#         self.signup()
-
-#         response = self.login()
-
-#         self.assertEqual(response.status_code, 200)
-#         self.assertEqual(response.data['message'], "Successfully login in Salma123")
-
-   
+    def tearDown(self):
+        drop()
+        

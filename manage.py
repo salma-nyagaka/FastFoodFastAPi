@@ -1,4 +1,5 @@
 from app.api.v2.model import User, FoodMenu, FoodOrder, User
+from run import app
 
 def drop():
     User().drop_tables()
@@ -23,6 +24,7 @@ def create_admin():
     admin.add()
 
 if __name__ == '__main__':
-    drop()
-    create()
-    create_admin()
+    with app.app_context():
+        drop()
+        create()
+        create_admin()

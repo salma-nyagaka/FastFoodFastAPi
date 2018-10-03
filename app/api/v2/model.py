@@ -341,12 +341,11 @@ class FoodOrder(DatabaseConnection):
         )
 
     def objectify_foodorder(self, data):
-        ''' Map a user to an object '''
+        ''' Map a foodorder to an object '''
         order = FoodOrder(
-            requester=data[1], name=data[2], destination=data[3])
+              name=data[1], destination=data[2])
         order.id = data[0]
-        order.status = data[4]
-        order.date = data[5]
-        self = order
+        order.status = data[3]
+        order.date = data[4]
 
-        return self
+        return order

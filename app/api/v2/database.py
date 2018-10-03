@@ -6,8 +6,10 @@ import os
 class DatabaseConnection:
     def __init__(self):
         try:
-            self.connection = psycopg2.connect(os.getenv('DATABASE_URL'))
+            self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
             self.cursor = self.connection.cursor()
+
+
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
