@@ -174,22 +174,6 @@ class FoodMenu(DatabaseConnection):
             return self.obectify_fooditem(item)
         return None
 
-    # def get_menu(self):
-    #     ''' Get user by food id '''
-    #     self.cursor.execute(   
-    #         "SELECT * FROM foodmenu"
-    #     )
-
-    #     item = self.cursor.fetchall()
-
-    #     self.save()
-
-
-    #     if item:
-    #         return self.obectify_fooditem(item)
-    #     return None
-        
-        
     def get_all(self):
         """ get all available food in the menu"""
         self.cursor.execute("SELECT * FROM foodmenu")
@@ -204,20 +188,6 @@ class FoodMenu(DatabaseConnection):
             return [self.obectify_fooditem(foodmenu) for foodmenu in FoodMenu]
         return None
 
-    def get_by_destination(self, destination):
-        ''' Get user by food id '''
-        self.cursor.execute(   
-            "SELECT * FROM foodmenu WHERE destination=%s", (destination,)
-        )
-
-        FoodMenu = self.cursor.fetchone()
-
-        self.save()
-
-
-        if FoodMenu:
-            return self.obectify_fooditem(FoodMenu)
-        return None
 
     def delete(self, menu_id):
         ''' delete a menu '''
@@ -268,6 +238,22 @@ class FoodOrder(DatabaseConnection):
             )'''
         )
         self.save()
+
+    def get_by_destination(self, destination):
+        ''' Get user by food id '''
+        self.cursor.execute(   
+            "SELECT * FROM foodorders WHERE destination=%s", (destination,)
+        )
+
+        FoodOrder = self.cursor.fetchone()
+
+        self.save()
+
+
+        if FoodOrder:
+            return self.objectify_foodorder(FoodOrder)
+        return None
+
 
 
     def drop_tables(self):
@@ -333,14 +319,6 @@ class FoodOrder(DatabaseConnection):
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, ('completed', order_id))
-        self.save()
-
-    def comete_accepted_order(self, order_id):
-        """ Complete an accepted order """
-        self.cursor.execute("""
-        UPDATE foodorders SET status=%s WHERE id=%s
-                    """, ('completed', order_id))
-       
         self.save()
 
     def serialize(self):
