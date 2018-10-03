@@ -31,6 +31,10 @@ class SignUp(Resource):
         password = data['password']
         confirmpassword = data['confirmpassword']
 
+        if password != confirmpassword:
+            return {'message': 'Password do not match'}, 400
+
+
         if not Validators().valid_username(username):
             return {'message': 'Enter valid username'}, 400
         if not Validators().valid_password(password):
