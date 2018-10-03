@@ -3,7 +3,7 @@ from flask import Blueprint
 
 
 from .admin import (PlaceNewMenu, AllMenu, SpecificMenu, AcceptOrder, CompleteOrder,
-                    GetSpecificOrder, AllUserOrders)
+                    GetSpecificOrder, AllUserOrders, UpdateStatus)
 
 
 ADMIN_BLUEPRINT = Blueprint('admin', __name__)

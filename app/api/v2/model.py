@@ -289,7 +289,7 @@ class FoodOrder(DatabaseConnection):
     def get_by_id(self, order_id):
         ''' Get order by ID '''
         self.cursor.execute(
-            "SELECT * FROM foodorders WHERE _id=%s", (order_id,)
+            "SELECT * FROM foodorders WHERE id=%s", (order_id,)
         )
 
         order = self.cursor.fetchone()
@@ -322,11 +322,18 @@ class FoodOrder(DatabaseConnection):
         self.save()
 
     def update_order(self, order_id):
-        """ Update an accepted order """
+        """update order status"""
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
-                    """, ('completed', order_id))
+                    """, ('status', order_id))
         self.save()
+
+    # def update_order(self, order_id):
+    #     """ Update an accepted order """
+    #     self.cursor.execute("""
+    #     UPDATE foodorders SET status=%s WHERE id=%s
+    #                 """, ('completed', order_id))
+    #     self.save()
 
     def serialize(self):
         ''' returns a dictioanry from the object'''

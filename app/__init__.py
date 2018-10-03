@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
-from app.api.v2.admin import PlaceNewMenu, AllMenu, SpecificMenu, AcceptOrder, CompleteOrder, DeclineOrder, GetSpecificOrder,AllUserOrders
+from app.api.v2.admin import PlaceNewMenu, AllMenu, SpecificMenu, AcceptOrder, CompleteOrder, GetSpecificOrder,AllUserOrders, UpdateStatus
 from app.api.v2.auth import Login, SignUp
 from app.api.v2.user.users import PlaceOrder, GetOrders
 
@@ -19,9 +19,9 @@ def create_app(config_name):
 
     api = Api(app)
 
-    from .api.v2.auth import auth_blueprint 
-    auth = Api(auth_blueprint)
-    app.register_blueprint(auth_blueprint, url_prefix="/api/v2/auth")
+    from .api.v2.auth import AUTH_BLUEPRINT 
+    auth = Api(AUTH_BLUEPRINT)
+    app.register_blueprint(AUTH_BLUEPRINT, url_prefix="/api/v2/auth")
 
 
     auth.add_resource(SignUp, '/signup')
@@ -29,9 +29,9 @@ def create_app(config_name):
     
 
 
-    from .api.v2.user import user_blueprint
-    user = Api(user_blueprint)
-    app.register_blueprint(user_blueprint, url_prefix="/api/v2/users")
+    from .api.v2.user import USER_BLUEPRINT
+    user = Api(USER_BLUEPRINT)
+    app.register_blueprint(USER_BLUEPRINT, url_prefix="/api/v2/users")
 
     user.add_resource(PlaceOrder, '/orders/<int:id>')
     user.add_resource(GetOrders, '/orders')
@@ -39,9 +39,9 @@ def create_app(config_name):
 
 
 
-    from .api.v2.admin import admin_blueprint 
-    admin = Api(admin_blueprint)
-    app.register_blueprint(admin_blueprint, url_prefix="/api/v2")
+    from .api.v2.admin import ADMIN_BLUEPRINT
+    admin = Api(ADMIN_BLUEPRINT)
+    app.register_blueprint(ADMIN_BLUEPRINT, url_prefix="/api/v2")
 
 
     admin.add_resource(PlaceNewMenu, '/menu')
@@ -52,6 +52,7 @@ def create_app(config_name):
     admin.add_resource(CompleteOrder, '/orders/<int:id>/complete')
     admin.add_resource(DeclineOrder, '/orders/<int:id>/decline')
     admin.add_resource(AllUserOrders, '/orders')
+    admin.add_resource(UpdateStatus, '/update/order/<int:id>')
 
 
     api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>')

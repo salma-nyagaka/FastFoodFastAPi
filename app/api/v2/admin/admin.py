@@ -133,3 +133,28 @@ class CompleteOrder(Resource):
 
         order.complete_accepted_order(id)
         return {'message': 'Order completed'}, 200
+
+
+class UpdateStatus(Resource):
+    '''upodate order status'''
+    parser = reqparse.RequestParser()
+    parser.add_argument('status', type=str, required=True,
+                        help="Enter valid status")
+    @jwt_required
+    def put(self, id):
+        '''update status to accept, decline, complete'''
+        data = UpdateStatus.parser.parse_args()
+        order = FoodOrder().get_by_id(id)
+        status = data['status']
+
+        if order:
+            order.status = data['status']
+            return{"order":  order.serialize()}, 201
+        
+        return{'message': "Order not found"}
+
+
+        
+
+
+
