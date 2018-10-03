@@ -36,6 +36,7 @@ class User(DatabaseConnection):
 
     def drop_tables(self):
         ''' Drop tables'''
+        self.drop_tables
         cursor = self.connection.cursor()
         cursor.execute(
             ''' DROP TABLE IF EXISTS users'''
@@ -147,7 +148,7 @@ class FoodMenu(DatabaseConnection):
         self.cursor.close()
 
     def add(self):
-        ''' add user to the users table'''
+        ''' add orders to the food orders table'''
         cursor = self.connection.cursor()
         cursor.execute('''
             INSERT INTO foodmenu(name, price, description, date)
@@ -158,7 +159,7 @@ class FoodMenu(DatabaseConnection):
         self.connection.commit()
 
     def get_by_id(self, item_id):
-        ''' Get user by username '''
+        ''' Get user by food id '''
         cursor = self.connection.cursor()
         cursor.execute(   
             "SELECT * FROM foodmenu WHERE id=%s", (item_id,)
@@ -206,7 +207,7 @@ class FoodMenu(DatabaseConnection):
         )
 
     def obectify_fooditem(self, data):
-        ''' Map a user to an object '''
+        ''' Map a fooditem to an object '''
         item = FoodMenu(name=data[1], description=data[2], price=data[3])
         item.id = data[0]
         item.date_created = data[4]
