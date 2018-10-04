@@ -1,3 +1,4 @@
+''' module imports'''
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import (jwt_required, get_jwt_identity)
 
@@ -7,6 +8,7 @@ from app.api.v2.model import FoodOrder, FoodMenu
 
 
 class PlaceNewMenu(Resource):
+    '''place a new food menu item'''
     parser = reqparse.RequestParser()
     parser.add_argument('name', type=str, required=True,
                         help="This field cannot be left blank")
@@ -20,27 +22,23 @@ class PlaceNewMenu(Resource):
     @jwt_required
     def post(self):
         ''' place new menu'''
-        current_user = get_jwt_identity()
-        print(current_user)
+        data = PlaceNewMenu.parser.parse_args()
+        name = data['name']
+        description = data['description']
+        price = data['price']
 
-        if(current_user["is_admin"]):
-            data = PlaceNewMenu.parser.parse_args()
-            name = data['name']
-            description = data['description']
-            price = data['price']
-
-            if not Validators().valid_food_name(name):
-                return {'message': 'Enter valid food name'}, 400
-            if not Validators().valid_food_description(description):
-                return {'message': 'Enter valid food description'}, 400
-            menu = FoodMenu(name=name, description=description, price=price)
-            menu.add()
-            return {"message": "Food menu created"}, 201
-        return {"message": "You are not authorized to create a new menu"}, 403
+        if not Validators().valid_food_name(name):
+            return {'message': 'Enter valid food name'}, 400
+        if not Validators().valid_food_description(description):
+            return {'message': 'Enter valid food description'}, 400
+        menu = FoodMenu(name=name, description=description, price=price)
+        menu.add()
+        meal = FoodMenu().get_by_name(name)
+        return {"message": "Food menu created", "meal":meal.serialize()}, 201
 
 
 class AllMenu(Resource):
-
+    '''get all menu'''
     @jwt_required
     def get(self):
         """ Get all food items """
@@ -59,9 +57,9 @@ class AllMenu(Resource):
 
 
 class SpecificMenu(Resource):
-
+    '''get specific menu'''
     @jwt_required
-    def delete(self, id):
+    def delete(self, _id):
         ''' Delete a specific menu '''
 
         menu = FoodMenu().get_by_id(id)
@@ -71,7 +69,7 @@ class SpecificMenu(Resource):
         return {'message': "Menu item not found"}
 
     @jwt_required
-    def get(self, id):
+    def get(self, _id):
         menu = FoodMenu().get_by_id(id)
 
         if menu:
@@ -81,7 +79,7 @@ class SpecificMenu(Resource):
 
 
 class AllUserOrders(Resource):
-
+    '''get all the orders made by users'''
     @jwt_required
     def get(self):
         ''' get all food orders '''
@@ -89,15 +87,15 @@ class AllUserOrders(Resource):
         foodorder = FoodOrder()
         if foodorder.get_all():
             return {'Food Orders': [foodorder.serialize() for foodorder
-                    in foodorder.get_all()]}, 200
+                                    in foodorder.get_all()]}, 200
         return {'message': "Not found"}, 404
 
 
 class GetSpecificOrder(Resource):
-
+    '''get a specific user order'''
     @jwt_required
-    def get(self, id):
-        ''' get a specific menu '''
+    def get(self, _id):
+        ''' get a specific order '''
 
         order = FoodOrder().get_by_id(id)
 
@@ -107,62 +105,56 @@ class GetSpecificOrder(Resource):
 
 
 class AcceptOrder(Resource):
-    
-
+    '''update status'''
     @jwt_required
-    def put(self, id):
+    def put(self, _id):
         ''' Update the status to accept '''
-        current_user = get_jwt_identity()
-        print(current_user)
+        order = FoodOrder().get_by_id(id)
+        if not order:
+            return {'message': "Not found"}, 404
+        if order.status != "pending":
+            return {'message': 'Order is {}'.format(order.status)}
 
-        if(current_user["is_admin"]):
-            order = FoodOrder().get_by_id(id)
-            if not order:
-                return {'message': "Not found"}, 404
-            if order.status != "pending":
-                return {'message': 'Order is {}'.format(order.status)}
-
-            order.accept_order(id)
-            return {'message': 'Order accepted'}, 200
-        return {"message": "You are not authorized to mark order as accepted"}, 403
+        order.accept_order(id)
+        return {'message': 'Order accepted'}, 200
 
 
 class CompleteOrder(Resource):
-
+    '''update order status'''
     @jwt_required
-    def put(self, id):
+    def put(self, _id):
         ''' Update the status of an order to completed '''
-        current_user = get_jwt_identity()
-        print(current_user)
+        order = FoodOrder().get_by_id(id)
 
-        if(current_user["is_admin"]):
-            order = FoodOrder().get_by_id(id)
+        if not order:
+            return {'message': "Not found"}, 404
+        if order.status != "accepted":
+            return {'message': 'Order  is{}'.format(order.status)}
 
-            if not order:
-                return {'message': "Not found"}, 404
-            if order.status != "accepted":
-                return {'message': 'Order  is{}'.format(order.status)}
-
-            order.complete_accepted_order(id)
-            return {'message': 'Order completed'}, 200
-        return {"message": "You are not authorized to mark order as completed"}, 403
+        order.complete_accepted_order(id)
+        return {'message': 'Order completed'}, 200
 
 
-class DeclineOrder(Resource):
-
+class UpdateStatus(Resource):
+    '''upodate order status'''
+    parser = reqparse.RequestParser()
+    parser.add_argument('status', type=str, required=True,
+                        help="Enter valid status")
     @jwt_required
     def put(self, id):
-        ''' Update the status of an order '''
-        current_user = get_jwt_identity()
-        print(current_user)
+        '''update status to accept, decline, complete'''
+        data = UpdateStatus.parser.parse_args()
+        order = FoodOrder().get_by_id(id)
+        status = data['status']
+
+        if order:
+            order.status = data['status']
+            return{"order":  order.serialize()}, 201
         
-        if(current_user["is_admin"]):
-            order = FoodOrder().get_by_id(id)
-            if not order:
-                return {'message': "Not found"}, 404
-            if order.status != "pending":
-                return {'message': 'Order  is{}'.format(order.status)}
-            order.complete_accepted_order(id)
-            return {'message': 'Order declined'}, 200
-        return {"message": "You are not authorized to decline an order"}, 403
+        return{'message': "Order not found"}
+
+
+        
+
+
 
