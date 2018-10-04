@@ -33,7 +33,7 @@ class PlaceOrder(Resource):
 
         order.add()
         myorder = FoodOrder().get_by_destination(destination)
-        return {"message": "Food menu created", "meal":myorder.serialize()}, 201
+        return {"message": "Food order created", "meal":myorder.serialize()}, 201
 
 
 class GetOrders(Resource):

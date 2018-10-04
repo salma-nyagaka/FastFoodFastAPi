@@ -23,8 +23,6 @@ class PlaceNewMenu(Resource):
     def post(self):
         ''' place new menu'''
         current_user = get_jwt_identity()
-        print(current_user)
-
         if current_user['is_admin']:
             data = PlaceNewMenu.parser.parse_args()
             name = data['name']
@@ -42,7 +40,7 @@ class PlaceNewMenu(Resource):
             menu.add()
             meal = FoodMenu().get_by_name(name)
             return {"message": "Food menu created", "meal":meal.serialize()}, 201
-        return {"message": "Not authorized to place a menu"}, 403
+        return {"message": "Authorization required"}, 403
 
 
 class AllMenu(Resource):
@@ -67,16 +65,6 @@ class AllMenu(Resource):
 class SpecificMenu(Resource):
     '''get specific menu'''
     @jwt_required
-    def delete(self, id):
-        ''' Delete a specific menu '''
-
-        menu = FoodMenu().get_by_id(id)
-        if menu:
-            menu.delete(id)
-            return {'message': "Successfully Deleted"}, 200
-        return {'message': "Menu item not found"}
-
-    @jwt_required
     def get(self, id):
         menu = FoodMenu().get_by_id(id)
 
@@ -91,12 +79,16 @@ class AllUserOrders(Resource):
     @jwt_required
     def get(self):
         ''' get all food orders '''
+        current_user = get_jwt_identity()
+        if current_user['is_admin']:
 
-        foodorder = FoodOrder()
-        if foodorder.get_all():
-            return {'Food Orders': [foodorder.serialize() for foodorder
-                                    in foodorder.get_all()]}, 200
-        return {'message': "Not found"}, 404
+            foodorder = FoodOrder()
+            if foodorder.get_all():
+                return {'Food Orders': [foodorder.serialize() for foodorder
+                                        in foodorder.get_all()]}, 200
+            return {'message': "Not found"}, 404
+        return {"message": "Authorization required"}, 403
+
 
 
 class GetSpecificOrder(Resource):
@@ -104,42 +96,13 @@ class GetSpecificOrder(Resource):
     @jwt_required
     def get(self, id):
         ''' get a specific order '''
-
-        order = FoodOrder().get_by_id(id)
-        if order:
-            return {"Menu": order.serialize()}, 200
-        return {'message': "Not found"}, 404
-
-
-class AcceptOrder(Resource):
-    '''update status'''
-    @jwt_required
-    def put(self, id):
-        ''' Update the status to accept '''
-        order = FoodOrder().get_by_id(id)
-        if not order:
+        current_user = get_jwt_identity()
+        if current_user['is_admin']:
+            order = FoodOrder().get_by_id(id)
+            if order:
+                return {"Menu": order.serialize()}, 200
             return {'message': "Not found"}, 404
-        if order.status != "pending":
-            return {'message': 'Order is {}'.format(order.status)}
-
-        order.accept_order(id)
-        return {'message': 'Order accepted'}, 200
-
-
-class CompleteOrder(Resource):
-    '''update order status'''
-    @jwt_required
-    def put(self, id):
-        ''' Update the status of an order to completed '''
-        order = FoodOrder().get_by_id(id)
-
-        if not order:
-            return {'message': "Not found"}, 404
-        if order.status != "accepted":
-            return {'message': 'Order  is{}'.format(order.status)}
-
-        order.complete_accepted_order(id)
-        return {'message': 'Order completed'}, 200
+        return {"message": "Authorization required"}, 403
 
 
 class UpdateStatus(Resource):
@@ -150,14 +113,18 @@ class UpdateStatus(Resource):
     @jwt_required
     def put(self, id):
         '''update status to accept, decline, complete'''
-        data = UpdateStatus.parser.parse_args()
-        order = FoodOrder().get_by_id(id)
+        current_user = get_jwt_identity()
+        if current_user['is_admin']:
+            data = UpdateStatus.parser.parse_args()
+            order = FoodOrder().get_by_id(id)
 
-        if order:
-            order.status = data['status']
-            return{"order":  order.serialize()}, 201
-        
-        return{'message': "Order not found"}
+            if order:
+                order.status = data['status']
+                return{"order":  order.serialize()}, 201
+            
+            return{'message': "Order not found"}
+        return {"message": "Authorization required"}, 403
+
 
 
         
