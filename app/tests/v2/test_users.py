@@ -1,4 +1,4 @@
-
+''''tests for testing the endpoints for a customer'''
 import json
 from unittest import TestCase
 from manage import drop, create, create_admin
@@ -7,6 +7,7 @@ from app import create_app
 
 
 class TestOrders(TestCase):
+    '''sets up configurations for testing'''
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
@@ -54,12 +55,10 @@ class TestOrders(TestCase):
 
     def get_token(self):
         """ function to get user token """
-
         response = self.login()
         
         token = json.loads(response.data.decode('utf-8')).get('token', None)
-
-
+        
         return "Bearer {}".format(token)
 
     def test_signup(self):
@@ -69,21 +68,15 @@ class TestOrders(TestCase):
 
     def test_place_an_order(self):
         '''Test for a user to place an order'''
-        
-
         token = self.get_token()
         order_data = {
             "destination": "Kabarak",
-            
         }
-        
         response = self.client.post(
             "/api/v2/users/menu/1/orders",
-            data  = json.dumps(order_data),
+            data=json.dumps(order_data),
             headers={"content-type": "application/json",
-                     'Authorization': token
-                 }
-         )
-
+                     'Authorization': token}
+            )
         response_data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(response_data['message'], "Order has been placed", 404)        
+        self.assertEqual(response_data['message'], "Order has been placed", 404)
