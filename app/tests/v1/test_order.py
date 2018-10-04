@@ -1,3 +1,4 @@
+'''tests for the ednpoints'''
 import json
 from unittest import TestCase
 
@@ -6,6 +7,7 @@ from app import create_app
 
 
 class TestOrders(TestCase):
+    '''setups iup configurations for testing'''
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
@@ -22,16 +24,13 @@ class TestOrders(TestCase):
         order_data = {
             "name": "Burger",
             "description": "Beef burger",
-            "price": 60
-        }
+            "price": 60}
 
         response = self.client.post(
             "/api/v1/orders",
             data=json.dumps(order_data),
             headers={"content-type": "application/json"}
         )
-        print(response.data)
-
         response_data = json.loads(response.data.decode('utf-8'))
 
         self.assertEqual(response_data['message'], "Food order placed", 201)
@@ -41,8 +40,7 @@ class TestOrders(TestCase):
         data = {
             "name": "  ",
             "description": "Beef burger",
-            "price": 60
-        }
+            "price": 60}
 
         response = self.client.post(
             "/api/v1/orders",
@@ -59,8 +57,7 @@ class TestOrders(TestCase):
         data = {
             "name": "Burger",
             "description": " ",
-            "price": 60
-        }
+            "price": 60}
 
         response = self.client.post(
             "/api/v1/orders",
@@ -77,7 +74,8 @@ class TestOrders(TestCase):
         ''' Test to get all orders '''
 
         response = self.client.get(
-             "/api/v1/orders", content_type='application/json')
+            "/api/v1/orders",
+            content_type='application/json')
 
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
@@ -87,7 +85,8 @@ class TestOrders(TestCase):
         ''' Test to get specific order '''
 
         response = self.client.get(
-                "/api/v1/orders/1", content_type='application/json')
+            "/api/v1/orders/1",
+            content_type='application/json')
 
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
@@ -96,7 +95,8 @@ class TestOrders(TestCase):
         ''' Test to get all completed orders '''
 
         response = self.client.get(
-             "/api/v1/completed/orders", content_type='application/json')
+            "/api/v1/completed/orders",
+            content_type='application/json')
 
         data = json.loads(response.data.decode('utf-8'))
         print(data)
@@ -108,7 +108,8 @@ class TestOrders(TestCase):
         ''' Test to get all accepted orders '''
 
         response = self.client.get(
-             "/api/v1/accepted/orders", content_type='application/json')
+            "/api/v1/accepted/orders",
+            content_type='application/json')
 
         data = json.loads(response.data.decode('utf-8'))
         print(data)
@@ -120,7 +121,8 @@ class TestOrders(TestCase):
         ''' Test to get all declined orders '''
 
         response = self.client.get(
-             "/api/v1/declined/orders", content_type='application/json')
+            "/api/v1/declined/orders",
+            content_type='application/json')
 
         data = json.loads(response.data.decode('utf-8'))
         print(data)
@@ -164,8 +166,7 @@ class TestOrders(TestCase):
         order_data = {
             "name": "***",
             "description": "Sweet empty food",
-            "price": 20
-        }
+            "price": 20}
 
         response = self.client.post(
             "/api/v1/orders",
@@ -185,8 +186,7 @@ class TestOrders(TestCase):
         order_data = {
             "name": "Validfood",
             "description": "****",
-            "price": 20
-        }
+            "price": 20}
 
         response = self.client.post(
             "/api/v1/orders",
