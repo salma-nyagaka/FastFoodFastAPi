@@ -1,0 +1,7 @@
+************* Module __init__
+__init__.py:5:31: C0303: Trailing whitespace (trailing-whitespace)
+__init__.py:5:0: E0401: Unable to import '__init__.auth' (import-error)
+
+-------------------------------------
+Your code has been rated at -10.00/10
+
