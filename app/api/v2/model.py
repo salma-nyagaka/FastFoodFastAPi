@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash
 from app.api.v2.database import DatabaseConnection
+import psycopg2
 
 
 class User(DatabaseConnection):
@@ -18,6 +19,8 @@ class User(DatabaseConnection):
 
     def create_table(self):
         '''create users table'''
+        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
+
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             '''
@@ -29,7 +32,7 @@ class User(DatabaseConnection):
                 is_admin BOOL NOT NULL
             )'''
             )
-        self.save()
+        self.connection.commit()
 
     def drop_tables(self):
         '''Drop tables'''
@@ -323,30 +326,6 @@ class FoodOrder(DatabaseConnection):
         if order:
             return self.objectify_foodorder(order)
         return None
-
-    def accept_order(self, order_id):
-        """ Accept an order """
-        self.cursor = self.connection.cursor()
-        self.cursor.execute("""
-        UPDATE foodorders SET status=%s WHERE _id=%s
-                    """, ('accepted', order_id))
-        self.save()
-
-    def decline_order(self, order_id):
-        """ Decline an order """
-        self.cursor = self.connection.cursor()
-        self.cursor.execute("""
-        UPDATE foodorders SET status=%s WHERE id=%s
-                    """, ('declined', order_id))
-        
-        self.save()
-
-    def complete_accepted_order(self, order_id):
-        """ Complete an accepted order """
-        self.cursor.execute("""
-        UPDATE foodorders SET status=%s WHERE id=%s
-                    """, ('completed', order_id))
-        self.save()
 
     def update_order(self, order_id):
         """update order status"""
