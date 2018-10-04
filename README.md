@@ -55,7 +55,7 @@ git clone -b api-v2 https://github.com/salma-nyagaka/fasrfoodfast.git
 
     pip install -r requirements.txt
 
-# Run thee .env file
+# Run the .env file
 
     source .env
 
