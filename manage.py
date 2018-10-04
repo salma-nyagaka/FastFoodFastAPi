@@ -20,7 +20,7 @@ def create():
 
 def create_admin():
     admin = User(username='Admin', email='admin@gmail.com',
-                 password='Admin123',  confirm_password='Admin123', is_admin=True)
+                 password='Admin123', is_admin=True)
     admin.add()
 
 if __name__ == '__main__':

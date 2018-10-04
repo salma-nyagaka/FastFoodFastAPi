@@ -17,11 +17,10 @@ class SignUp(Resource):
 
     parser.add_argument('email', type=str, required=True,
                         help="This field cannot be left blank")
-
     parser.add_argument('password', type=str, required=True,
                         help="This field cannot be left blank")
 
-    parser.add_argument('confirmpassword', type=str,
+    parser.add_argument('confirm_password', type=str,
                         required=True, help="This field cannot be left blank")
 
     def post(self):
@@ -31,15 +30,15 @@ class SignUp(Resource):
         username = data['username']
         email = data['email']
         password = data['password']
-        confirmpassword = data['confirmpassword']
+        confirm_password = data['confirm_password']
 
-        if password != confirmpassword:
+        if password != confirm_password:
             return {'message': 'Password do not match'}, 400
 
 
-        if not Validators().valid_username(username):
+        if not Validators().valid_account(username):
             return {'message': 'Enter valid username'}, 400
-        if not Validators().valid_password(password):
+        if not Validators().valid_account(password):
             return {'message': 'Enter valid password'}, 400
         if not Validators().valid_email(email):
             return {'message': 'Enter valid email'}, 400
@@ -48,7 +47,7 @@ class SignUp(Resource):
         if User().get_by_email(email):
             return {'message': 'Email address exists'}, 409
 
-        user = User(username, email, password, confirmpassword)
+        user = User(username, email, password)
 
         user.add()
 

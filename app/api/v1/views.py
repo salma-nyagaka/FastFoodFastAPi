@@ -24,9 +24,9 @@ class PlaceNewOrder(Resource):
         description = data['description']
         price = data['price']
 
-        if not Validators().valid_food_name(name):
+        if not Validators().valid_food(name):
             return {'message': 'Enter valid name'}, 400
-        if not Validators().valid_food_description(description):
+        if not Validators().valid_food(description):
             return {'message': 'Enter valid food description'}, 400
 
         order = FoodOrder(name=name, description=description, price=price)

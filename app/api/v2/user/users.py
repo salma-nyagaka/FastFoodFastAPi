@@ -12,7 +12,7 @@ class PlaceOrder(Resource):
     parser.add_argument('destination', type=str, required=True,
                         help="This field cannot be left blank")
     @jwt_required
-    def post(self, _id):
+    def post(self, id):
         ''' place new order'''
 
         menu = FoodMenu().get_by_id(id)
@@ -21,7 +21,7 @@ class PlaceOrder(Resource):
             return {"message": "Food does not exist"}, 404
 
         current_user = get_jwt_identity()['username']
-
+        print(current_user)
         data = PlaceOrder.parser.parse_args()
 
         destination = data['destination']
@@ -42,8 +42,11 @@ class GetOrders(Resource):
     @jwt_required
     def get(self):
         ''' get all orders '''
+        
+        current_user = get_jwt_identity()['username']
+        print(current_user)
 
-        orders = FoodOrder().get_all()
+        orders = FoodOrder().get_all_orders_by_username(current_user)
         if orders:
             return {'Orders': [order.serialize() for order
                                in orders]}, 200

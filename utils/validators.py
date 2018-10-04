@@ -2,30 +2,19 @@ import re
 
 
 class Validators:
-    def valid_food_name(self, name):
+    def valid_food(self, food):
+        '''valid food item'''
         regex = "^[a-zA-Z_ ]+$"
-        return re.match(regex, name)
-
-    def valid_food_description(self, description):
-        regex = "^[a-zA-Z_ ]+$"
-        return re.match(regex, description)
+        return re.match(regex, food)
 
     def valid_destination(self, destination):
         regex = "^[a-zA-Z0-9_ ]+$"
         return re.match(regex, destination)
 
-    def valid_name(self, name):
-        regex = "^[a-zA-Z_ ]+$"
-        return re.match(regex, name)
-    
-    def valid_username(self, username):
+    def valid_account(self, account):
+        '''valid password and username'''
         regex = "^[a-zA-Z0-9_ ]+$"
-        return re.match(regex, username)
-
-    def valid_password(self, password):
-        """ valid password """
-        regex = "^[a-zA-Z0-9_ ]+$"
-        return re.match(regex, password)
+        return re.match(regex, account)
 
     def valid_email(self, email):
         """valid email"""

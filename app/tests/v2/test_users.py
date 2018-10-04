@@ -2,6 +2,7 @@
 import json
 from unittest import TestCase
 from manage import drop, create, create_admin
+from run import app
 
 from app import create_app
 
@@ -14,76 +15,144 @@ class TestOrders(TestCase):
             drop()
             create()
             create_admin()
-        self.signup_response = self.signup()
-        
-    def tearDown(self):
-        """Method to clear all test side effects before the next test"""
-        with self.app.app_context():
-            drop()
+        self.order_data = {
+            "name": "Burger",
+            "description": "Beef burger",
+            "price": 60
+        }
+
+        self.user_orders = {
+            "destination": "juja",
+            "status": "pending",
+            "name": "Burger",
+            
+        }
+    def login_admin(self):
+        """ test for loggin in """
+        login_data = {
+            "username": "Admin",
+            "password": "Admin123"
+        }
+
+        response = self.client.post(
+            "api/v2/auth/login",
+            data=json.dumps(login_data),
+            headers={'content-type': 'application/json'}
+        )
+    
+        return response
+
+    def get_admin_token(self):
+        """ function to get user token """
+
+        response = self.login_admin()
+        token = json.loads(response.data.decode('utf-8')).get('token', None)
+        return token
+
 
     def signup(self):
         """ function for signing up"""
         signup_data = {
-            "username": "salma",
-            "email": "salma@gmail.com",
-            "password": "Password123",
-            "confirmpassword": "Password123"
+            "username": "salmaa",
+            "email": "salmaa@email.com",
+            "password": "passmesome",
+            "confirm_password": "passmesome"
         }
 
         response = self.client.post(
-            "/api/v2/auth/signup",
+            "api/v2/auth/signup",
             data=json.dumps(signup_data),
             headers={'content-type': 'application/json'}
         )
         return response
 
+    
     def login(self):
-        """ function for loggin in """
+        """ test for signing up"""
+        self.signup()
+
         login_data = {
-            "username": "salma",
-            "password": "Password123"
+            "username": "salmaa",
+            "password": "passmesome"
         }
 
         response = self.client.post(
-            "/api/v2/auth/login",
+            "api/v2/auth/login",
             data=json.dumps(login_data),
             headers={'content-type': 'application/json'}
         )
 
         return response
 
+
     def get_token(self):
         """ function to get user token """
 
         response = self.login()
-        
         token = json.loads(response.data.decode('utf-8')).get('token', None)
+        return token
 
+    def create_menu(self):
+        '''function to create a menu'''
+        data = {
+            "name": "Burger",
+            "description": "Cheese burger",
+            "price": 20.0
+        }
 
-        return "Bearer {}".format(token)
+        response = self.client.post(
+            "api/v2/menu",
+            data=json.dumps(data),
+            headers={
+                'content-type': 'application/json',
+                'Authorization': 'Bearer {}'.format(self.get_admin_token())
+            }
+        )
 
-    def test_signup(self):
-        """ test for signing up"""
-        response = self.signup_response
+        return response
+    
+    def test_create_menu(self):
+        '''test for creating menu'''
+        data = {
+            "name": "Burger",
+            "description": "Cheese burger",
+            "price": 20.0
+        }
+
+        response = self.client.post(
+            "api/v2/menu",
+            data=json.dumps(data),
+            headers={
+                'content-type': 'application/json',
+                'Authorization': 'Bearer {}'.format(self.get_admin_token())
+            }
+        )
+
         self.assertEqual(response.status_code, 201)
 
-    def test_place_an_order(self):
-        '''Test for a user to place an order'''
-        
-
-        token = self.get_token()
-        order_data = {
-            "destination": "Kabarak",
-            
+    
+    def test_place_order(self):
+        '''test for placing an order'''
+        res = self.create_menu()
+        print(res.data)
+        data = {
+            'destination': 'Roosters'
         }
-        
-        response = self.client.post(
-            "/api/v2/users/menu/1/orders",
-            data  = json.dumps(order_data),
-            headers={"content-type": "application/json",
-                     'Authorization': token
-                 }
-         )
 
-        response_data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(response_data['message'], "Order has been placed", 404)        
+
+        response = self.client.post(
+            "api/v2/users/orders/1",
+            data=json.dumps(data),
+            headers={
+                'content-type': 'application/json',
+                'Authorization': 'Bearer {}'.format(self.get_token())
+            }
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+
+    def tearDown(self):
+        with app.app_context():
+            drop()
+        

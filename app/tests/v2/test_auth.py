@@ -2,6 +2,7 @@
 import json
 from unittest import TestCase
 from manage import drop, create, create_admin
+from run import app
 
 from app import create_app
 
@@ -28,7 +29,7 @@ class TestOrders(TestCase):
         }
 
     def signup(self):
-        """ test for signing up"""
+        """ function for signing up"""
         signup_data = {
             "username": "salma123",
             "email": "salma@gmail.com",
@@ -41,14 +42,76 @@ class TestOrders(TestCase):
             data=json.dumps(signup_data),
             headers={'content-type': 'application/json'}
         )
-        response_data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(response_data['message'], "successfully created a new account", 201)
+        return response
 
-    def login(self):
-        """ test for loggin in """
+
+    def test_signup(self):
+        """ test for signing up"""
+        signup_data = {
+            "username": "salmaa",
+            "email": "salmaa@email.com",
+            "password": "passmesome",
+            "confirm_password": "passmesome"
+        }
+
+        response = self.client.post(
+            "api/v2/auth/signup",
+            data=json.dumps(signup_data),
+            headers={'content-type': 'application/json'}
+        )
+        self.assertEqual(response.status_code, 201)
+    
+    def test_password_mismatch(self):
+        """ test for signing up"""
+        signup_data = {
+            "username": "salmaa",
+            "email": "salmaa@email.com",
+            "password": "passmesome",
+            "confirm_password": "passmes123ome"
+        }
+
+        response = self.client.post(
+            "api/v2/auth/signup",
+            data=json.dumps(signup_data),
+            headers={'content-type': 'application/json'}
+        )
+        self.assertEqual(response.status_code, 400)
+    
+    def test_invalid_email(self):
+        """ test for signing up"""
+        signup_data = {
+            "username": "salmaa",
+            "email": "salmaaemail.com",
+            "password": "passmesome",
+            "confirm_password": "passmes123ome"
+        }
+
+        response = self.client.post(
+            "api/v2/auth/signup",
+            data=json.dumps(signup_data),
+            headers={'content-type': 'application/json'}
+        )
+        self.assertEqual(response.status_code, 400)
+
+    
+    def test_login(self):
+        """ test for signing up"""
+        signup_data = {
+            "username": "salmaa",
+            "email": "salmaa@email.com",
+            "password": "passmesome",
+            "confirm_password": "passmesome"
+        }
+
+        self.client.post(
+            "api/v2/auth/signup",
+            data=json.dumps(signup_data),
+            headers={'content-type': 'application/json'}
+        )
+
         login_data = {
-            "username": "Salma",
-            "password": "salma123"
+            "username": "salmaa",
+            "password": "passmesome"
         }
 
         response = self.client.post(
@@ -57,8 +120,11 @@ class TestOrders(TestCase):
             headers={'content-type': 'application/json'}
         )
 
-        return response
+        print(response.data)
+
+        self.assertEqual(response.status_code, 200)
 
     def tearDown(self):
-        drop()
+        with app.app_context():
+            drop()
         

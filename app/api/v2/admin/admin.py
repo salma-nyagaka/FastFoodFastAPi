@@ -22,19 +22,27 @@ class PlaceNewMenu(Resource):
     @jwt_required
     def post(self):
         ''' place new menu'''
-        data = PlaceNewMenu.parser.parse_args()
-        name = data['name']
-        description = data['description']
-        price = data['price']
+        current_user = get_jwt_identity()
+        print(current_user)
 
-        if not Validators().valid_food_name(name):
-            return {'message': 'Enter valid food name'}, 400
-        if not Validators().valid_food_description(description):
-            return {'message': 'Enter valid food description'}, 400
-        menu = FoodMenu(name=name, description=description, price=price)
-        menu.add()
-        meal = FoodMenu().get_by_name(name)
-        return {"message": "Food menu created", "meal":meal.serialize()}, 201
+        if current_user['is_admin']:
+            data = PlaceNewMenu.parser.parse_args()
+            name = data['name']
+            description = data['description']
+            price = data['price']
+            
+
+            if not Validators().valid_food(name):
+                return {'message': 'Enter valid food name'}, 400
+            if not Validators().valid_food(description):
+                return {'message': 'Enter valid food description'}, 400
+            if FoodMenu().get_by_name(name):
+                return {'message': 'This food already exists'}, 409
+            menu = FoodMenu(name=name, description=description, price=price)
+            menu.add()
+            meal = FoodMenu().get_by_name(name)
+            return {"message": "Food menu created", "meal":meal.serialize()}, 201
+        return {"message": "Not authorized to place a menu"}, 403
 
 
 class AllMenu(Resource):
@@ -59,7 +67,7 @@ class AllMenu(Resource):
 class SpecificMenu(Resource):
     '''get specific menu'''
     @jwt_required
-    def delete(self, _id):
+    def delete(self, id):
         ''' Delete a specific menu '''
 
         menu = FoodMenu().get_by_id(id)
@@ -69,7 +77,7 @@ class SpecificMenu(Resource):
         return {'message': "Menu item not found"}
 
     @jwt_required
-    def get(self, _id):
+    def get(self, id):
         menu = FoodMenu().get_by_id(id)
 
         if menu:
@@ -94,11 +102,10 @@ class AllUserOrders(Resource):
 class GetSpecificOrder(Resource):
     '''get a specific user order'''
     @jwt_required
-    def get(self, _id):
+    def get(self, id):
         ''' get a specific order '''
 
         order = FoodOrder().get_by_id(id)
-
         if order:
             return {"Menu": order.serialize()}, 200
         return {'message': "Not found"}, 404
@@ -107,7 +114,7 @@ class GetSpecificOrder(Resource):
 class AcceptOrder(Resource):
     '''update status'''
     @jwt_required
-    def put(self, _id):
+    def put(self, id):
         ''' Update the status to accept '''
         order = FoodOrder().get_by_id(id)
         if not order:
@@ -122,7 +129,7 @@ class AcceptOrder(Resource):
 class CompleteOrder(Resource):
     '''update order status'''
     @jwt_required
-    def put(self, _id):
+    def put(self, id):
         ''' Update the status of an order to completed '''
         order = FoodOrder().get_by_id(id)
 
@@ -145,7 +152,6 @@ class UpdateStatus(Resource):
         '''update status to accept, decline, complete'''
         data = UpdateStatus.parser.parse_args()
         order = FoodOrder().get_by_id(id)
-        status = data['status']
 
         if order:
             order.status = data['status']

@@ -19,28 +19,40 @@ class TestOrders(TestCase):
             "price": 60
         }
 
-    def signup(self):
-        """ test for signing up"""
-        signup_data = {
-            "username": "salma123",
-            "email": "salma@gmail.com",
-            "password": "Password123",
-            "confirmpassword": "Password123"
-        }
-
-        response = self.client.post(
-            "api/v2/auth/signup",
-            data=json.dumps(signup_data),
-            headers={'content-type': 'application/json'}
-        )
-        response_data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(response_data['message'], "successfully created a new account", 201)
 
     def login(self):
         """ test for loggin in """
         login_data = {
             "username": "Admin",
             "password": "Admin123"
+        }
+
+        response = self.client.post(
+            "api/v2/auth/login",
+            data=json.dumps(login_data),
+            headers={'content-type': 'application/json'}
+        )
+
+        return response
+
+    def user_login(self):
+        """ test for signing up"""
+        signup_data = {
+            "username": "salmaa",
+            "email": "salmaa@email.com",
+            "password": "passmesome",
+            "confirm_password": "passmesome"
+        }
+
+        self.client.post(
+            "api/v2/auth/signup",
+            data=json.dumps(signup_data),
+            headers={'content-type': 'application/json'}
+        )
+
+        login_data = {
+            "username": "salmaa",
+            "password": "passmesome"
         }
 
         response = self.client.post(
@@ -59,7 +71,15 @@ class TestOrders(TestCase):
 
         return token
 
-    def test_place_new_order(self):
+    def get_user_token(self):
+        """ function to get user token """
+
+        response = self.user_login()
+        token = json.loads(response.data.decode('utf-8')).get('token', None)
+
+        return token
+
+    def test_place_new_menu(self):
         ''' Test to place an order '''
 
         token = self.get_token()
@@ -78,7 +98,7 @@ class TestOrders(TestCase):
         )
     
         response_data = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(response_data['message'], "Food order placed", 201)
+        self.assertEqual(response_data['message'], "Food menu created", 201)
     
     def test_all_menu(self):
         '''Test get all menu'''
@@ -92,7 +112,7 @@ class TestOrders(TestCase):
                 }
         )
         response = self.client.get(
-            "/api/v2/allmenu",
+            "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
                     'Authorization': 'Bearer {}'.format(token)
@@ -100,6 +120,21 @@ class TestOrders(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+    def test_empty_menu(self):
+        '''Test get all menu'''
+
+        token = self.get_token()
+
+        response = self.client.get(
+            "/api/v2/menu",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+
+        self.assertEqual(response.status_code, 404)
 
     def test_get_specific_menu(self):
         '''Test to get a specific menu'''
@@ -120,35 +155,95 @@ class TestOrders(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    # def test_get_all_users_orders(self):
-    #     '''Test to get all orders from users'''
+    def test_get_specific_order(self):
+        '''Test to get a specific menu'''
+        user_token = self.get_user_token()
+        token = self.get_token()
 
-    #     token = self.get_token()
+        self.client.post(
+            "/api/v2/menu",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
 
-    #     response = self.client.get(
-    #         "/api/v2/orders",
-    #         data=json.dumps(self.user_orders),
-    #         headers={"content-type": "application/json",
-    #                 'Authorization': 'Bearer {}'.format(token)
-    #             }
-    #     )
-    #     self.assertEqual(response.status_code, 200)
+        data = {
+            'destination': 'Roysa'
+        }
 
-    # def test_get_update_order_to_accept(self):
-    #     '''Test to update order status'''
+        response = self.client.post(
+            "/api/v2/users/orders/1",
+            data=json.dumps(data),
+            headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(user_token)
+                }
+        )
 
-    #     token = self.get_token()
+        response= self.client.get(
+             "/api/v2/orders/1",
+             data=json.dumps(self.order_data),
+             headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+        self.assertEqual(response.status_code, 200)
 
-    #     response = self.client.get(
-    #         "/api/v2/1/accept",
-    #         data=json.dumps(self.user_orders),
+    def test_get_non_existing_menu(self):
+        '''Test to get a specific menu'''
+        token = self.get_token()
+        response = self.client.post(
+            "/api/v2/menu",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+        response= self.client.get(
+             "/api/v2/menu/2331",
+             data=json.dumps(self.order_data),
+             headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_update_order_status(self):
+        '''Test to get a specific menu'''
+        user_token = self.get_user_token()
+        token = self.get_token()
+
+        self.client.post(
+            "/api/v2/menu",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+
+        data = {
+            'destination': 'Roysa'
+        }
         
-    #         headers={"content-type": "application/json",
-    #                 'Authorization': 'Bearer {}'.format(token)
-    #             }
-    #     )
-    #     self.assertEqual(response.status_code, 200)
+        status = {
+            "status": "accept"
+        }
 
+        self.client.post(
+            "/api/v2/users/orders/1",
+            data=json.dumps(data),
+            headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(user_token)
+                }
+        )
 
+        response= self.client.put(
+             "/api/v2/update/order/1",
+             data=json.dumps(status),
+             headers={"content-type": "application/json",
+                    'Authorization': 'Bearer {}'.format(token)
+                }
+        )
+        self.assertEqual(response.status_code, 201)
 
-    
+   

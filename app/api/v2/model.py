@@ -8,19 +8,16 @@ from app.api.v2.database import DatabaseConnection
 class User(DatabaseConnection):
     '''create an instance of the class'''
     def __init__(self, username=None, email=None,
-                 password=None, confirm_password=None,
-                 is_admin=False):
+                 password=None, is_admin=False):
         super().__init__()
         self.username = username
         self.email = email
         if password:
             self.password = generate_password_hash(password)
-        self.confirm_password = confirm_password
         self.is_admin = is_admin
 
     def create_table(self):
         '''create users table'''
-        self.drop_tables
         self.cursor.execute(
             '''
             CREATE TABLE IF NOT EXISTS users(
@@ -28,7 +25,6 @@ class User(DatabaseConnection):
                 username VARCHAR (200) NOT NULL,
                 email VARCHAR (200) NOT NULL,
                 password VARCHAR (200) NOT NULL,
-                confirm_password VARCHAR (200) NOT NULL,
                 is_admin BOOL NOT NULL
             )'''
             )
@@ -47,11 +43,11 @@ class User(DatabaseConnection):
         self.cursor.execute(
             '''
             INSERT INTO users(username, email,
-            password, confirm_password, is_admin)
-            VALUES(%s, %s, %s, %s, %s)
+            password, is_admin)
+            VALUES(%s, %s, %s, %s)
             ''',
             (self.username, self.email, self.password,
-             self.confirm_password, self.is_admin)
+             self.is_admin)
         )
         self.save()
 
@@ -91,7 +87,6 @@ class User(DatabaseConnection):
             username=self.username,
             email=self.email,
             password=self.password,
-            confirm_password=self.confirm_password,
             is_admin=self.is_admin
         )
 
@@ -147,10 +142,10 @@ class FoodMenu(DatabaseConnection):
         self.save()
 
 
-    def get_by_id(self, item_id):
+    def get_by_id(self, id):
         ''' Get user by food id '''
         self.cursor.execute(   
-            "SELECT * FROM foodmenu WHERE id=%s", (item_id,)
+            "SELECT * FROM foodmenu WHERE id=%s", (id,)
         )
 
         item = self.cursor.fetchone()
@@ -285,6 +280,19 @@ class FoodOrder(DatabaseConnection):
             return [self.objectify_foodorder(foodorder)
                     for foodorder in Foodorders]
         return None
+    
+    def get_all_orders_by_username(self, username):
+        """ get all orders available by username """
+        self.cursor.execute("SELECT * FROM foodorders WHERE requester=%s", (username, ))
+
+        food_orders = self.cursor.fetchall()
+
+        self.save()
+
+        if food_orders:
+            return [self.objectify_foodorder(foodorder)
+                    for foodorder in food_orders]
+        return None
 
     def get_by_id(self, order_id):
         ''' Get order by ID '''
@@ -328,28 +336,22 @@ class FoodOrder(DatabaseConnection):
                     """, ('status', order_id))
         self.save()
 
-    # def update_order(self, order_id):
-    #     """ Update an accepted order """
-    #     self.cursor.execute("""
-    #     UPDATE foodorders SET status=%s WHERE id=%s
-    #                 """, ('completed', order_id))
-    #     self.save()
-
     def serialize(self):
         ''' returns a dictioanry from the object'''
         return dict(
-            id=self._id,
+            id=self.id,
             name=self.name,
             destination=self.destination,
             status=self.status,
-            date=str(self.date_created)
+            date=str(self.date_created),
+            requester=self.requester
         )
 
     def objectify_foodorder(self, data):
         ''' Map a foodorder to an object '''
         order = FoodOrder(
             requester=data[1], name=data[2], destination=data[3])
-        order._id = data[0]
+        order.id = data[0]
         order.status = data[4]
         order.date_created = data[5]
         self = order
