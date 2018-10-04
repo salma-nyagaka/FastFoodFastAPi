@@ -1,5 +1,8 @@
+'''module imports'''
 from flask import Blueprint
-from .auth import SignUp, Login 
 
 
-auth_blueprint = Blueprint('auth', __name__)
+from .auth import SignUp, Login
+
+
+AUTH_BLUEPRINT = Blueprint('auth', __name__)

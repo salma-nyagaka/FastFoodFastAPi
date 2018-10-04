@@ -1,3 +1,4 @@
+'''import modules'''
 import datetime
 from werkzeug.security import check_password_hash
 from flask_restful import Resource, reqparse
@@ -9,6 +10,7 @@ from utils.validators import Validators
 
 
 class SignUp(Resource):
+    '''sigmup a user'''
     parser = reqparse.RequestParser()
     parser.add_argument('username', type=str, required=True,
                         help="This field cannot be left blank")
@@ -19,8 +21,8 @@ class SignUp(Resource):
     parser.add_argument('password', type=str, required=True,
                         help="This field cannot be left blank")
 
-    parser.add_argument('confirmpassword', type=str, required=True,
-                        help="This field cannot be left blank")
+    parser.add_argument('confirmpassword', type=str,
+                        required=True, help="This field cannot be left blank")
 
     def post(self):
         ''' Add a new user '''
@@ -31,15 +33,20 @@ class SignUp(Resource):
         password = data['password']
         confirmpassword = data['confirmpassword']
 
+        if password != confirmpassword:
+            return {'message': 'Password do not match'}, 400
+
+
         if not Validators().valid_username(username):
             return {'message': 'Enter valid username'}, 400
         if not Validators().valid_password(password):
             return {'message': 'Enter valid password'}, 400
-       
+        if not Validators().valid_email(email):
+            return {'message': 'Enter valid email'}, 400
         if User().get_by_username(username):
-            return {'message': 'Username exists'}, 400
+            return {'message': 'Username exists'}, 409
         if User().get_by_email(email):
-            return {'message': 'Email address exists'}, 400
+            return {'message': 'Email address exists'}, 409
 
         user = User(username, email, password, confirmpassword)
 
@@ -49,6 +56,7 @@ class SignUp(Resource):
 
 
 class Login(Resource):
+    '''login a user'''
     parser = reqparse.RequestParser()
     parser.add_argument('username', type=str, required=True,
                         help="This field cannot be left blank")
@@ -65,15 +73,16 @@ class Login(Resource):
         user = User().get_by_username(username)
 
         if not user:
-            return {'message': 'user does not exist'}, 404
+            return {'message': 'user does not exist'}, 401
 
         if not check_password_hash(user.password, password):
-            return {'message': 'Wrong password'}, 400
+            return {'message': 'Wrong password'}, 401
+        expires = datetime.timedelta(minutes=60)
 
-        token = create_access_token(
-            identity=user.serialize())
-
+        token = create_access_token(identity=user.serialize(),
+                                    expires_delta=expires)
         return {
             'token': token,
             'message': 'successfully logged in'
             }, 200
+       
