@@ -9,14 +9,14 @@
 Fast food fast is a fast food delivery application
 
 # How it Works
-User can signin/signout from the app. 
-User can an order for food.
-User can get a history list of orders.
-Admin can get all user orders
-Admin can get a specific order.
-Admin can uppdate the status of an order. 
-Admin and user can get the menu.
-Add food option to the menu.
+-User can signin/signout from the app. 
+-User can an order for food.
+-User can get a history list of orders.
+-Admin can get all user orders
+-Admin can get a specific order.
+-Admin can uppdate the status of an order. 
+-Admin and user can get the menu.
+-Add food option to the menu.
 
 
 ## Prerequisite
