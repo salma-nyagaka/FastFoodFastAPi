@@ -3,7 +3,6 @@ from datetime import datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash
 from app.api.v2.database import DatabaseConnection
-import psycopg2
 
 
 class User(DatabaseConnection):
@@ -19,7 +18,6 @@ class User(DatabaseConnection):
 
     def create_table(self):
         '''create users table'''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             '''
@@ -35,8 +33,6 @@ class User(DatabaseConnection):
 
     def drop_tables(self):
         '''Drop tables'''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS users'''
@@ -45,8 +41,6 @@ class User(DatabaseConnection):
 
     def add(self):
         ''' add user to the users table'''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             '''
@@ -61,8 +55,6 @@ class User(DatabaseConnection):
 
     def get_by_username(self, username):
         ''' Get user by username '''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             "SELECT * FROM users WHERE username=%s", (username,)
@@ -79,8 +71,6 @@ class User(DatabaseConnection):
 
     def get_by_email(self, email):
         ''' Get user by email '''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             "SELECT * FROM users WHERE email=%s", (email,)
@@ -126,8 +116,6 @@ class FoodMenu(DatabaseConnection):
     
     def create_table(self):
         ''' create orders table '''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(            
             '''
@@ -144,8 +132,6 @@ class FoodMenu(DatabaseConnection):
 
     def drop_tables(self):
         ''' Drop tables'''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS foodmenu'''
@@ -165,8 +151,6 @@ class FoodMenu(DatabaseConnection):
 
     def get_by_id(self, id):
         ''' Get user by food id '''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(   
             "SELECT * FROM foodmenu WHERE id=%s", (id,)
@@ -183,8 +167,6 @@ class FoodMenu(DatabaseConnection):
 
     def get_by_name(self, name):
         ''' Get user by food id '''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(   
             "SELECT * FROM foodmenu WHERE name=%s", (name,)
@@ -201,8 +183,6 @@ class FoodMenu(DatabaseConnection):
 
     def get_all(self):
         """ get all available food in the menu"""
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute("SELECT * FROM foodmenu")
 
@@ -219,9 +199,6 @@ class FoodMenu(DatabaseConnection):
 
     def delete(self, menu_id):
         ''' delete a menu '''
-
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute("DELETE FROM foodmenu WHERE id=%s", (menu_id,))
 
@@ -258,8 +235,6 @@ class FoodOrder(DatabaseConnection):
 
     def create_table(self):
         ''' create orders table '''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             '''
@@ -276,8 +251,6 @@ class FoodOrder(DatabaseConnection):
 
     def get_by_destination(self, destination):
         ''' Get user by food id '''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(   
             "SELECT * FROM foodorders WHERE destination=%s", (destination,))
@@ -294,8 +267,6 @@ class FoodOrder(DatabaseConnection):
 
     def drop_tables(self):
         ''' Drop tables'''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS foodorders'''
@@ -304,8 +275,6 @@ class FoodOrder(DatabaseConnection):
     
     def add(self):
         ''' add orders to the foodorders table'''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor.execute('''
             INSERT INTO foodorders(requester, name, destination, status, date)
             VALUES(%s, %s, %s, %s, %s)
@@ -315,8 +284,6 @@ class FoodOrder(DatabaseConnection):
 
     def get_all(self):
         """ get all available food items """
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute("SELECT * FROM foodorders")
 
@@ -331,8 +298,6 @@ class FoodOrder(DatabaseConnection):
     
     def get_all_orders_by_username(self, username):
         """ get all orders available by username """
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute("SELECT * FROM foodorders WHERE requester=%s", (username, ))
 
@@ -347,8 +312,6 @@ class FoodOrder(DatabaseConnection):
 
     def get_by_id(self, order_id):
         ''' Get order by ID '''
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute(
             "SELECT * FROM foodorders WHERE id=%s", (order_id,)
@@ -361,10 +324,10 @@ class FoodOrder(DatabaseConnection):
             return self.objectify_foodorder(order)
         return None
 
+   
+
     def update_order(self, order_id):
         """update order status"""
-        self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
-
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
