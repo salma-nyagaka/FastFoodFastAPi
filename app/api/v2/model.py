@@ -18,6 +18,7 @@ class User(DatabaseConnection):
 
     def create_table(self):
         '''create users table'''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(
             '''
             CREATE TABLE IF NOT EXISTS users(
@@ -40,6 +41,7 @@ class User(DatabaseConnection):
 
     def add(self):
         ''' add user to the users table'''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(
             '''
             INSERT INTO users(username, email,
@@ -53,6 +55,7 @@ class User(DatabaseConnection):
 
     def get_by_username(self, username):
         ''' Get user by username '''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(
             "SELECT * FROM users WHERE username=%s", (username,)
         )
@@ -68,6 +71,7 @@ class User(DatabaseConnection):
 
     def get_by_email(self, email):
         ''' Get user by email '''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(
             "SELECT * FROM users WHERE email=%s", (email,)
         )
@@ -112,6 +116,7 @@ class FoodMenu(DatabaseConnection):
     
     def create_table(self):
         ''' create orders table '''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(            
             '''
             CREATE TABLE IF NOT EXISTS foodmenu(
@@ -127,6 +132,7 @@ class FoodMenu(DatabaseConnection):
 
     def drop_tables(self):
         ''' Drop tables'''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS foodmenu'''
         )
@@ -134,6 +140,7 @@ class FoodMenu(DatabaseConnection):
 
     def add(self):
         ''' add orders to the food orders table'''
+        self.cursor = self.connection.cursor()
         self.cursor.execute('''
             INSERT INTO foodmenu(name, price, description, date_created)
             VALUES(%s, %s, %s, %s)
@@ -144,6 +151,7 @@ class FoodMenu(DatabaseConnection):
 
     def get_by_id(self, id):
         ''' Get user by food id '''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(   
             "SELECT * FROM foodmenu WHERE id=%s", (id,)
         )
@@ -159,6 +167,7 @@ class FoodMenu(DatabaseConnection):
 
     def get_by_name(self, name):
         ''' Get user by food id '''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(   
             "SELECT * FROM foodmenu WHERE name=%s", (name,)
         )
@@ -174,6 +183,7 @@ class FoodMenu(DatabaseConnection):
 
     def get_all(self):
         """ get all available food in the menu"""
+        self.cursor = self.connection.cursor()
         self.cursor.execute("SELECT * FROM foodmenu")
 
         FoodMenu = self.cursor.fetchall()
@@ -189,6 +199,7 @@ class FoodMenu(DatabaseConnection):
 
     def delete(self, menu_id):
         ''' delete a menu '''
+        self.cursor = self.connection.cursor()
         self.cursor.execute("DELETE FROM foodmenu WHERE id=%s", (menu_id,))
 
         self.save()
@@ -224,6 +235,7 @@ class FoodOrder(DatabaseConnection):
 
     def create_table(self):
         ''' create orders table '''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(
             '''
             CREATE TABLE IF NOT EXISTS foodorders(
@@ -239,6 +251,7 @@ class FoodOrder(DatabaseConnection):
 
     def get_by_destination(self, destination):
         ''' Get user by food id '''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(   
             "SELECT * FROM foodorders WHERE destination=%s", (destination,))
 
@@ -254,6 +267,7 @@ class FoodOrder(DatabaseConnection):
 
     def drop_tables(self):
         ''' Drop tables'''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS foodorders'''
         )
@@ -270,6 +284,7 @@ class FoodOrder(DatabaseConnection):
 
     def get_all(self):
         """ get all available food items """
+        self.cursor = self.connection.cursor()
         self.cursor.execute("SELECT * FROM foodorders")
 
         Foodorders = self.cursor.fetchall()
@@ -283,6 +298,7 @@ class FoodOrder(DatabaseConnection):
     
     def get_all_orders_by_username(self, username):
         """ get all orders available by username """
+        self.cursor = self.connection.cursor()
         self.cursor.execute("SELECT * FROM foodorders WHERE requester=%s", (username, ))
 
         food_orders = self.cursor.fetchall()
@@ -296,6 +312,7 @@ class FoodOrder(DatabaseConnection):
 
     def get_by_id(self, order_id):
         ''' Get order by ID '''
+        self.cursor = self.connection.cursor()
         self.cursor.execute(
             "SELECT * FROM foodorders WHERE id=%s", (order_id,)
         )
@@ -309,6 +326,7 @@ class FoodOrder(DatabaseConnection):
 
     def accept_order(self, order_id):
         """ Accept an order """
+        self.cursor = self.connection.cursor()
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE _id=%s
                     """, ('accepted', order_id))
@@ -316,6 +334,7 @@ class FoodOrder(DatabaseConnection):
 
     def decline_order(self, order_id):
         """ Decline an order """
+        self.cursor = self.connection.cursor()
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, ('declined', order_id))
@@ -331,6 +350,7 @@ class FoodOrder(DatabaseConnection):
 
     def update_order(self, order_id):
         """update order status"""
+        self.cursor = self.connection.cursor()
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, ('status', order_id))
