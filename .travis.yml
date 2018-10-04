@@ -7,7 +7,8 @@ install:
  - pip install coveralls
 
 addons:
-  -postgresql: "9.6"
+  - postgresql: "9.6"
+
 
 before_script:
   - psql -c 'CREATE DATABASE fast_food_db' -U fast_food_user
@@ -17,6 +18,8 @@ before_script:
   - export JWT_SECRET_KEY="aduscaecawserydtvyubiun1234567******sfc"
   - export DATABASE_URL="dbname='fast_food_db' host='127.0.0.1' port='5432' user='fast_food_user' password='salma'"
   - export DATABASE_TEST_URL="dbname='fast_food_test_db' host='127.0.0.1' port='5432' user='fast_food_user' password='salma'"
+
+
 
 script:
   - nosetests --with-coverage --cover-package=app
