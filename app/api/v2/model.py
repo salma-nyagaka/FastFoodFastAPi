@@ -1,5 +1,4 @@
-'''import module'''
-import psycopg2
+'''import modules'''
 from datetime import datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash
@@ -7,8 +6,10 @@ from app.api.v2.database import DatabaseConnection
 
 
 class User(DatabaseConnection):
+    '''create an instance of the class'''
     def __init__(self, username=None, email=None,
-                 password=None, confirm_password=None, is_admin=False):
+                 password=None, confirm_password=None,
+                 is_admin=False):
         super().__init__()
         self.username = username
         self.email = email
@@ -18,9 +19,9 @@ class User(DatabaseConnection):
         self.is_admin = is_admin
 
     def create_table(self):
-        ''' create users table '''
-        cursor = self.connection.cursor()
-        cursor.execute(
+        '''create users table'''
+        self.drop_tables
+        self.cursor.execute(
             '''
             CREATE TABLE IF NOT EXISTS users(
                 id serial PRIMARY KEY,
@@ -31,25 +32,19 @@ class User(DatabaseConnection):
                 is_admin BOOL NOT NULL
             )'''
             )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
 
     def drop_tables(self):
-        self.drop_table = "foodname"
-        ''' Drop tables'''
-        cursor = self.connection.cursor()
-        cursor.execute(
+        '''Drop tables'''
+        self.drop_tables
+        self.cursor.execute(
             ''' DROP TABLE IF EXISTS users'''
         )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
 
     def add(self):
         ''' add user to the users table'''
-        cursor = self.connection.cursor()
-        cursor.execute(
+        self.cursor.execute(
             '''
             INSERT INTO users(username, email,
             password, confirm_password, is_admin)
@@ -58,20 +53,18 @@ class User(DatabaseConnection):
             (self.username, self.email, self.password,
              self.confirm_password, self.is_admin)
         )
-        self.connection.commit()
-        cursor.close()
+        self.save()
 
     def get_by_username(self, username):
         ''' Get user by username '''
-        cursor = self.connection.cursor()
-        cursor.execute(
+        self.cursor.execute(
             "SELECT * FROM users WHERE username=%s", (username,)
         )
 
-        user = cursor.fetchone()
+        user = self.cursor.fetchone()
 
-        self.connection.commit()
-        cursor.close()
+        self.save()
+
 
         if user:
             return self.objectify_user(user)
@@ -79,21 +72,21 @@ class User(DatabaseConnection):
 
     def get_by_email(self, email):
         ''' Get user by email '''
-        cursor = self.connection.cursor()
-        cursor.execute(
+        self.cursor.execute(
             "SELECT * FROM users WHERE email=%s", (email,)
         )
 
-        user = cursor.fetchone()
+        user = self.cursor.fetchone()
 
-        self.connection.commit()
-        cursor.close()
+        self.save()
+
 
         if user:
             return self.objectify_user(user)
         return None
 
     def serialize(self):
+        '''converts an object to a dictionary'''
         return dict(
             username=self.username,
             email=self.email,
@@ -104,7 +97,7 @@ class User(DatabaseConnection):
 
     def objectify_user(self, data):
         ''' Map a user to an object '''
-        self.id = data[0]
+        self._id = data[0]
         self.username = data[1]
         self.email = data[2]
         self.password = data[3]
@@ -114,103 +107,112 @@ class User(DatabaseConnection):
 
 
 class FoodMenu(DatabaseConnection):
+    ''' instance of the FoodMenu class'''
     def __init__(self, name=None, price=None, description=None):
         super().__init__()
         self.name = name
         self.price = price
         self.description = description
-        self.date = datetime.now().replace(second=0, microsecond=0)
+        self.date_created = datetime.now().replace(second=0, microsecond=0)
+    
     def create_table(self):
         ''' create orders table '''
-        cursor = self.connection.cursor()
-        cursor.execute(            
+        self.cursor.execute(            
             '''
             CREATE TABLE IF NOT EXISTS foodmenu(
                 id serial PRIMARY KEY,
                 name VARCHAR (200) NOT NULL,
                 price INTEGER NOT NULL,
                 description VARCHAR(200) NOT NULL,
-                date TIMESTAMP
+                date_created TIMESTAMP
             )'''
             )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
+
 
     def drop_tables(self):
         ''' Drop tables'''
-        cursor = self.connection.cursor()
-        cursor.execute(
+        self.cursor.execute(
             ''' DROP TABLE IF EXISTS foodmenu'''
         )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
 
     def add(self):
-        ''' add user to the users table'''
-        cursor = self.connection.cursor()
-        cursor.execute('''
-            INSERT INTO foodmenu(name, price, description, date)
+        ''' add orders to the food orders table'''
+        self.cursor.execute('''
+            INSERT INTO foodmenu(name, price, description, date_created)
             VALUES(%s, %s, %s, %s)
-            ''', (self.name, self.price, self.description, self.date)
-        )
-        cursor.close()
-        self.connection.commit()
+            ''', (self.name, self.price, self.description, self.date_created))
+        
+        self.save()
+
 
     def get_by_id(self, item_id):
-        ''' Get user by username '''
-        cursor = self.connection.cursor()
-        cursor.execute(   
+        ''' Get user by food id '''
+        self.cursor.execute(   
             "SELECT * FROM foodmenu WHERE id=%s", (item_id,)
         )
 
-        item = cursor.fetchone()
+        item = self.cursor.fetchone()
 
-        cursor.close()
-        self.connection.commit()
+        self.save()
+
 
         if item:
             return self.obectify_fooditem(item)
         return None
-    
+
+    def get_by_name(self, name):
+        ''' Get user by food id '''
+        self.cursor.execute(   
+            "SELECT * FROM foodmenu WHERE name=%s", (name,)
+        )
+
+        item = self.cursor.fetchone()
+
+        self.save()
+
+
+        if item:
+            return self.obectify_fooditem(item)
+        return None
+
     def get_all(self):
         """ get all available food in the menu"""
-        cur = self.connection.cursor()
-        cur.execute("SELECT * FROM foodmenu")
+        self.cursor.execute("SELECT * FROM foodmenu")
 
-        FoodMenu = cur.fetchall()
+        FoodMenu = self.cursor.fetchall()
         print(FoodMenu)
 
-        self.connection.commit()
-        cur.close()
+        self.save()
+
 
         if FoodMenu:
             return [self.obectify_fooditem(foodmenu) for foodmenu in FoodMenu]
         return None
 
+
     def delete(self, menu_id):
         ''' delete a menu '''
-        cursor = self.connection.cursor()
-        cursor.execute("DELETE FROM foodmenu WHERE id=%s", (menu_id,))
+        self.cursor.execute("DELETE FROM foodmenu WHERE id=%s", (menu_id,))
 
-        cursor.close()
-        self.connection.commit()
-        
+        self.save()
+
     def serialize(self):
+        ''' return a dictionary from the object'''
         return dict(
             id=self.id,
             name=self.name,
             price=self.price,
             description=self.description,
-            date=str(self.date)
+            date=str(self.date_created)
         )
 
     def obectify_fooditem(self, data):
-        ''' Map a user to an object '''
-        item = FoodMenu(name=data[1], description=data[2], price=data[3])
+        ''' Map a fooditem to an object '''
+        item = FoodMenu(name=data[1], description=data[3], price=data[2])
         item.id = data[0]
-        item.date = data[4]
+        item.date_created = data[4]
         self = item
         return self
 
@@ -223,12 +225,11 @@ class FoodOrder(DatabaseConnection):
         self.name = name
         self.destination = destination
         self.status = 'pending'
-        self.date = datetime.now().replace(second=0, microsecond=0)
+        self.date_created = datetime.now().replace(second=0, microsecond=0)
 
     def create_table(self):
         ''' create orders table '''
-        cursor = self.connection.cursor()
-        cursor.execute(
+        self.cursor.execute(
             '''
             CREATE TABLE IF NOT EXISTS foodorders(
                 id serial PRIMARY KEY,
@@ -239,41 +240,46 @@ class FoodOrder(DatabaseConnection):
                 date TIMESTAMP
             )'''
             )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
+
+    def get_by_destination(self, destination):
+        ''' Get user by food id '''
+        self.cursor.execute(   
+            "SELECT * FROM foodorders WHERE destination=%s", (destination,))
+
+        FoodOrder = self.cursor.fetchone()
+
+        self.save()
+
+        if FoodOrder:
+            return self.objectify_foodorder(FoodOrder)
+        return None
+
+
 
     def drop_tables(self):
         ''' Drop tables'''
-        cursor = self.connection.cursor()
-        cursor.execute(
+        self.cursor.execute(
             ''' DROP TABLE IF EXISTS foodorders'''
         )
-        self.connection.commit()
-        self.connection.close()
-        self.cursor.close()
+        self.save()
     
     def add(self):
         ''' add orders to the foodorders table'''
-        cursor = self.connection.cursor()
-        cursor.execute('''
+        self.cursor.execute('''
             INSERT INTO foodorders(requester, name, destination, status, date)
             VALUES(%s, %s, %s, %s, %s)
             ''', (self.requester, self.name, self.destination,
-                  self.status, self.date)
-        )
-        cursor.close()
-        self.connection.commit()
+                  self.status, self.date_created))
+        self.save()
 
     def get_all(self):
         """ get all available food items """
-        cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM foodorders")
+        self.cursor.execute("SELECT * FROM foodorders")
 
-        Foodorders = cursor.fetchall()
+        Foodorders = self.cursor.fetchall()
 
-        cursor.close()
-        self.connection.commit()
+        self.save()
 
         if Foodorders:
             return [self.objectify_foodorder(foodorder)
@@ -282,71 +288,70 @@ class FoodOrder(DatabaseConnection):
 
     def get_by_id(self, order_id):
         ''' Get order by ID '''
-        cursor = self.connection.cursor()
-        cursor.execute(
+        self.cursor.execute(
             "SELECT * FROM foodorders WHERE id=%s", (order_id,)
         )
 
-        order = cursor.fetchone()
+        order = self.cursor.fetchone()
 
-        cursor.close()
-        self.connection.commit()
-
+        self.save()
         if order:
             return self.objectify_foodorder(order)
         return None
 
     def accept_order(self, order_id):
         """ Accept an order """
-        cursor = self.connection.cursor()
-        cursor.execute("""
-        UPDATE foodorders SET status=%s WHERE id=%s
+        self.cursor.execute("""
+        UPDATE foodorders SET status=%s WHERE _id=%s
                     """, ('accepted', order_id))
-        cursor.close()
-        self.connection.commit()
+        self.save()
 
     def decline_order(self, order_id):
         """ Decline an order """
-        cursor = self.connection.cursor()
-        cursor.execute("""
+        self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, ('declined', order_id))
-        cursor.close()
-        self.connection.commit()
+        
+        self.save()
 
     def complete_accepted_order(self, order_id):
         """ Complete an accepted order """
-        cursor = self.connection.cursor()
-        cursor.execute("""
+        self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, ('completed', order_id))
-        cursor.close()
-        self.connection.commit()
+        self.save()
 
-    def comete_accepted_order(self, order_id):
-        """ Complete an accepted order """
-        cursor = self.connection.cursor()
-        cursor.execute("""
+    def update_order(self, order_id):
+        """update order status"""
+        self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
-                    """, ('completed', order_id))
-        cursor.close()
-        self.connection.commit()
+                    """, ('status', order_id))
+        self.save()
+
+    # def update_order(self, order_id):
+    #     """ Update an accepted order """
+    #     self.cursor.execute("""
+    #     UPDATE foodorders SET status=%s WHERE id=%s
+    #                 """, ('completed', order_id))
+    #     self.save()
 
     def serialize(self):
+        ''' returns a dictioanry from the object'''
         return dict(
-            id=self.id,
+            id=self._id,
             name=self.name,
             destination=self.destination,
             status=self.status,
-            date=str(self.date)
+            date=str(self.date_created)
         )
 
     def objectify_foodorder(self, data):
         ''' Map a foodorder to an object '''
         order = FoodOrder(
-          name=data[1], destination=data[2])
-        order.id = data[0]
-        order.status = data[3]
-        order.date = data[4]
+            requester=data[1], name=data[2], destination=data[3])
+        order._id = data[0]
+        order.status = data[4]
+        order.date_created = data[5]
+        self = order
 
-        return order
+        return self

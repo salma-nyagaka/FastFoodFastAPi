@@ -1,3 +1,4 @@
+'''tests for admin ednpoints'''
 import json
 from unittest import TestCase
 from manage import drop, create, create_admin
@@ -6,6 +7,7 @@ from app import create_app
 
 
 class TestOrders(TestCase):
+    '''sets the config settings'''
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
@@ -40,8 +42,7 @@ class TestOrders(TestCase):
         """ test for loggin in """
         login_data = {
             "username": "Admin",
-            "password": "Admin123"
-        }
+            "password": "Admin123"}
 
         response = self.client.post(
             "api/v2/auth/login",
@@ -66,17 +67,14 @@ class TestOrders(TestCase):
         order_data = {
             "name": "Burger",
             "description": "Beef burger",
-            "price": 60
-        }
+            "price": 60}
 
         response = self.client.post(
             "/api/v2/menu",
             data=json.dumps(order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
+                     'Authorization': 'Bearer {}'.format(token)}
         )
-    
         response_data = json.loads(response.data.decode('utf-8'))
         self.assertEqual(response_data['message'], "Food order placed", 201)
     
@@ -88,15 +86,13 @@ class TestOrders(TestCase):
             "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
+                     'Authorization': 'Bearer {}'.format(token)}
         )
         response = self.client.get(
             "/api/v2/allmenu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
+                     'Authorization': 'Bearer {}'.format(token)}
         )
 
         self.assertEqual(response.status_code, 200)
@@ -108,32 +104,45 @@ class TestOrders(TestCase):
             "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
+                     'Authorization': 'Bearer {}'.format(token)}
         )
-        response= self.client.get(
-             "/api/v2/menu/1",
-             data=json.dumps(self.order_data),
-             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
-        self.assertEqual(response.status_code, 200)
-
-    def test_get_all_users_orders(self):
-        '''Test to get all orders from users'''
-
-        token = self.get_token()
-
         response = self.client.get(
-            "/api/v2/orders",
-            headers = {"contemt-type": "Application.json",
-                        "Authorization": "Bearer{}".format(token)
-                        }
-
+            "/api/v2/menu/1",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                     'Authorization': 'Bearer {}'.format(token)}
         )
         self.assertEqual(response.status_code, 200)
 
+    # def test_get_all_users_orders(self):
+    #     '''Test to get all orders from users'''
 
-    def tearDown(self):
-        drop()
+    #     token = self.get_token()
+
+    #     response = self.client.get(
+    #         "/api/v2/orders",
+    #         data=json.dumps(self.user_orders),
+    #         headers={"content-type": "application/json",
+    #                 'Authorization': 'Bearer {}'.format(token)
+    #             }
+    #     )
+    #     self.assertEqual(response.status_code, 200)
+
+    # def test_get_update_order_to_accept(self):
+    #     '''Test to update order status'''
+
+    #     token = self.get_token()
+
+    #     response = self.client.get(
+    #         "/api/v2/1/accept",
+    #         data=json.dumps(self.user_orders),
+        
+    #         headers={"content-type": "application/json",
+    #                 'Authorization': 'Bearer {}'.format(token)
+    #             }
+    #     )
+    #     self.assertEqual(response.status_code, 200)
+
+
+
+    

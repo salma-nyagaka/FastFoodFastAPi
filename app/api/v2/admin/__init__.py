@@ -1,8 +1,9 @@
-''' module imports'''
+''' blueprint for admin routes'''
 from flask import Blueprint
 
-from .admin import (PlaceNewMenu, AllMenu, SpecificMenu, AllUserOrders,
-                    GetSpecificOrder, AcceptOrder, CompleteOrder, DeclineOrder)
+
+from .admin import (PlaceNewMenu, AllMenu, SpecificMenu, AcceptOrder, CompleteOrder,
+                    GetSpecificOrder, AllUserOrders, UpdateStatus)
 
 
 ADMIN_BLUEPRINT = Blueprint('admin', __name__)
