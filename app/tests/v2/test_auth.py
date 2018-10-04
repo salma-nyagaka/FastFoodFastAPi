@@ -1,4 +1,4 @@
-
+'''tssts for signing up and logging in'''
 import json
 from unittest import TestCase
 from manage import drop, create, create_admin
@@ -7,6 +7,7 @@ from app import create_app
 
 
 class TestOrders(TestCase):
+    '''configurations for testing'''
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
@@ -24,7 +25,6 @@ class TestOrders(TestCase):
             "destination": "juja",
             "status": "pending",
             "name": "Burger",
-            
         }
 
     def signup(self):
