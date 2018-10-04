@@ -46,8 +46,6 @@ def create_app(config_name):
     admin.add_resource(AllMenu, '/menu')
     admin.add_resource(SpecificMenu, '/menu/<int:id>')
     admin.add_resource(GetSpecificOrder, '/orders/<int:id>')
-    admin.add_resource(AcceptOrder, '/orders/<int:id>/accept')
-    admin.add_resource(CompleteOrder, '/orders/<int:id>/complete')
     admin.add_resource(DeclineOrder, '/orders/<int:id>/decline')
     admin.add_resource(AllUserOrders, '/orders')
     admin.add_resource(UpdateStatus, '/update/order/<int:id>')
