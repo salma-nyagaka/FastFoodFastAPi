@@ -33,7 +33,7 @@ class User(DatabaseConnection):
 
     def drop_tables(self):
         '''Drop tables'''
-        self.drop_tables
+        self.cursor = self.connection.cursor()
         self.cursor.execute(
             ''' DROP TABLE IF EXISTS users'''
         )
