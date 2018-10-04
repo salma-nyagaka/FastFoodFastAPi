@@ -7,17 +7,11 @@ install:
  - pip install coveralls
 
 addons:
-  - postgresql: "9.6"
-
+  - postgresql:"9.6"
 
 before_script:
-  - psql -c 'CREATE DATABASE fast_food_db' -U postgres
-  - export FLASK_APP="run.py"
-  - export APP_SETTINGS="development"
-  - export FLASK_DEBUG=1
-  - export JWT_SECRET_KEY="aduscaecawserydtvyubiun1234567******sfc"
-  - export DATABASE_URL="dbname='fast_food_db' host='127.0.0.1' port='5432' user='postgres' password='12345'"
-
+  - psql -c 'CREATE DATABASE fast_food_test_db;' -U postgres
+  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA PUBLIC to postgres;" -U postgres
 
 
 script:
@@ -25,4 +19,6 @@ script:
 
 after_success:
   - coveralls
+
+cache: pip
  
