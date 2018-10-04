@@ -11,6 +11,8 @@ addons:
 
 before_script:
   - psql -c "CREATE DATABASE fast_food_test_db;" -U postgres
+  - psql -c "CREATE DATABASE fast_food_test_db;" -U postgres
+
 
 script:
   - nosetests --with-coverage --cover-package=app
