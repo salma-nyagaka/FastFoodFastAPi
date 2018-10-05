@@ -2,7 +2,7 @@
 from flask import Blueprint
 
 
-from .admin import (PlaceNewMenu, AllMenu, SpecificMenu,
+from .admin import (PlaceNewMenu, AllMenu, SpecificMenu, DeleteMenu,
                     GetSpecificOrder, AllUserOrders, UpdateStatus)
 
 

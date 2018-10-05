@@ -41,7 +41,7 @@ class PlaceNewMenu(Resource):
             menu.add()
             meal = FoodMenu().get_by_name(name)
             return {"message": "Food menu created", "meal":meal.serialize()}, 201
-        return {"message": "Not authorized to place a menu"}, 403
+        return {"message": "Insufficient permissions to perform this actions"}, 403
 
 
 class AllMenu(Resource):
@@ -79,7 +79,7 @@ class DeleteMenu(Resource):
                 menu.delete(id)
                 return {'message': "Successfully Deleted"}, 200
             return {'message': "Menu item not found"}, 404
-        return {"message": "Not authorized to place a menu"}, 403
+        return {"message": "Insufficient permissions to perform this actions"}, 403
 
 
 
@@ -110,7 +110,7 @@ class AllUserOrders(Resource):
                 return {'Food Orders': [foodorder.serialize() for foodorder
                                         in foodorder.get_all()]}, 200
             return {'message': "Not found"}, 404
-        return {"message": "Not authorized to place a menu"}, 403
+        return {"message": "Insufficient permissions to perform this actions"}, 403
 
 
 class FilterOrdersByStatus(Resource):
@@ -132,7 +132,7 @@ class FilterOrdersByStatus(Resource):
                     return {'orders': orders}, 200
                 return {'message': "Not found"}, 404
             return {'message': "Not found"}, 404
-        return {"message": "Not authorized to place a menu"}, 403
+        return {"message": "Insufficient permissions to perform this actions"}, 403
 
 
 
@@ -170,7 +170,7 @@ class UpdateStatus(Resource):
                 return{"order":  new_order.serialize()}, 200
             
             return{'message': "Order not found"}, 404
-        return {"message": "Not authorized to place a menu"}, 403
+        return {"message": "Insufficient permissions to perform this actions"}, 403
 
 
 
