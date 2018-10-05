@@ -213,7 +213,7 @@ class FoodOrder(DatabaseConnection):
         self.requester = requester
         self.name = name
         self.destination = destination
-        self.status = 'pending'
+        self.status = 'processing'
         self.date_created = datetime.now().replace(second=0, microsecond=0)
 
     def create_table(self):
