@@ -1,4 +1,4 @@
-'''import modules'''
+'''creation of database tables'''
 from datetime import datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash
@@ -124,8 +124,7 @@ class FoodMenu(DatabaseConnection):
                 name VARCHAR (200) NOT NULL,
                 price INTEGER NOT NULL,
                 description VARCHAR(200) NOT NULL,
-                date_created TIMESTAMP
-            )'''
+                date_created TIMESTAMP)'''
             )
         self.save()
 
@@ -145,9 +144,7 @@ class FoodMenu(DatabaseConnection):
             INSERT INTO foodmenu(name, price, description, date_created)
             VALUES(%s, %s, %s, %s)
             ''', (self.name, self.price, self.description, self.date_created))
-        
         self.save()
-
 
     def get_by_id(self, id):
         ''' Get user by food id '''
@@ -155,11 +152,9 @@ class FoodMenu(DatabaseConnection):
         self.cursor.execute(   
             "SELECT * FROM foodmenu WHERE id=%s", (id,)
         )
-
         item = self.cursor.fetchone()
 
         self.save()
-
 
         if item:
             return self.obectify_fooditem(item)
@@ -224,7 +219,7 @@ class FoodMenu(DatabaseConnection):
 
 
 class FoodOrder(DatabaseConnection):
-
+    '''creates tables for the food orders database'''
     def __init__(self, requester=None, name=None, destination=None):
         super().__init__()
         self.requester = requester
@@ -244,8 +239,7 @@ class FoodOrder(DatabaseConnection):
                 name VARCHAR (200) NOT NULL,
                 destination VARCHAR(200) NOT NULL,
                 status VARCHAR (200) NOT NULL,
-                date TIMESTAMP
-            )'''
+                date TIMESTAMP)'''
             )
         self.save()
 
@@ -258,7 +252,6 @@ class FoodOrder(DatabaseConnection):
         FoodOrder = self.cursor.fetchone()
 
         self.save()
-
         if FoodOrder:
             return self.objectify_foodorder(FoodOrder)
         return None
@@ -302,7 +295,6 @@ class FoodOrder(DatabaseConnection):
         self.cursor.execute("SELECT * FROM foodorders WHERE requester=%s", (username, ))
 
         food_orders = self.cursor.fetchall()
-
         self.save()
 
         if food_orders:
@@ -345,6 +337,7 @@ class FoodOrder(DatabaseConnection):
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
                     """, (status, order_id))
+        
         self.save()
 
     def serialize(self):

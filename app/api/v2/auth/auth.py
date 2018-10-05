@@ -1,4 +1,4 @@
-'''import modules'''
+'''import modules to create login signup endpoints'''
 import datetime
 from werkzeug.security import check_password_hash
 from flask_restful import Resource, reqparse
@@ -34,14 +34,10 @@ class SignUp(Resource):
 
         if password != confirm_password:
             return {'message': 'Password do not match'}, 400
-        
-        if (len(password)<6):
+        if (len(password) < 6):
             return {'message': 'Password is too short'}, 400
-
-        if (len(username)<6):
+        if (len(username) < 6):
             return {'message': 'Username is too short'}, 400
-
-
         if not Validators().valid_account(username):
             return {'message': 'Enter valid username'}, 400
         if not Validators().valid_account(password):

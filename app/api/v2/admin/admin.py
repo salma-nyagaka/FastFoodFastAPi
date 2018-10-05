@@ -29,7 +29,6 @@ class PlaceNewMenu(Resource):
             name = data['name']
             description = data['description']
             price = data['price']
-            
 
             if not Validators().valid_food(name):
                 return {'message': 'Enter valid food name'}, 400
@@ -88,6 +87,7 @@ class SpecificMenu(Resource):
     '''get specific menu'''
     @jwt_required
     def get(self, id):
+        ''' gets a specific menu'''
         menu = FoodMenu().get_by_id(id)
 
         if menu:
@@ -119,10 +119,7 @@ class FilterOrdersByStatus(Resource):
     def get(self, status):
         ''' get all food orders '''
         current_user = get_jwt_identity()
-
         if current_user['is_admin']:
-
-
             foodorders = FoodOrder().get_all()
             
             if foodorders:
@@ -171,10 +168,3 @@ class UpdateStatus(Resource):
             
             return{'message': "Order not found"}, 404
         return {"message": "Insufficient permissions to perform this actions"}, 403
-
-
-
-        
-
-
-

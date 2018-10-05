@@ -1,13 +1,16 @@
+'''validators for input fields'''
 import re
 
 
 class Validators:
+    ''' The validaion method'''
     def valid_food(self, food):
         '''valid food item'''
         regex = "^[a-zA-Z_ ]+$"
         return re.match(regex, food)
 
     def valid_destination(self, destination):
+        '''valid destination'''
         regex = "^[a-zA-Z0-9_ ]+$"
         return re.match(regex, destination)
 
@@ -17,9 +20,6 @@ class Validators:
         return re.match(regex, account)
 
     def valid_email(self, email):
-        """valid email"""
+        '''valid email'''
         regex = "^[a-zA-Z0-9_+-]+@[a-zA-Z-]+\.[a-zA-Z0-]+$"
         return re.match(regex, email)
-    
-
-

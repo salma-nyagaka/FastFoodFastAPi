@@ -1,4 +1,4 @@
-'''import modules'''
+'''import modules to create users endpoints'''
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -37,13 +37,10 @@ class PlaceOrder(Resource):
 
 class GetOrders(Resource):
     '''get a history of orders'''
-
     @jwt_required
     def get(self):
         ''' get all orders '''
-        
         current_user = get_jwt_identity()['username']
-        print(current_user)
 
         orders = FoodOrder().get_all_orders_by_username(current_user)
         if orders:

@@ -1,3 +1,4 @@
+'''tests for all the ednpoints'''
 import json
 from unittest import TestCase
 
@@ -6,6 +7,7 @@ from app import create_app
 
 
 class TestOrders(TestCase):
+    '''loads the configuration'''
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
@@ -22,15 +24,12 @@ class TestOrders(TestCase):
         order_data = {
             "name": "Burger",
             "description": "Beef burger",
-            "price": 60
-        }
+            "price": 60}
 
         response = self.client.post(
             "/api/v1/orders",
             data=json.dumps(order_data),
-            headers={"content-type": "application/json"}
-        )
-        print(response.data)
+            headers={"content-type": "application/json"})
 
         response_data = json.loads(response.data.decode('utf-8'))
 
@@ -47,8 +46,7 @@ class TestOrders(TestCase):
         response = self.client.post(
             "/api/v1/orders",
             data=json.dumps(data),
-            headers={"content-type": "application/json"}
-        )
+            headers={"content-type": "application/json"})
 
         response_data = json.loads(response.data.decode('utf-8'))
 
@@ -65,8 +63,7 @@ class TestOrders(TestCase):
         response = self.client.post(
             "/api/v1/orders",
             data=json.dumps(data),
-            headers={"content-type": "application/json"}
-        )
+            headers={"content-type": "application/json"})
 
         response_data = json.loads(response.data.decode('utf-8'))
 
@@ -75,9 +72,9 @@ class TestOrders(TestCase):
 
     def test_get_all_orders(self):
         ''' Test to get all orders '''
-
         response = self.client.get(
-             "/api/v1/orders", content_type='application/json')
+            "/api/v1/orders",
+            content_type='application/json')
 
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
@@ -87,7 +84,8 @@ class TestOrders(TestCase):
         ''' Test to get specific order '''
 
         response = self.client.get(
-                "/api/v1/orders/1", content_type='application/json')
+            "/api/v1/orders/1",
+            content_type='application/json')
 
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.status_code, 200)
@@ -96,7 +94,8 @@ class TestOrders(TestCase):
         ''' Test to get all completed orders '''
 
         response = self.client.get(
-             "/api/v1/completed/orders", content_type='application/json')
+            "/api/v1/completed/orders",
+            content_type='application/json')
 
         data = json.loads(response.data.decode('utf-8'))
         print(data)
@@ -108,7 +107,8 @@ class TestOrders(TestCase):
         ''' Test to get all accepted orders '''
 
         response = self.client.get(
-             "/api/v1/accepted/orders", content_type='application/json')
+            "/api/v1/accepted/orders",
+            content_type='application/json')
 
         data = json.loads(response.data.decode('utf-8'))
         print(data)
@@ -120,7 +120,8 @@ class TestOrders(TestCase):
         ''' Test to get all declined orders '''
 
         response = self.client.get(
-             "/api/v1/declined/orders", content_type='application/json')
+            "/api/v1/declined/orders",
+            content_type='application/json')
 
         data = json.loads(response.data.decode('utf-8'))
         print(data)
@@ -191,9 +192,7 @@ class TestOrders(TestCase):
         response = self.client.post(
             "/api/v1/orders",
             data=json.dumps(order_data),
-            headers={"content-type": "application/json"}
-        )
-
+            headers={"content-type": "application/json"})
         response_data = json.loads(response.data.decode('utf-8'))
 
         self.assertEqual(response.status_code, 400)
@@ -205,8 +204,8 @@ class TestOrders(TestCase):
         ''' Test to delete order'''
         response = self.client.delete(
             "/api/v1/orders/1",
-            headers={"content-type": "application/json"}
-        )
+            headers={"content-type": "application/json"})
+            
         self.assertEqual(response.status_code, 200)
 
         self.assertNotEqual(response.status_code, 404)

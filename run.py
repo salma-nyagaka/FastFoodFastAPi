@@ -1,5 +1,5 @@
+'''starts the applications with the configurtaion settings'''
 import os
-import click
 from app import create_app
 
 

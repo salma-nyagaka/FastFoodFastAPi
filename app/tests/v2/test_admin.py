@@ -1,3 +1,4 @@
+'''tests for admins endpoints'''
 import json
 from unittest import TestCase
 from manage import drop, create, create_admin
@@ -6,6 +7,7 @@ from app import create_app
 
 
 class TestOrders(TestCase):
+    '''loads up all confiugration settings'''
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
@@ -16,9 +18,7 @@ class TestOrders(TestCase):
         self.order_data = {
             "name": "Burger",
             "description": "Beef burger",
-            "price": 60
-        }
-
+            "price": 60}
 
     def login(self):
         """ test for loggin in """
@@ -30,8 +30,7 @@ class TestOrders(TestCase):
         response = self.client.post(
             "api/v2/auth/login",
             data=json.dumps(login_data),
-            headers={'content-type': 'application/json'}
-        )
+            headers={'content-type': 'application/json'})
 
         return response
 
@@ -93,8 +92,7 @@ class TestOrders(TestCase):
             "/api/v2/menu",
             data=json.dumps(order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
+                     'Authorization': 'Bearer {}'.format(token)}
         )
     
         response_data = json.loads(response.data.decode('utf-8'))
@@ -108,16 +106,13 @@ class TestOrders(TestCase):
             "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
+                     'Authorization': 'Bearer {}'.format(token)}
         )
         response = self.client.get(
             "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
+                     'Authorization': 'Bearer {}'.format(token)})
 
         self.assertEqual(response.status_code, 200)
 
@@ -130,9 +125,7 @@ class TestOrders(TestCase):
             "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
+                     'Authorization': 'Bearer {}'.format(token)})
 
         self.assertEqual(response.status_code, 404)
 
@@ -143,16 +136,13 @@ class TestOrders(TestCase):
             "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
-        response= self.client.get(
-             "/api/v2/menu/1",
-             data=json.dumps(self.order_data),
-             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
+                     'Authorization': 'Bearer {}'.format(token)})
+
+        response = self.client.get(
+            "/api/v2/menu/1",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                     'Authorization': 'Bearer {}'.format(token)})
         self.assertEqual(response.status_code, 200)
 
     def test_get_specific_order(self):
@@ -164,9 +154,7 @@ class TestOrders(TestCase):
             "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
+                     'Authorization': 'Bearer {}'.format(token)})
 
         data = {
             'destination': 'Roysa'
@@ -176,17 +164,13 @@ class TestOrders(TestCase):
             "/api/v2/users/orders/1",
             data=json.dumps(data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(user_token)
-                }
-        )
+                     'Authorization': 'Bearer {}'.format(user_token)})
 
-        response= self.client.get(
-             "/api/v2/orders/1",
-             data=json.dumps(self.order_data),
-             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
+        response = self.client.get(
+            "/api/v2/orders/1",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                     'Authorization': 'Bearer {}'.format(token)})
         self.assertEqual(response.status_code, 200)
 
     def test_get_non_existing_menu(self):
@@ -196,16 +180,12 @@ class TestOrders(TestCase):
             "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
-        response= self.client.get(
-             "/api/v2/menu/2331",
-             data=json.dumps(self.order_data),
-             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
+                     'Authorization': 'Bearer {}'.format(token)})
+        response = self.client.get(
+            "/api/v2/menu/2331",
+            data=json.dumps(self.order_data),
+            headers={"content-type": "application/json",
+                     'Authorization': 'Bearer {}'.format(token)})
         self.assertEqual(response.status_code, 404)
 
     def test_update_order_status(self):
@@ -217,14 +197,11 @@ class TestOrders(TestCase):
             "/api/v2/menu",
             data=json.dumps(self.order_data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
+                     'Authorization': 'Bearer {}'.format(token)})
 
         data = {
             'destination': 'Roysa'
         }
-        
         status = {
             "status": "accept"
         }
@@ -233,17 +210,11 @@ class TestOrders(TestCase):
             "/api/v2/users/orders/1",
             data=json.dumps(data),
             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(user_token)
-                }
-        )
+                     'Authorization': 'Bearer {}'.format(user_token)})
 
-        response= self.client.put(
-             "/api/v2/update/order/1",
-             data=json.dumps(status),
-             headers={"content-type": "application/json",
-                    'Authorization': 'Bearer {}'.format(token)
-                }
-        )
+        response = self.client.put(
+            "/api/v2/update/order/1",
+            data=json.dumps(status),
+            headers={"content-type": "application/json",
+                     'Authorization': 'Bearer {}'.format(token)})
         self.assertEqual(response.status_code, 200)
-
-   

@@ -1,4 +1,5 @@
 
+'''tests for users endpoints'''
 import json
 from unittest import TestCase
 from manage import drop, create, create_admin
@@ -8,6 +9,7 @@ from app import create_app
 
 
 class TestOrders(TestCase):
+    ''' loads the app all configurations for testings'''
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()

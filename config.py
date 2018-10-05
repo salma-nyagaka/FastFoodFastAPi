@@ -6,7 +6,6 @@ class Config():
     DEBUG = False
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
-    
 class Development(Config):
     '''Configuration for development environment'''
     DEBUG = True
@@ -21,7 +20,6 @@ class Testing(Config):
 class Production(Config):
     '''Configuration for production environment'''
     DEBUG = False
-
 
 app_config = {
     'development': Development,

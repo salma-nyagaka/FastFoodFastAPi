@@ -1,4 +1,4 @@
-
+'''tests for signup and login endpoints'''
 import json
 from unittest import TestCase
 from manage import drop, create, create_admin
@@ -8,6 +8,7 @@ from app import create_app
 
 
 class TestOrders(TestCase):
+    ''' loads the apw ith all configurations for testings'''
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
@@ -76,7 +77,7 @@ class TestOrders(TestCase):
             headers={'content-type': 'application/json'}
         )
         self.assertEqual(response.status_code, 400)
-    
+        
     def test_invalid_email(self):
         """ test for signing up"""
         signup_data = {
@@ -93,7 +94,6 @@ class TestOrders(TestCase):
         )
         self.assertEqual(response.status_code, 400)
 
-    
     def test_login(self):
         """ test for signing up"""
         signup_data = {

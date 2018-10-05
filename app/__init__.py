@@ -1,8 +1,10 @@
+'''initializes the application'''
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
-from app.api.v2.admin import PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOrder,AllUserOrders, UpdateStatus, DeleteMenu
+from app.api.v2.admin import (PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOrder, 
+                              AllUserOrders, UpdateStatus, DeleteMenu)
 from app.api.v2.auth import Login, SignUp
 from app.api.v2.user.users import PlaceOrder, GetOrders
 
