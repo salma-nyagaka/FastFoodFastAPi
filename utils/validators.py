@@ -13,6 +13,12 @@ class Validators:
         '''valid destination'''
         regex = "^[a-zA-Z0-9_ ]+$"
         return re.match(regex, destination)
+    
+
+    def valid_contact(self, contact):
+        '''valid contact'''
+        regex = "^[1-10_]+$"
+        return re.match(regex, contact)
 
     def valid_account(self, account):
         '''valid password and username'''

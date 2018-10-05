@@ -4,7 +4,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
 from app.api.v2.admin import (PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOrder, 
-                              AllUserOrders, UpdateStatus, DeleteMenu)
+                              AllUserOrders, UpdateStatus, DeleteMenu, FilterOrdersByStatus)
 from app.api.v2.auth import Login, SignUp
 from app.api.v2.user.users import PlaceOrder, GetOrders
 
@@ -53,6 +53,7 @@ def create_app(config_name):
     admin.add_resource(AllUserOrders, '/orders')
     admin.add_resource(UpdateStatus, '/update/order/<int:id>')
     admin.add_resource(DeleteMenu, '/menu/<int:id>')
+    admin.add_resource(FilterOrdersByStatus, '/orders/<string:status>')
 
 
     api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>')

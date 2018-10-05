@@ -119,6 +119,7 @@ class FilterOrdersByStatus(Resource):
     def get(self, status):
         ''' get all food orders '''
         current_user = get_jwt_identity()
+        
         if current_user['is_admin']:
             foodorders = FoodOrder().get_all()
             
