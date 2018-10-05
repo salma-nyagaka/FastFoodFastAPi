@@ -244,6 +244,6 @@ class TestOrders(TestCase):
                     'Authorization': 'Bearer {}'.format(token)
                 }
         )
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
 
    

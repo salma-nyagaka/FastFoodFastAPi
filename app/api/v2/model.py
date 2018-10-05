@@ -324,20 +324,33 @@ class FoodOrder(DatabaseConnection):
             return self.objectify_foodorder(order)
         return None
 
+    def get_all_orders_by_status(self, status):
+        """ get all available food items """
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("SELECT * FROM foodorders WHERE status=%s", (status,))
+
+        Foodorders = self.cursor.fetchall()
+
+        self.save()
+
+        if Foodorders:
+            return [self.objectify_foodorder(foodorder)
+                    for foodorder in Foodorders]
+        return None
    
 
-    def update_order(self, order_id):
+    def update_order(self, status, order_id):
         """update order status"""
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
         UPDATE foodorders SET status=%s WHERE id=%s
-                    """, ('status', order_id))
+                    """, (status, order_id))
         self.save()
 
     def serialize(self):
         ''' returns a dictioanry from the object'''
         return dict(
-            id=self.id,
+            id="1",
             name=self.name,
             destination=self.destination,
             status=self.status,

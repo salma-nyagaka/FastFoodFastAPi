@@ -23,6 +23,7 @@ class PlaceNewMenu(Resource):
     def post(self):
         ''' place new menu'''
         current_user = get_jwt_identity()
+
         if current_user['is_admin']:
             data = PlaceNewMenu.parser.parse_args()
             name = data['name']
@@ -40,7 +41,7 @@ class PlaceNewMenu(Resource):
             menu.add()
             meal = FoodMenu().get_by_name(name)
             return {"message": "Food menu created", "meal":meal.serialize()}, 201
-        return {"message": "Authorization required"}, 403
+        return {"message": "Not authorized to place a menu"}, 403
 
 
 class AllMenu(Resource):
@@ -48,18 +49,39 @@ class AllMenu(Resource):
     @jwt_required
     def get(self):
         """ Get all food items """
-        data = FoodMenu().get_all()
+        current_user = get_jwt_identity()
 
-        food_menus = []
+        if current_user['is_admin']:
+            data = FoodMenu().get_all()
 
-        if data:
-            for food_menu in data:
-                food_menus.append(food_menu.serialize())
+            food_menus = []
 
-            return {"Food menu": food_menus,
-                    "message": "These are the available food items"}, 200
+            if data:
+                for food_menu in data:
+                    food_menus.append(food_menu.serialize())
 
-        return {"message": "No food items available for now"}, 404
+                return {"Food menu": food_menus,
+                        "message": "These are the available food items"}, 200
+
+            return {"message": "No food items available for now"}, 404
+
+
+class DeleteMenu(Resource):
+    '''get specific menu'''
+    @jwt_required
+    def delete(self, id):
+        ''' Delete a specific menu '''
+        current_user = get_jwt_identity()
+
+        if current_user['is_admin']:
+            menu = FoodMenu().get_by_id(id)
+            if menu:
+                menu.delete(id)
+                return {'message': "Successfully Deleted"}, 200
+            return {'message': "Menu item not found"}, 404
+        return {"message": "Not authorized to place a menu"}, 403
+
+
 
 
 class SpecificMenu(Resource):
@@ -80,6 +102,7 @@ class AllUserOrders(Resource):
     def get(self):
         ''' get all food orders '''
         current_user = get_jwt_identity()
+
         if current_user['is_admin']:
 
             foodorder = FoodOrder()
@@ -87,7 +110,29 @@ class AllUserOrders(Resource):
                 return {'Food Orders': [foodorder.serialize() for foodorder
                                         in foodorder.get_all()]}, 200
             return {'message': "Not found"}, 404
-        return {"message": "Authorization required"}, 403
+        return {"message": "Not authorized to place a menu"}, 403
+
+
+class FilterOrdersByStatus(Resource):
+    '''get all the orders made by users'''
+    @jwt_required
+    def get(self, status):
+        ''' get all food orders '''
+        current_user = get_jwt_identity()
+
+        if current_user['is_admin']:
+
+
+            foodorders = FoodOrder().get_all()
+            
+            if foodorders:
+                orders = [order.serialize() for order in foodorders if order.status == status]
+
+                if orders:
+                    return {'orders': orders}, 200
+                return {'message': "Not found"}, 404
+            return {'message': "Not found"}, 404
+        return {"message": "Not authorized to place a menu"}, 403
 
 
 
@@ -96,13 +141,11 @@ class GetSpecificOrder(Resource):
     @jwt_required
     def get(self, id):
         ''' get a specific order '''
-        current_user = get_jwt_identity()
-        if current_user['is_admin']:
-            order = FoodOrder().get_by_id(id)
-            if order:
-                return {"Menu": order.serialize()}, 200
-            return {'message': "Not found"}, 404
-        return {"message": "Authorization required"}, 403
+
+        order = FoodOrder().get_by_id(id)
+        if order:
+            return {"Menu": order.serialize()}, 200
+        return {'message': "Not found"}, 404
 
 
 class UpdateStatus(Resource):
@@ -114,16 +157,20 @@ class UpdateStatus(Resource):
     def put(self, id):
         '''update status to accept, decline, complete'''
         current_user = get_jwt_identity()
+
         if current_user['is_admin']:
+
             data = UpdateStatus.parser.parse_args()
             order = FoodOrder().get_by_id(id)
 
             if order:
-                order.status = data['status']
-                return{"order":  order.serialize()}, 201
+                status = data['status']
+                order.update_order(status, id)
+                new_order = FoodOrder().get_by_id(id)
+                return{"order":  new_order.serialize()}, 200
             
-            return{'message': "Order not found"}
-        return {"message": "Authorization required"}, 403
+            return{'message': "Order not found"}, 404
+        return {"message": "Not authorized to place a menu"}, 403
 
 
 
