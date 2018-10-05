@@ -34,6 +34,12 @@ class SignUp(Resource):
 
         if password != confirm_password:
             return {'message': 'Password do not match'}, 400
+        
+        if (len(password)<6):
+            return {'message': 'Password is too short'}, 400
+
+        if (len(username)<6):
+            return {'message': 'Username is too short'}, 400
 
 
         if not Validators().valid_account(username):
