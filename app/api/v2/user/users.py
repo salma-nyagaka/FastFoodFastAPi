@@ -21,7 +21,6 @@ class PlaceOrder(Resource):
             return {"message": "Food does not exist"}, 404
 
         current_user = get_jwt_identity()['username']
-        print(current_user)
         data = PlaceOrder.parser.parse_args()
 
         destination = data['destination']
