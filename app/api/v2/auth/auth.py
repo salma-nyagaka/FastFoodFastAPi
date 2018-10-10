@@ -78,7 +78,7 @@ class Login(Resource):
 
         if not check_password_hash(user.password, password):
             return {'message': 'Wrong password'}, 401
-        expires = datetime.timedelta(minutes=60)
+        expires = datetime.timedelta(minutes=1200)
 
         token = create_access_token(identity=user.serialize(),
                                     expires_delta=expires)

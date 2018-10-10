@@ -208,41 +208,20 @@ class FoodMenu(DatabaseConnection):
 
 class FoodOrder(DatabaseConnection):
     '''creates tables for the food orders database'''
-    def __init__(self, requester=None, name=None, destination=None):
+    def __init__(self,
+                 id = None,
+                 username=None,
+                 name=None,
+                 description = None,
+                 price=None,
+                 status="Processing"):
         super().__init__()
-        self.requester = requester
+        self.username = username
         self.name = name
-        self.destination = destination
-        self.status = 'processing'
-        self.date_created = datetime.now().replace(second=0, microsecond=0)
-
-    def create_table(self):
-        ''' create orders table '''
-        self.cursor.execute(
-            '''
-            CREATE TABLE IF NOT EXISTS foodorders(
-                id serial PRIMARY KEY,
-                requester VARCHAR (200) NOT NULL,
-                name VARCHAR (200) NOT NULL,
-                destination VARCHAR(200) NOT NULL,
-                status VARCHAR (200) NOT NULL,
-                date TIMESTAMP)'''
-            )
-        self.save()
-
-    def get_by_destination(self, destination):
-        ''' Get user by food id '''
-        self.cursor.execute(   
-            "SELECT * FROM foodorders WHERE destination=%s", (destination,))
-
-        FoodOrder = self.cursor.fetchone()
-
-        self.save()
-        if FoodOrder:
-            return self.objectify_foodorder(FoodOrder)
-        return None
-
-
+        self.description = description
+        self.price = price
+        self.status = status
+    
 
     def drop_tables(self):
         ''' Drop tables'''
@@ -250,68 +229,88 @@ class FoodOrder(DatabaseConnection):
             ''' DROP TABLE IF EXISTS foodorders'''
         )
         self.save()
-    
-    def add(self):
-        ''' add orders to the foodorders table'''
-        self.cursor.execute('''
-            INSERT INTO foodorders(requester, name, destination, status, date)
-            VALUES(%s, %s, %s, %s, %s)
-            ''', (self.requester, self.name, self.destination,
-                  self.status, self.date_created))
+
+    def create_table(self):
+        ''' create orders table '''
+        self.cursor.execute(            
+            '''
+            CREATE TABLE IF NOT EXISTS foodorders(
+               id serial PRIMARY KEY,
+                username VARCHAR NOT NULL,
+                name VARCHAR NOT NULL,
+                description VARCHAR NOT NULL,
+                price INT NOT NULL,
+                status VARCHAR NOT NULL)
+            '''
+            )
         self.save()
+
+    def add(self):
+        ''' Add food order to database'''
+        print(self.username)
+        self.cursor.execute(
+            ''' INSERT INTO foodorders(username, name, description, price, status)
+            VALUES(%s, %s, %s, %s, %s)
+            ''',
+            (self.username, self.name, self.description, self.price,self.status))
+
+        self.save()
+
+
+    def get_by_id(self, order_id):
+        '''fetch an order by id'''
+        self.cursor.execute(''' SELECT * FROM foodorders WHERE id=%s''',
+                            (order_id, ))
+
+        food_order = self.cursor.fetchone()
+
+        self.save()
+
+        if food_order:
+            return self.objectify_orders(food_order)
+        return None
+
+    def get_all_orders_by_username(self, username):
+        '''fetch orders by username'''
+        self.cursor.execute(''' SELECT * FROM foodorders WHERE username=%s''', (username,))
+
+        food_orders = self.cursor.fetchall()
+
+        self.save()
+
+
+        if food_orders:
+            return [self.objectify_orders(foodorder) for foodorder in food_orders]
+        return None
+
 
     def get_all(self):
         """ get all available food items """
         self.cursor.execute("SELECT * FROM foodorders")
 
-        Foodorders = self.cursor.fetchall()
-
-        self.save()
-
-        if Foodorders:
-            return [self.objectify_foodorder(foodorder)
-                    for foodorder in Foodorders]
-        return None
-    
-    def get_all_orders_by_username(self, username):
-        """ get all orders available by username """
-        self.cursor.execute("SELECT * FROM foodorders WHERE requester=%s", (username, ))
-
         food_orders = self.cursor.fetchall()
+
         self.save()
 
         if food_orders:
-            return [self.objectify_foodorder(foodorder)
-                    for foodorder in food_orders]
-        return None
 
-    def get_by_id(self, order_id):
-        ''' Get order by ID '''
-        self.cursor.execute(
-            "SELECT * FROM foodorders WHERE id=%s", (order_id,)
-        )
-
-        order = self.cursor.fetchone()
-
-        self.save()
-        if order:
-            return self.objectify_foodorder(order)
+            return [self.objectify_orders(foodorder) for foodorder in food_orders]
         return None
 
     def get_all_orders_by_status(self, status):
         """ get all available food items """
         self.cursor.execute("SELECT * FROM foodorders WHERE status=%s", (status,))
 
-        Foodorders = self.cursor.fetchall()
+        food_orders = self.cursor.fetchall()
 
         self.save()
 
-        if Foodorders:
-            return [self.objectify_foodorder(foodorder)
-                    for foodorder in Foodorders]
+        if food_orders:
+            return [self.objectify_orders(foodorder)
+                    for foodorder in food_orders]
         return None
-   
 
+    
     def update_order(self, status, order_id):
         """update order status"""
         self.cursor.execute("""
@@ -319,25 +318,28 @@ class FoodOrder(DatabaseConnection):
                     """, (status, order_id))
         
         self.save()
+   
+
 
     def serialize(self):
-        ''' returns a dictioanry from the object'''
-        return dict(
-            id="1",
-            name=self.name,
-            destination=self.destination,
-            status=self.status,
-            date=str(self.date_created),
-            requester=self.requester
+        ''' return object as a dictionary '''
+        return dict (
+            id = self.id,
+            username = self.username,
+            name = self.name,
+            description = self.description,
+            price = self.price,
+            status = self.status
         )
-
-    def objectify_foodorder(self, data):
-        ''' Map a foodorder to an object '''
+    
+    def objectify_orders(self, data):
+        ''' map tuple to an object '''
         order = FoodOrder(
-            requester=data[1], name=data[2], destination=data[3])
+            username=data[1],
+            description=data[2],
+            name=data[3],
+            price=data[4],
+            status=data[5])
         order.id = data[0]
-        order.status = data[4]
-        order.date_created = data[5]
         self = order
-
         return self

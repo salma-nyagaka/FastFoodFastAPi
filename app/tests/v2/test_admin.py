@@ -200,7 +200,7 @@ class TestOrders(TestCase):
                      'Authorization': 'Bearer {}'.format(token)})
 
         data = {
-            'destination': 'Roysa'
+            'name': 'Burger'
         }
         status = {
             "status": "accept"

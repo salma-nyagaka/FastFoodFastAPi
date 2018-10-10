@@ -138,12 +138,12 @@ class TestOrders(TestCase):
         res = self.create_menu()
         print(res.data)
         data = {
-            'destination': 'Roosters'
+            'name': 'Burger'
         }
 
 
         response = self.client.post(
-            "api/v2/users/orders/1",
+            "api/v2/users/orders",
             data=json.dumps(data),
             headers={
                 'content-type': 'application/json',

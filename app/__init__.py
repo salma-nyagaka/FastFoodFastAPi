@@ -35,7 +35,7 @@ def create_app(config_name):
     user = Api(USER_BLUEPRINT)
     app.register_blueprint(USER_BLUEPRINT, url_prefix="/api/v2/users")
 
-    user.add_resource(PlaceOrder, '/orders/<int:id>')
+    user.add_resource(PlaceOrder, '/orders')
     user.add_resource(GetOrders, '/orders')
     user.add_resource(AllMenu, '/menu')
 
