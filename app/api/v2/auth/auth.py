@@ -3,6 +3,8 @@ import datetime
 from werkzeug.security import check_password_hash
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token
+from flask_jwt_extended import (jwt_required, get_jwt_identity)
+
 
 
 from app.api.v2.model import User
@@ -76,6 +78,11 @@ class Login(Resource):
         if not user:
             return {'message': 'user does not exist'}, 401
 
+        # if current_user['is_admin']:
+        #     admin = True
+        # admin = False
+            # return {'message': 'Successfully logged in as the admin'}
+
         if not check_password_hash(user.password, password):
             return {'message': 'Wrong password'}, 401
         expires = datetime.timedelta(minutes=1200)
@@ -84,6 +91,7 @@ class Login(Resource):
                                     expires_delta=expires)
         return {
             'token': token,
-            'message': 'successfully logged in'
+            'message': 'successfully logged in',
+            'admin': user.is_admin
             }, 200
-       
+    

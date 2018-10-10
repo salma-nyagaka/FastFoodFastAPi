@@ -2,6 +2,7 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 from app.api.v2.admin import (PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOrder, 
                               AllUserOrders, UpdateStatus, DeleteMenu, FilterOrdersByStatus)
@@ -20,6 +21,8 @@ def create_app(config_name):
     jwt.init_app(app)
 
     api = Api(app)
+
+    CORS(app)
 
     from .api.v2.auth import AUTH_BLUEPRINT 
     auth = Api(AUTH_BLUEPRINT)
