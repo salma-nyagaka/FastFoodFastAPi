@@ -30,8 +30,6 @@ def create_app(config_name):
     auth.add_resource(SignUp, '/signup')
     auth.add_resource(Login, '/login')
     
-
-
     from .api.v2.user import USER_BLUEPRINT
     user = Api(USER_BLUEPRINT)
     app.register_blueprint(USER_BLUEPRINT, url_prefix="/api/v2/users")
