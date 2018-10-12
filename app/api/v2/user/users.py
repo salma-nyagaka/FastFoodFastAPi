@@ -30,11 +30,11 @@ class PlaceOrder(Resource):
         if not meal_item:
             return {"message": "Food not found"}, 404
 
-        order = FoodOrder(username=current_user, name=meal_item.name, description=meal_item.description,
+        order = FoodOrder(username=current_user, food_name=meal_item.name, description=meal_item.description,
                       price=meal_item.price)
         order.add()
 
-        return {"message": "order placed sucessfully"}, 201 
+        return {"food_order": "order placed sucessfully" }, 201 
 
 
 class GetOrders(Resource):
@@ -49,3 +49,23 @@ class GetOrders(Resource):
             return {'Orders': [order.serialize() for order
                                in orders]}, 200
         return {'message': "Not found"}, 404
+
+
+class GetAllMenu(Resource):
+    '''get all menu'''
+    # @jwt_required
+
+    def get(self):
+        """ Get all food items """
+       
+        data = FoodMenu().get_all()
+
+        food_menus = []
+
+        if data:
+            for food_menu in data:
+                food_menus.append(food_menu.serialize())
+
+            return {"Food menu": food_menus,
+                    "message": "These are the available food items"}, 200
+

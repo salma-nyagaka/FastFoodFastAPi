@@ -2,12 +2,11 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from flask_cors import CORS
 
 from app.api.v2.admin import (PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOrder, 
                               AllUserOrders, UpdateStatus, DeleteMenu, FilterOrdersByStatus)
 from app.api.v2.auth import Login, SignUp
-from app.api.v2.user.users import PlaceOrder, GetOrders
+from app.api.v2.user.users import PlaceOrder, GetOrders, GetAllMenu
 
 from config import app_config
 from app.api.v1.views import *
@@ -40,7 +39,7 @@ def create_app(config_name):
 
     user.add_resource(PlaceOrder, '/orders')
     user.add_resource(GetOrders, '/orders')
-    user.add_resource(AllMenu, '/menu')
+    user.add_resource(GetAllMenu, '/menu')
 
 
 

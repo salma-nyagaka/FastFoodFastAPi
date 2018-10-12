@@ -211,13 +211,13 @@ class FoodOrder(DatabaseConnection):
     def __init__(self,
                  id = None,
                  username=None,
-                 name=None,
+                 food_name=None,
                  description = None,
                  price=None,
                  status="Processing"):
         super().__init__()
         self.username = username
-        self.name = name
+        self.food_name = food_name
         self.description = description
         self.price = price
         self.status = status
@@ -237,7 +237,7 @@ class FoodOrder(DatabaseConnection):
             CREATE TABLE IF NOT EXISTS foodorders(
                id serial PRIMARY KEY,
                 username VARCHAR NOT NULL,
-                name VARCHAR NOT NULL,
+                food_name VARCHAR NOT NULL,
                 description VARCHAR NOT NULL,
                 price INT NOT NULL,
                 status VARCHAR NOT NULL)
@@ -249,10 +249,10 @@ class FoodOrder(DatabaseConnection):
         ''' Add food order to database'''
         print(self.username)
         self.cursor.execute(
-            ''' INSERT INTO foodorders(username, name, description, price, status)
+            ''' INSERT INTO foodorders(username, food_name, description, price, status)
             VALUES(%s, %s, %s, %s, %s)
             ''',
-            (self.username, self.name, self.description, self.price,self.status))
+            (self.username, self.food_name, self.description, self.price,self.status))
 
         self.save()
 
@@ -282,6 +282,16 @@ class FoodOrder(DatabaseConnection):
         if food_orders:
             return [self.objectify_orders(foodorder) for foodorder in food_orders]
         return None
+
+    def accept_order(self, order_id):
+        """ reject an order """
+
+        self.cursor.execute(
+            """ UPDATE foodorder SET status=%s WHERE id= %s """, (
+                'Processing', order_id
+            )
+        )
+        self.save()
 
 
     def get_all(self):
@@ -326,7 +336,7 @@ class FoodOrder(DatabaseConnection):
         return dict (
             id = self.id,
             username = self.username,
-            name = self.name,
+            food_name = self.food_name,
             description = self.description,
             price = self.price,
             status = self.status
@@ -337,7 +347,7 @@ class FoodOrder(DatabaseConnection):
         order = FoodOrder(
             username=data[1],
             description=data[2],
-            name=data[3],
+            food_name=data[3],
             price=data[4],
             status=data[5])
         order.id = data[0]
