@@ -2,6 +2,7 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS, cross_origin
 
 from app.api.v2.admin import (PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOrder, 
                               AllUserOrders, UpdateStatus, DeleteMenu, FilterOrdersByStatus)
@@ -16,7 +17,7 @@ jwt=JWTManager()
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(app_config[config_name])
-
+    CORS(app)
 
     jwt.init_app(app)
 
