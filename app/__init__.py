@@ -21,7 +21,6 @@ def create_app(config_name):
 
     api = Api(app)
 
-    CORS(app)
 
     from .api.v2.auth import AUTH_BLUEPRINT 
     auth = Api(AUTH_BLUEPRINT)
