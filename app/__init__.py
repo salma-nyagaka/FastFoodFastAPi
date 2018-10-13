@@ -23,7 +23,7 @@ def create_app(config_name):
 
     jwt.init_app(app)
 
-    api = Api(app)
+    api = Api(app)    
 
 
     from .api.v2.auth import AUTH_BLUEPRINT 
@@ -41,7 +41,7 @@ def create_app(config_name):
     user.add_resource(PlaceOrder, '/orders')
     user.add_resource(GetOrders, '/orders')
     user.add_resource(GetAllMenu, '/menu')
-
+    
 
 
     from .api.v2.admin import ADMIN_BLUEPRINT
