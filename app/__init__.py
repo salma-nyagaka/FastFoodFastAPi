@@ -5,7 +5,9 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS, cross_origin
 
 from app.api.v2.admin import (PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOrder, 
-                              AllUserOrders, UpdateStatus, DeleteMenu, FilterOrdersByStatus)
+                              AllUserOrders, UpdateStatus, DeleteMenu, FilterOrdersByStatus,
+                              UpdateMeal)
+
 from app.api.v2.auth import Login, SignUp
 from app.api.v2.user.users import PlaceOrder, GetOrders, GetAllMenu
 
@@ -54,6 +56,7 @@ def create_app(config_name):
     admin.add_resource(AllUserOrders, '/orders')
     admin.add_resource(UpdateStatus, '/update/order/<int:id>')
     admin.add_resource(DeleteMenu, '/menu/<int:id>')
+    admin.add_resource(UpdateMeal, '/menu/<int:id>')
     admin.add_resource(FilterOrdersByStatus, '/orders/<string:status>')
 
 

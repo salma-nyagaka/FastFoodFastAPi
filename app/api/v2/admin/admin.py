@@ -169,3 +169,28 @@ class UpdateStatus(Resource):
             
             return{'message': "Order not found"}, 404
         return {"message": "Insufficient permissions to perform this actions"}, 403
+
+class UpdateMeal(Resource):
+
+    @jwt_required
+    def put(self, id):
+        ''' update a meal'''
+        current_user = get_jwt_identity()
+
+        if current_user['is_admin']:
+            data = PlaceNewMenu.parser.parse_args()
+            name = data['name']
+            description = data['description']
+            price = data['price']
+
+            if not Validators().valid_food(name):
+                return {'message': 'Enter valid food name'}, 400
+            if not Validators().valid_food(description):
+                return {'message': 'Enter valid food description'}, 400
+
+            if FoodMenu().get_by_id(id):
+                menu = FoodMenu(name=name, description=description, price=price)
+                # menu.add()
+                menu.update(id)
+            return {"message": "Food menu updated"}, 201
+        return {"message": "Insufficient permissions to perform this actions"}, 403

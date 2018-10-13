@@ -102,11 +102,12 @@ class User(DatabaseConnection):
 
 class FoodMenu(DatabaseConnection):
     ''' instance of the FoodMenu class'''
-    def __init__(self, name=None, price=None, description=None):
+    def __init__(self, name=None, price=None, description=None, image=None):
         super().__init__()
         self.name = name
         self.price = price
         self.description = description
+        self.image = image
         self.date_created = datetime.now().replace(second=0, microsecond=0)
     
     def create_table(self):
@@ -118,7 +119,8 @@ class FoodMenu(DatabaseConnection):
                 name VARCHAR (200) NOT NULL,
                 price INTEGER NOT NULL,
                 description VARCHAR(200) NOT NULL,
-                date_created TIMESTAMP)'''
+                date_created TIMESTAMP,
+                image BYTEA NULL DEFAULT NULL)'''
             )
         self.save()
 
@@ -133,15 +135,25 @@ class FoodMenu(DatabaseConnection):
     def add(self):
         ''' add orders to the food orders table'''
         self.cursor.execute('''
-            INSERT INTO foodmenu(name, price, description, date_created)
-            VALUES(%s, %s, %s, %s)
-            ''', (self.name, self.price, self.description, self.date_created))
+            INSERT INTO foodmenu(name, price, description, image, date_created)
+            VALUES(%s, %s, %s, %s, %s)
+            ''', (self.name, self.price, self.description, self.image, self.date_created))
         self.save()
+
+    
+    def update(self, id):
+        """ update an existing food item """
+
+        self.cursor.execute(
+            """ UPDATE foodmenu SET name=%s, price=%s, image=%s, description=%s WHERE id=%s """, (
+                self.name, self.price, self.description, self.image, id))
+        self.save()
+
 
     def get_by_id(self, id):
         ''' Get user by food id '''
         self.cursor.execute(   
-            "SELECT * FROM foodmenu WHERE id=%s", (id,)
+            "SELECT * FROM foodmenu WHERE id=%s", (id, )
         )
         item = self.cursor.fetchone()
 
@@ -194,6 +206,7 @@ class FoodMenu(DatabaseConnection):
             name=self.name,
             price=self.price,
             description=self.description,
+            image=self.image,
             date=str(self.date_created)
         )
 
@@ -214,7 +227,7 @@ class FoodOrder(DatabaseConnection):
                  food_name=None,
                  description = None,
                  price=None,
-                 status="Processing"):
+                 status="New"):
         super().__init__()
         self.username = username
         self.food_name = food_name
@@ -288,7 +301,7 @@ class FoodOrder(DatabaseConnection):
 
         self.cursor.execute(
             """ UPDATE foodorder SET status=%s WHERE id= %s """, (
-                'Processing', order_id
+                'New', order_id
             )
         )
         self.save()
@@ -319,7 +332,6 @@ class FoodOrder(DatabaseConnection):
             return [self.objectify_orders(foodorder)
                     for foodorder in food_orders]
         return None
-
     
     def update_order(self, status, order_id):
         """update order status"""
