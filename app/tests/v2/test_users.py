@@ -2,7 +2,7 @@
 '''tests for users endpoints'''
 import json
 from unittest import TestCase
-from manage import drop, create, create_admin
+from manage import Connection
 from run import app
 
 from app import create_app
@@ -14,9 +14,9 @@ class TestOrders(TestCase):
         self.app = create_app("testing")
         self.client = self.app.test_client()
         with self.app.app_context():
-            drop()
-            create()
-            create_admin()
+            Connection().drop()
+            Connection().create()
+            Connection().create_admin()
         self.order_data = {
             "name": "Burger",
             "description": "Beef burger",
@@ -156,5 +156,5 @@ class TestOrders(TestCase):
 
     def tearDown(self):
         with app.app_context():
-            drop()
+            Connection().drop()
         
