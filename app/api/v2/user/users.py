@@ -66,7 +66,7 @@ class GetAllMenu(Resource):
 
     def get(self):
         """ Get all food items """
-       
+
         data = FoodMenu().get_all()
 
         food_menus = []
