@@ -12,12 +12,12 @@ class PlaceOrder(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('name', type=str, required=True,
                         help="This field cannot be left blank")
-    parser.add_argument('quantity', type=int, required=True,
-                    help="This field cannot be left blank")
-    parser.add_argument('destination', type=str, required=True,
-                    help="This field cannot be left blank")
-    parser.add_argument('phone_number', type=str, required=True,
-                    help="This field cannot be left blank")
+    # parser.add_argument('quantity', type=int, required=True,
+    #                 help="This field cannot be left blank")
+    # parser.add_argument('destination', type=str, required=True,
+    #                 help="This field cannot be left blank")
+    # parser.add_argument('phone_number', type=str, required=True,
+    #                 help="This field cannot be left blank")
 
  
     @jwt_required
@@ -29,9 +29,9 @@ class PlaceOrder(Resource):
         
         current_user = get_jwt_identity()['username']
         name = data['name']
-        quantity = data['quantity']
-        destination = data['destination']
-        phone_number = data['phone_number']
+        # quantity = data['quantity']
+        # destination = data['destination']
+        # phone_number = data['phone_number']
       
 
         meal_item = FoodMenu().get_by_name(name)
@@ -40,7 +40,7 @@ class PlaceOrder(Resource):
             return {"message": "Food not found"}, 404
 
         order = FoodOrder(username=current_user, food_name=meal_item.name, description=meal_item.description,
-                      price=meal_item.price, quantity=quantity, destination=destination, phone_number=phone_number)
+                      price=meal_item.price)
         order.add()
 
         return {"food_order": "order placed sucessfully" }, 201 

@@ -219,16 +219,16 @@ class FoodMenu(DatabaseConnection):
 class FoodOrder(DatabaseConnection):
     '''creates tables for the food orders database'''
     def __init__(self, id = None, username=None,  food_name=None, description = None, price=None,
-                 status="New", quantity=None, destination=None, phone_number=None):
+                 status="New"):
         super().__init__()
         self.username = username
         self.food_name = food_name
         self.description = description
         self.price = price
         self.status = status
-        self.quantity = quantity
-        self.destination = destination
-        self.phone_number = phone_number 
+        # self.quantity = quantity
+        # self.destination = destination
+        # self.phone_number = phone_number 
    
 
     def drop_tables(self):
@@ -248,10 +248,7 @@ class FoodOrder(DatabaseConnection):
                 food_name VARCHAR NOT NULL,
                 description VARCHAR NOT NULL,
                 price INT NOT NULL,
-                status VARCHAR NOT NULL,
-                quantity INT NOT NULL,
-                destination VARCHAR NOT NULL,
-                phone_number INT NOT NULL)
+                status VARCHAR NOT NULL)
             '''
             )
         self.save()
@@ -260,10 +257,10 @@ class FoodOrder(DatabaseConnection):
         ''' Add food order to database'''
         print(self.username)
         self.cursor.execute(
-            ''' INSERT INTO foodorders(username, food_name, description, price, status, quantity, destination, phone_number)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
+            ''' INSERT INTO foodorders(username, food_name, description, price, status)
+            VALUES(%s, %s, %s, %s, %s)
             ''',
-            (self.username, self.food_name, self.description, self.price, self.status, self.quantity, self.destination, self.phone_number))
+            (self.username, self.food_name, self.description, self.price, self.status))
 
         self.save()
 
@@ -355,10 +352,7 @@ class FoodOrder(DatabaseConnection):
             food_name = self.food_name,
             description = self.description,
             price = self.price,
-            status = self.status,
-            quantity =  self.quantity,
-            destination = self.destination,
-            phone_number = self.phone_number
+            status = self.status
         )
     
     def objectify_orders(self, data):
@@ -367,10 +361,7 @@ class FoodOrder(DatabaseConnection):
                             food_name=data[2],
                             description=data[3],
                             price=data[4],
-                            status=data[5],
-                            quantity=data[6],
-                            destination=data[7],
-                            phone_number=data[8])
+                            status=data[5])
         order.id = data[0]
         self = order
         return self
