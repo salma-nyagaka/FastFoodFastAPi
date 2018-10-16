@@ -9,7 +9,7 @@ from app.api.v2.admin import (PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOr
                               UpdateMeal)
 
 from app.api.v2.auth import Login, SignUp
-from app.api.v2.user.users import PlaceOrder, GetOrders, GetAllMenu
+from app.api.v2.user.users import PlaceOrder, GetOrders, GetAllMenu, GetNewOrders, DeleteOrder
 
 from config import app_config
 from app.api.v1.views import *
@@ -41,9 +41,11 @@ def create_app(config_name):
     user.add_resource(PlaceOrder, '/orders')
     user.add_resource(GetOrders, '/orders')
     user.add_resource(GetAllMenu, '/menu')
+    user.add_resource(GetNewOrders, '/orders/<string:status>')
+    user.add_resource(DeleteOrder, '/orders/<int:id>')
+
+
     
-
-
     from .api.v2.admin import ADMIN_BLUEPRINT
     admin = Api(ADMIN_BLUEPRINT)
     app.register_blueprint(ADMIN_BLUEPRINT, url_prefix="/api/v2")

@@ -12,6 +12,12 @@ class PlaceOrder(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('name', type=str, required=True,
                         help="This field cannot be left blank")
+    parser.add_argument('quantity', type=int, required=True,
+                    help="This field cannot be left blank")
+    parser.add_argument('destination', type=str, required=True,
+                    help="This field cannot be left blank")
+    parser.add_argument('phone_number', type=str, required=True,
+                    help="This field cannot be left blank")
 
  
     @jwt_required
@@ -23,7 +29,10 @@ class PlaceOrder(Resource):
         
         current_user = get_jwt_identity()['username']
         name = data['name']
-       
+        quantity = data['quantity']
+        destination = data['destination']
+        phone_number = data['phone_number']
+      
 
         meal_item = FoodMenu().get_by_name(name)
         
@@ -31,7 +40,7 @@ class PlaceOrder(Resource):
             return {"message": "Food not found"}, 404
 
         order = FoodOrder(username=current_user, food_name=meal_item.name, description=meal_item.description,
-                      price=meal_item.price)
+                      price=meal_item.price, quantity=quantity, destination=destination, phone_number=phone_number)
         order.add()
 
         return {"food_order": "order placed sucessfully" }, 201 
@@ -68,4 +77,37 @@ class GetAllMenu(Resource):
 
             return {"Food menu": food_menus,
                     "message": "These are the available food items"}, 200
+
+
+
+
+class GetNewOrders(Resource):
+    '''get all the orders made'''
+    @jwt_required
+    def get(self, status):
+        ''' get all food orders '''
+      
+        foodorders = FoodOrder().get_all()
+        
+        if foodorders:
+            orders = [order.serialize() for order in foodorders if order.status == status]
+
+            if orders:
+                return {'orders': orders}, 200
+            return {'message': "Not found"}, 404
+        return {'message': "Not found"}, 404
+
+
+
+class DeleteOrder(Resource):
+    '''delete order'''
+    @jwt_required
+    def delete(self, id):
+        ''' Delete an order'''
+        
+        order = FoodOrder().get_by_id(id)
+        if order:
+            order.delete(id)
+            return {'message': "Successfully Deleted"}, 200
+        return {'message': "Order item not found"}, 404
 

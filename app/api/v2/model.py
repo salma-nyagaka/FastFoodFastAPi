@@ -102,12 +102,11 @@ class User(DatabaseConnection):
 
 class FoodMenu(DatabaseConnection):
     ''' instance of the FoodMenu class'''
-    def __init__(self, name=None, price=None, description=None, image=None):
+    def __init__(self, name=None, price=None, description=None):
         super().__init__()
         self.name = name
         self.price = price
         self.description = description
-        self.image = image
         self.date_created = datetime.now().replace(second=0, microsecond=0)
     
     def create_table(self):
@@ -119,8 +118,7 @@ class FoodMenu(DatabaseConnection):
                 name VARCHAR (200) NOT NULL,
                 price INTEGER NOT NULL,
                 description VARCHAR(200) NOT NULL,
-                date_created TIMESTAMP,
-                image BYTEA NULL DEFAULT NULL)'''
+                date_created TIMESTAMP)'''
             )
         self.save()
 
@@ -135,9 +133,9 @@ class FoodMenu(DatabaseConnection):
     def add(self):
         ''' add orders to the food orders table'''
         self.cursor.execute('''
-            INSERT INTO foodmenu(name, price, description, image, date_created)
-            VALUES(%s, %s, %s, %s, %s)
-            ''', (self.name, self.price, self.description, self.image, self.date_created))
+            INSERT INTO foodmenu(name, price, description,  date_created)
+            VALUES(%s, %s, %s, %s)
+            ''', (self.name, self.price, self.description,  self.date_created))
         self.save()
 
     
@@ -145,8 +143,8 @@ class FoodMenu(DatabaseConnection):
         """ update an existing food item """
 
         self.cursor.execute(
-            """ UPDATE foodmenu SET name=%s, price=%s, image=%s, description=%s WHERE id=%s """, (
-                self.name, self.price, self.description, self.image, id))
+            """ UPDATE foodmenu SET name=%s, price=%s,  description=%s WHERE id=%s """, (
+                self.name, self.price, self.description,  id))
         self.save()
 
 
@@ -206,7 +204,6 @@ class FoodMenu(DatabaseConnection):
             name=self.name,
             price=self.price,
             description=self.description,
-            image=self.image,
             date=str(self.date_created)
         )
 
@@ -221,20 +218,18 @@ class FoodMenu(DatabaseConnection):
 
 class FoodOrder(DatabaseConnection):
     '''creates tables for the food orders database'''
-    def __init__(self,
-                 id = None,
-                 username=None,
-                 food_name=None,
-                 description = None,
-                 price=None,
-                 status="New"):
+    def __init__(self, id = None, username=None,  food_name=None, description = None, price=None,
+                 status="New", quantity=None, destination=None, phone_number=None):
         super().__init__()
         self.username = username
         self.food_name = food_name
         self.description = description
         self.price = price
         self.status = status
-    
+        self.quantity = quantity
+        self.destination = destination
+        self.phone_number = phone_number 
+   
 
     def drop_tables(self):
         ''' Drop tables'''
@@ -253,7 +248,10 @@ class FoodOrder(DatabaseConnection):
                 food_name VARCHAR NOT NULL,
                 description VARCHAR NOT NULL,
                 price INT NOT NULL,
-                status VARCHAR NOT NULL)
+                status VARCHAR NOT NULL,
+                quantity INT NOT NULL,
+                destination VARCHAR NOT NULL,
+                phone_number INT NOT NULL)
             '''
             )
         self.save()
@@ -262,10 +260,10 @@ class FoodOrder(DatabaseConnection):
         ''' Add food order to database'''
         print(self.username)
         self.cursor.execute(
-            ''' INSERT INTO foodorders(username, food_name, description, price, status)
-            VALUES(%s, %s, %s, %s, %s)
+            ''' INSERT INTO foodorders(username, food_name, description, price, status, quantity, destination, phone_number)
+            VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
             ''',
-            (self.username, self.food_name, self.description, self.price,self.status))
+            (self.username, self.food_name, self.description, self.price, self.status, self.quantity, self.destination, self.phone_number))
 
         self.save()
 
@@ -304,6 +302,12 @@ class FoodOrder(DatabaseConnection):
                 'New', order_id
             )
         )
+        self.save()
+
+    def delete(self, order_id):
+        ''' delete an order '''
+        self.cursor.execute("DELETE FROM foodorder WHERE id=%s", (order_id,))
+
         self.save()
 
 
@@ -351,17 +355,22 @@ class FoodOrder(DatabaseConnection):
             food_name = self.food_name,
             description = self.description,
             price = self.price,
-            status = self.status
+            status = self.status,
+            quantity =  self.quantity,
+            destination = self.destination,
+            phone_number = self.phone_number
         )
     
     def objectify_orders(self, data):
         ''' map tuple to an object '''
-        order = FoodOrder(
-            username=data[1],
-            description=data[2],
-            food_name=data[3],
-            price=data[4],
-            status=data[5])
+        order = FoodOrder(  username=data[1],
+                            food_name=data[2],
+                            description=data[3],
+                            price=data[4],
+                            status=data[5],
+                            quantity=data[6],
+                            destination=data[7],
+                            phone_number=data[8])
         order.id = data[0]
         self = order
         return self

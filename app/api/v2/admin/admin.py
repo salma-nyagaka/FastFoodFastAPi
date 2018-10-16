@@ -29,6 +29,7 @@ class PlaceNewMenu(Resource):
             name = data['name']
             description = data['description']
             price = data['price']
+            
 
             if not Validators().valid_food(name):
                 return {'message': 'Enter valid food name'}, 400
@@ -63,6 +64,8 @@ class AllMenu(Resource):
                         "message": "These are the available food items"}, 200
 
             return {"message": "No food items available for now"}, 404
+        return {"message": "Insufficient permissions to perform this actions"}, 403
+
 
 
 class DeleteMenu(Resource):
