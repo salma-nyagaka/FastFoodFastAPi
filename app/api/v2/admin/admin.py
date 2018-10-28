@@ -133,15 +133,19 @@ class FilterOrdersByStatus(Resource):
         current_user = get_jwt_identity()
         
         if current_user['is_admin']:
+
             foodorders = FoodOrder().get_all()
             
             if foodorders:
                 orders = [order.serialize() for order in foodorders if order.status == status]
 
                 if orders:
-                    return {'message': orders}, 200
-                return {'message': "The updated order has not been found"}, 404
-        return {"message": "Insufficient permissions to view updated orders"}, 403
+                    return {'orders': orders}, 200
+                return {'message': "Not found"}, 404
+            return {'message': "Not found"}, 404
+        return {"message": "Insufficient permissions to perform this actions"}, 403
+
+
 
 
 
