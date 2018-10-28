@@ -19,6 +19,10 @@ class PlaceNewMenu(Resource):
     parser.add_argument('price', type=int, required=True,
                         help="Enter valid price")
 
+    parser.add_argument('image', type=str, required=True,
+                        help="image cannot be left blank")
+
+
     @jwt_required
     def post(self):
         ''' place new menu'''
@@ -29,7 +33,12 @@ class PlaceNewMenu(Resource):
             name = data['name']
             description = data['description']
             price = data['price']
-            
+            image = data['image']
+
+            if data['name'].strip() == "":
+                return {'message': 'Name cannot be left blank'}, 400
+            if data['description'].strip() == "":
+                return {'message': 'Description cannot be left blank'}, 400                                
 
             if not Validators().valid_food(name):
                 return {'message': 'Enter valid food name'}, 400
@@ -37,11 +46,11 @@ class PlaceNewMenu(Resource):
                 return {'message': 'Enter valid food description'}, 400
             if FoodMenu().get_by_name(name):
                 return {'message': 'This food already exists'}, 409
-            menu = FoodMenu(name=name, description=description, price=price)
+            menu = FoodMenu(name=name, description=description, price=price, image=image)
             menu.add()
             meal = FoodMenu().get_by_name(name)
             return {"message": "Food menu created", "meal":meal.serialize()}, 201
-        return {"message": "Insufficient permissions to perform this actions"}, 403
+        return {"message": "Insufficient permissions to add a new meal item"}, 403
 
 
 class AllMenu(Resource):
@@ -61,10 +70,10 @@ class AllMenu(Resource):
                     food_menus.append(food_menu.serialize())
 
                 return {"Food menu": food_menus,
-                        "message": "These are the available food items"}, 200
+                        "message": "These are meals"}, 200
 
             return {"message": "No food items available for now"}, 404
-        return {"message": "Insufficient permissions to perform this actions"}, 403
+        return {"message": "Insufficient permissions to view this section"}, 403
 
 
 
@@ -112,8 +121,8 @@ class AllUserOrders(Resource):
             if foodorder.get_all():
                 return {'Food Orders': [foodorder.serialize() for foodorder
                                         in foodorder.get_all()]}, 200
-            return {'message': "Not found"}, 404
-        return {"message": "Insufficient permissions to perform this actions"}, 403
+            return {'message': "No orders have been made"}, 404
+        return {"message": "Insufficient permissions to view this page"}, 403
 
 
 class FilterOrdersByStatus(Resource):
@@ -131,9 +140,8 @@ class FilterOrdersByStatus(Resource):
 
                 if orders:
                     return {'orders': orders}, 200
-                return {'message': "Not found"}, 404
-            return {'message': "Not found"}, 404
-        return {"message": "Insufficient permissions to perform this actions"}, 403
+                return {'message': "The updated order has not been found"}, 404
+        return {"message": "Insufficient permissions to view updated orders"}, 403
 
 
 
@@ -145,7 +153,7 @@ class GetSpecificOrder(Resource):
 
         order = FoodOrder().get_by_id(id)
         if order:
-            return {"Menu": order.serialize()}, 200
+            return {"message": "Specific order", "order":order.serialize()}, 200
         return {'message': "Not found"}, 404
 
 
@@ -170,7 +178,7 @@ class UpdateStatus(Resource):
                 new_order = FoodOrder().get_by_id(id)
                 return{"order":  new_order.serialize()}, 200
             
-            return{'message': "Order not found"}, 404
+            return{'message': "No orders yet"}, 404
         return {"message": "Insufficient permissions to perform this actions"}, 403
 
 class UpdateMeal(Resource):
@@ -184,6 +192,7 @@ class UpdateMeal(Resource):
             data = PlaceNewMenu.parser.parse_args()
             name = data['name']
             description = data['description']
+            image = data['image']
             price = data['price']
 
             if not Validators().valid_food(name):
@@ -192,7 +201,7 @@ class UpdateMeal(Resource):
                 return {'message': 'Enter valid food description'}, 400
 
             if FoodMenu().get_by_id(id):
-                menu = FoodMenu(name=name, description=description, price=price)
+                menu = FoodMenu(name=name, description=description, price=price, image=image)
                 # menu.add()
                 menu.update(id)
             return {"message": "Food menu updated"}, 201

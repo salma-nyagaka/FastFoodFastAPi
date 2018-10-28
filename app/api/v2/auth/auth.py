@@ -24,6 +24,8 @@ class SignUp(Resource):
 
     parser.add_argument('confirm_password', type=str,
                         required=True, help="This field cannot be left blank")
+    # parser.add_argument('phone_number', type=int,
+    #                 required=True, help="This field cannot be left blank")
 
     def post(self):
         ''' Add a new user '''
@@ -33,6 +35,14 @@ class SignUp(Resource):
         email = data['email']
         password = data['password']
         confirm_password = data['confirm_password']
+        # phone_number = data['phone_number']
+
+        if data['username'].strip() == "":
+                return {'message': 'Username cannot be left blank'}, 400                                
+        if data['email'].strip() == "":
+                return {'message': 'Email cannot be left blank'}, 400                                              
+        if data['password'].strip() == "":
+                return {'message': 'Password cannot be left blank'}, 400  
 
         if password != confirm_password:
             return {'message': 'Password do not match'}, 400
@@ -62,9 +72,9 @@ class Login(Resource):
     '''login a user'''
     parser = reqparse.RequestParser()
     parser.add_argument('username', type=str, required=True,
-                        help="This field cannot be left blank")
+                        help="Username field cannot be left blank")
     parser.add_argument('password', type=str, required=True,
-                        help="This field cannot be left blank")
+                        help="Password field cannot be left blank")
 
     def post(self):
         ''' login a user '''
@@ -72,6 +82,10 @@ class Login(Resource):
 
         username = data['username']
         password = data['password']
+        if data['username'].strip() == "":
+                return {'message': 'Username cannot be left blank'}, 400                                                                            
+        if data['password'].strip() == "":
+                return {'message': 'Password cannot be left blank'}, 400      
 
         user = User().get_by_username(username)
 
@@ -82,11 +96,11 @@ class Login(Resource):
         #     admin = True
         # admin = False
             # return {'message': 'Successfully logged in as the admin'}
-
+    
         if not check_password_hash(user.password, password):
             return {'message': 'Wrong password'}, 401
+            
         expires = datetime.timedelta(minutes=1200)
-
         token = create_access_token(identity=user.serialize(),
                                     expires_delta=expires)
         return {
@@ -94,4 +108,47 @@ class Login(Resource):
             'message': 'successfully logged in',
             'admin': user.is_admin
             }, 200
+
+
+class UpdateProfile(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('username', type=str, required=True,
+                        help="This field cannot be left blank")
+
+    parser.add_argument('email', type=str, required=True,
+                        help="This field cannot be left blank")
+    parser.add_argument('password', type=str, required=True,
+                        help="This field cannot be left blank")
+
+    parser.add_argument('phone_number', type=int,
+                    required=True, help="This field cannot be left blank")
+
+    @jwt_required
+    def put(self, id):
+        ''' update user profile'''    
+        data = UpdateProfile.parser.parse_args()
+
+        username = data['username']
+        email = data['email']
+        password = 'password'
+        # phone_number = data['phone_number']
+
+
+        if (len(password) < 6):
+            return {'message': 'Password is too short'}, 400
+        if (len(username) < 6):
+            return {'message': 'Username is too short'}, 400
+        if not Validators().valid_account(username):
+            return {'message': 'Enter valid username'}, 400
+        if not Validators().valid_account(password):
+            return {'message': 'Enter valid password'}, 400
+        if not Validators().valid_email(email):
+            return {'message': 'Enter valid email'}, 400
+       
+
+        # if User().update(id):
+        #     user = User(username=username, email=email, password=password, phone_number=phone_number)
+        #     user.add()
+        #     user.update(id)
+        return {"message": "profile has been updated"}, 201
     

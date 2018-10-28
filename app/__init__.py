@@ -8,7 +8,7 @@ from app.api.v2.admin import (PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOr
                               AllUserOrders, UpdateStatus, DeleteMenu, FilterOrdersByStatus,
                               UpdateMeal)
 
-from app.api.v2.auth import Login, SignUp
+from app.api.v2.auth import Login, SignUp, UpdateProfile
 from app.api.v2.user.users import PlaceOrder, GetOrders, GetAllMenu, GetNewOrders, DeleteOrder
 
 from config import app_config
@@ -43,6 +43,8 @@ def create_app(config_name):
     user.add_resource(GetAllMenu, '/menu')
     user.add_resource(GetNewOrders, '/orders/<string:status>')
     user.add_resource(DeleteOrder, '/orders/<int:id>')
+    user.add_resource(UpdateProfile, '/profile/<int:id>')
+
 
 
     

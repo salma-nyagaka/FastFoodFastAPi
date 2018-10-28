@@ -118,6 +118,7 @@ class TestOrders(TestCase):
         data = {
             "name": "Burger",
             "description": "Cheese burger",
+            "image": "Burger",
             "price": 20.0
         }
 
@@ -138,11 +139,7 @@ class TestOrders(TestCase):
     #     res = self.create_menu()
     #     print(res.data)
     #     data = {
-    #         'name': 'Riccce',
-    #         'destination': 'ghfhg',
-    #         'phone_number': '09886678',
-    #         'quantity': 2
-
+    #         'name': 'Riccce'
     #     }
 
 
@@ -161,4 +158,3 @@ class TestOrders(TestCase):
     def tearDown(self):
         with app.app_context():
             Connection().drop()
-        

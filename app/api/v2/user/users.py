@@ -10,16 +10,11 @@ from utils.validators import Validators
 
 class PlaceOrder(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('name', type=str, required=True,
+    parser.add_argument('name', type=str, required=False,
                         help="This field cannot be left blank")
-    # parser.add_argument('quantity', type=int, required=True,
-    #                 help="This field cannot be left blank")
-    # parser.add_argument('destination', type=str, required=True,
-    #                 help="This field cannot be left blank")
-    # parser.add_argument('phone_number', type=str, required=True,
-    #                 help="This field cannot be left blank")
-
- 
+    parser.add_argument('quantity', type=str, required=False,
+                    help="This field cannot be left blank")
+   
     @jwt_required
     def post(self):
         '''post an order by the user'''
@@ -29,18 +24,14 @@ class PlaceOrder(Resource):
         
         current_user = get_jwt_identity()['username']
         name = data['name']
-        # quantity = data['quantity']
-        # destination = data['destination']
-        # phone_number = data['phone_number']
-      
-
+        quantity = data['quantity']
         meal_item = FoodMenu().get_by_name(name)
         
         if not meal_item:
             return {"message": "Food not found"}, 404
 
         order = FoodOrder(username=current_user, food_name=meal_item.name, description=meal_item.description,
-                      price=meal_item.price)
+                      price=meal_item.price, quantity=quantity)
         order.add()
 
         return {"food_order": "order placed sucessfully" }, 201 
@@ -57,7 +48,7 @@ class GetOrders(Resource):
         if orders:
             return {'Orders': [order.serialize() for order
                                in orders]}, 200
-        return {'message': "Not found"}, 404
+        return {'message': "No order history"}, 404
 
 
 class GetAllMenu(Resource):
@@ -66,8 +57,8 @@ class GetAllMenu(Resource):
 
     def get(self):
         """ Get all food items """
-
-        data = FoodMenu().get_all()
+       
+        data = FoodMenu().get_all_menu()
 
         food_menus = []
 
@@ -77,6 +68,7 @@ class GetAllMenu(Resource):
 
             return {"Food menu": food_menus,
                     "message": "These are the available food items"}, 200
+        return{"Food menu": "There are no meals available for now"}, 404
 
 
 

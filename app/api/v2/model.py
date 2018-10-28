@@ -25,8 +25,7 @@ class User(DatabaseConnection):
                 username VARCHAR (200) NOT NULL,
                 email VARCHAR (200) NOT NULL,
                 password VARCHAR (200) NOT NULL,
-                is_admin BOOL NOT NULL
-            )'''
+                is_admin BOOL NOT NULL )'''
             )
         self.save()
 
@@ -43,9 +42,9 @@ class User(DatabaseConnection):
             '''
             INSERT INTO users(username, email,
             password, is_admin)
-            VALUES(%s, %s, %s, %s)
+            VALUES(%s, %s,  %s, %s)
             ''',
-            (self.username, self.email, self.password,
+            (self.username, self.email, self.password, 
              self.is_admin)
         )
         self.save()
@@ -65,16 +64,35 @@ class User(DatabaseConnection):
             return self.objectify_user(user)
         return None
 
+
+    def get_all_users(self):
+        """ get all users"""
+        self.cursor.execute("SELECT * FROM users")
+
+        users = self.cursor.fetchall()
+        self.save()
+
+        if users:
+            return [self.objectify_user(user) for user in users]
+        return None
+
+
+    # def update(self, id):
+    #     """ update an existing food item """
+
+    #     self.cursor.execute(
+    #         """ UPDATE users SET username=%s, email=%s,  phone_number=%s WHERE id=%s """, 
+    #         (self.username, self.email,  self.phone_number, id))
+    #     self.save()
+
+
     def get_by_email(self, email):
         ''' Get user by email '''
         self.cursor.execute(
             "SELECT * FROM users WHERE email=%s", (email,)
         )
-
         user = self.cursor.fetchone()
-
         self.save()
-
 
         if user:
             return self.objectify_user(user)
@@ -102,12 +120,13 @@ class User(DatabaseConnection):
 
 class FoodMenu(DatabaseConnection):
     ''' instance of the FoodMenu class'''
-    def __init__(self, name=None, price=None, description=None):
+    def __init__(self, name=None, price=None, description=None, image=None):
         super().__init__()
         self.name = name
         self.price = price
         self.description = description
         self.date_created = datetime.now().replace(second=0, microsecond=0)
+        self.image = image
     
     def create_table(self):
         ''' create orders table '''
@@ -118,7 +137,8 @@ class FoodMenu(DatabaseConnection):
                 name VARCHAR (200) NOT NULL,
                 price INTEGER NOT NULL,
                 description VARCHAR(200) NOT NULL,
-                date_created TIMESTAMP)'''
+                date_created TIMESTAMP,
+                image VARCHAR (200) NOT NULL)'''
             )
         self.save()
 
@@ -133,9 +153,9 @@ class FoodMenu(DatabaseConnection):
     def add(self):
         ''' add orders to the food orders table'''
         self.cursor.execute('''
-            INSERT INTO foodmenu(name, price, description,  date_created)
-            VALUES(%s, %s, %s, %s)
-            ''', (self.name, self.price, self.description,  self.date_created))
+            INSERT INTO foodmenu(name, price, description,  date_created, image)
+            VALUES(%s, %s, %s, %s, %s)
+            ''', (self.name, self.price, self.description,  self.date_created, self.image))
         self.save()
 
     
@@ -143,8 +163,8 @@ class FoodMenu(DatabaseConnection):
         """ update an existing food item """
 
         self.cursor.execute(
-            """ UPDATE foodmenu SET name=%s, price=%s,  description=%s WHERE id=%s """, (
-                self.name, self.price, self.description,  id))
+            """ UPDATE foodmenu SET name=%s, price=%s,  description=%s,  image=%s WHERE id=%s """, (
+                self.name, self.price, self.description, self.image , id))
         self.save()
 
 
@@ -181,10 +201,18 @@ class FoodMenu(DatabaseConnection):
         self.cursor.execute("SELECT * FROM foodmenu")
 
         FoodMenu = self.cursor.fetchall()
-        print(FoodMenu)
-
         self.save()
 
+        if FoodMenu:
+            return [self.obectify_fooditem(foodmenu) for foodmenu in FoodMenu]
+        return None
+
+    def get_all_menu(self):
+        """ get all available food in the menu"""
+        self.cursor.execute("SELECT * FROM foodmenu")
+
+        FoodMenu = self.cursor.fetchall()
+        self.save()
 
         if FoodMenu:
             return [self.obectify_fooditem(foodmenu) for foodmenu in FoodMenu]
@@ -204,7 +232,8 @@ class FoodMenu(DatabaseConnection):
             name=self.name,
             price=self.price,
             description=self.description,
-            date=str(self.date_created)
+            date=str(self.date_created),
+            image=self.image
         )
 
     def obectify_fooditem(self, data):
@@ -212,6 +241,7 @@ class FoodMenu(DatabaseConnection):
         item = FoodMenu(name=data[1], description=data[3], price=data[2])
         item.id = data[0]
         item.date_created = data[4]
+        item.image = data[5]
         self = item
         return self
 
@@ -219,16 +249,15 @@ class FoodMenu(DatabaseConnection):
 class FoodOrder(DatabaseConnection):
     '''creates tables for the food orders database'''
     def __init__(self, id = None, username=None,  food_name=None, description = None, price=None,
-                 status="New"):
+                 status="New", date = None, quantity = None):
         super().__init__()
         self.username = username
         self.food_name = food_name
         self.description = description
         self.price = price
         self.status = status
-        # self.quantity = quantity
-        # self.destination = destination
-        # self.phone_number = phone_number 
+        self.date = datetime.now().replace(second=0, microsecond=0)
+        self.quantity = quantity
    
 
     def drop_tables(self):
@@ -248,7 +277,9 @@ class FoodOrder(DatabaseConnection):
                 food_name VARCHAR NOT NULL,
                 description VARCHAR NOT NULL,
                 price INT NOT NULL,
-                status VARCHAR NOT NULL)
+                status VARCHAR NOT NULL,
+                date TIMESTAMP,
+                quantity INT NOT NULL)
             '''
             )
         self.save()
@@ -257,10 +288,10 @@ class FoodOrder(DatabaseConnection):
         ''' Add food order to database'''
         print(self.username)
         self.cursor.execute(
-            ''' INSERT INTO foodorders(username, food_name, description, price, status)
-            VALUES(%s, %s, %s, %s, %s)
+            ''' INSERT INTO foodorders(username, food_name, description, price, status, date, quantity)
+            VALUES(%s, %s, %s, %s, %s, %s, %s)
             ''',
-            (self.username, self.food_name, self.description, self.price, self.status))
+            (self.username, self.food_name, self.description, self.price, self.status, self.date, self.quantity))
 
         self.save()
 
@@ -292,7 +323,7 @@ class FoodOrder(DatabaseConnection):
         return None
 
     def accept_order(self, order_id):
-        """ reject an order """
+        """ accept an order """
 
         self.cursor.execute(
             """ UPDATE foodorder SET status=%s WHERE id= %s """, (
@@ -303,14 +334,14 @@ class FoodOrder(DatabaseConnection):
 
     def delete(self, order_id):
         ''' delete an order '''
-        self.cursor.execute("DELETE FROM foodorder WHERE id=%s", (order_id,))
+        self.cursor.execute("DELETE FROM foodorders WHERE id=%s", (order_id,))
 
         self.save()
 
 
     def get_all(self):
         """ get all available food items """
-        self.cursor.execute("SELECT * FROM foodorders")
+        self.cursor.execute("SELECT * FROM foodorders ORDER BY id")
 
         food_orders = self.cursor.fetchall()
 
@@ -352,7 +383,9 @@ class FoodOrder(DatabaseConnection):
             food_name = self.food_name,
             description = self.description,
             price = self.price,
-            status = self.status
+            status = self.status,
+            date = self.date,
+            quantity = self.quantity
         )
     
     def objectify_orders(self, data):
@@ -362,6 +395,8 @@ class FoodOrder(DatabaseConnection):
                             description=data[3],
                             price=data[4],
                             status=data[5])
-        order.id = data[0]
+        order.id = data[0],
+        order.date = str(data[6]),
+        order.quantity = data[7]
         self = order
         return self

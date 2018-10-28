@@ -27,5 +27,5 @@ class Validators:
 
     def valid_email(self, email):
         '''valid email'''
-        regex = "^[a-zA-Z0-9_+-]+@[a-zA-Z-]+\.[a-zA-Z0-]+$"
+        regex = "^[a-z_+-]+@[a-zA-Z-]+\.[a-zA-Z0-]+$"
         return re.match(regex, email)
