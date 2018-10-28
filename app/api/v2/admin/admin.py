@@ -140,7 +140,7 @@ class FilterOrdersByStatus(Resource):
                 orders = [order.serialize() for order in foodorders if order.status == status]
 
                 if orders:
-                    return {'orders': orders}, 200
+                    return {'message': orders}, 200
                 return {'message': "Not found"}, 404
             return {'message': "Not found"}, 404
         return {"message": "Insufficient permissions to perform this actions"}, 403
