@@ -8,13 +8,14 @@ from app.api.v2.database import DatabaseConnection
 class User(DatabaseConnection):
     '''create an instance of the class'''
     def __init__(self, username=None, email=None,
-                 password=None, is_admin=False):
+                 password=None, is_admin=False, phoneNumber=None):
         super().__init__()
         self.username = username
         self.email = email
         if password:
             self.password = generate_password_hash(password)
         self.is_admin = is_admin
+        self.phoneNumber = phoneNumber
 
     def create_table(self):
         '''create users table'''
@@ -25,7 +26,8 @@ class User(DatabaseConnection):
                 username VARCHAR (200) NOT NULL,
                 email VARCHAR (200) NOT NULL,
                 password VARCHAR (200) NOT NULL,
-                is_admin BOOL NOT NULL )'''
+                is_admin BOOL NOT NULL,
+                phoneNumber VARCHAR(13) NOT NULL)'''
             )
         self.save()
 
@@ -41,11 +43,11 @@ class User(DatabaseConnection):
         self.cursor.execute(
             '''
             INSERT INTO users(username, email,
-            password, is_admin)
-            VALUES(%s, %s,  %s, %s)
+            password, is_admin, phoneNumber)
+            VALUES(%s, %s, %s, %s, %s)
             ''',
             (self.username, self.email, self.password, 
-             self.is_admin)
+             self.is_admin, self.phoneNumber)
         )
         self.save()
 
@@ -77,15 +79,6 @@ class User(DatabaseConnection):
         return None
 
 
-    # def update(self, id):
-    #     """ update an existing food item """
-
-    #     self.cursor.execute(
-    #         """ UPDATE users SET username=%s, email=%s,  phone_number=%s WHERE id=%s """, 
-    #         (self.username, self.email,  self.phone_number, id))
-    #     self.save()
-
-
     def get_by_email(self, email):
         ''' Get user by email '''
         self.cursor.execute(
@@ -104,7 +97,8 @@ class User(DatabaseConnection):
             username=self.username,
             email=self.email,
             password=self.password,
-            is_admin=self.is_admin
+            is_admin=self.is_admin,
+            phoneNumber=self.phoneNumber
         )
 
     def objectify_user(self, data):
@@ -114,6 +108,7 @@ class User(DatabaseConnection):
         self.email = data[2]
         self.password = data[3]
         self.is_admin = data[4]
+        self.phoneNumber = data[5]
 
         return self
 
@@ -198,7 +193,7 @@ class FoodMenu(DatabaseConnection):
 
     def get_all(self):
         """ get all available food in the menu"""
-        self.cursor.execute("SELECT * FROM foodmenu")
+        self.cursor.execute("SELECT * FROM foodmenu ORDER BY id")
 
         FoodMenu = self.cursor.fetchall()
         self.save()
@@ -209,7 +204,7 @@ class FoodMenu(DatabaseConnection):
 
     def get_all_menu(self):
         """ get all available food in the menu"""
-        self.cursor.execute("SELECT * FROM foodmenu")
+        self.cursor.execute("SELECT * FROM foodmenu ORDER BY id")
 
         FoodMenu = self.cursor.fetchall()
         self.save()

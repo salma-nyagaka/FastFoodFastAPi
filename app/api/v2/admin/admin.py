@@ -44,6 +44,8 @@ class PlaceNewMenu(Resource):
                 return {'message': 'Enter valid food name'}, 400
             if not Validators().valid_food(description):
                 return {'message': 'Enter valid food description'}, 400
+            if not Validators().valid_contact(price):
+                return {'message': 'Enter valid food price'}, 400
             if FoodMenu().get_by_name(name):
                 return {'message': 'This food already exists'}, 409
             menu = FoodMenu(name=name, description=description, price=price, image=image)

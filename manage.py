@@ -30,7 +30,7 @@ class Connection(DatabaseConnection):
     def create_admin(self):
         '''creates an admin'''
         admin = User(username='Admin', email='admin@gmail.com',
-                    password='Admin123', is_admin=True)
+                    password='Admin123', is_admin=True, phoneNumber='+254727808458')
         admin.add()
 
 if __name__ == '__main__':
