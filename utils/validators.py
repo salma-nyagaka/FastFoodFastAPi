@@ -6,14 +6,13 @@ class Validators:
     ''' The validaion method'''
     def valid_food(self, food):
         '''valid food item'''
-        regex = "^[a-zA-Z_ ]+$"
+        regex = "^[a-zA-Z,_ ]+$"
         return re.match(regex, food)
 
     def valid_destination(self, destination):
         '''valid destination'''
         regex = "^[a-zA-Z0-9_ ]+$"
-        return re.match(regex, destination)
-  
+        return re.match(regex, destination)  
 
     def valid_price(self, price):
         '''valid price'''
