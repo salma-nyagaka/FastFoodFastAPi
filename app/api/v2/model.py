@@ -8,14 +8,13 @@ from app.api.v2.database import DatabaseConnection
 class User(DatabaseConnection):
     '''create an instance of the class'''
     def __init__(self, username=None, email=None,
-                 password=None, is_admin=False, phoneNumber=None):
+                 password=None, is_admin=False):
         super().__init__()
         self.username = username
         self.email = email
         if password:
             self.password = generate_password_hash(password)
         self.is_admin = is_admin
-        self.phoneNumber = phoneNumber
 
     def create_table(self):
         '''create users table'''
@@ -26,8 +25,7 @@ class User(DatabaseConnection):
                 username VARCHAR (200) NOT NULL,
                 email VARCHAR (200) NOT NULL,
                 password VARCHAR (200) NOT NULL,
-                is_admin BOOL NOT NULL,
-                phoneNumber VARCHAR(13) NOT NULL)'''
+                is_admin BOOL NOT NULL)'''
             )
         self.save()
 
@@ -43,11 +41,11 @@ class User(DatabaseConnection):
         self.cursor.execute(
             '''
             INSERT INTO users(username, email,
-            password, is_admin, phoneNumber)
-            VALUES(%s, %s, %s, %s, %s)
+            password, is_admin)
+            VALUES(%s, %s, %s, %s)
             ''',
             (self.username, self.email, self.password, 
-             self.is_admin, self.phoneNumber)
+             self.is_admin)
         )
         self.save()
 
@@ -98,7 +96,6 @@ class User(DatabaseConnection):
             email=self.email,
             password=self.password,
             is_admin=self.is_admin,
-            phoneNumber=self.phoneNumber
         )
 
     def objectify_user(self, data):
@@ -108,7 +105,6 @@ class User(DatabaseConnection):
         self.email = data[2]
         self.password = data[3]
         self.is_admin = data[4]
-        self.phoneNumber = data[5]
 
         return self
 

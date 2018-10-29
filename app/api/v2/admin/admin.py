@@ -16,7 +16,7 @@ class PlaceNewMenu(Resource):
     parser.add_argument('description', type=str, required=True,
                         help="This field cannot be left blank")
 
-    parser.add_argument('price', type=int, required=True,
+    parser.add_argument('price', type=str, required=True,
                         help="Enter valid price")
 
     parser.add_argument('image', type=str, required=True,
@@ -35,7 +35,6 @@ class PlaceNewMenu(Resource):
             price = data['price']
             image = data['image']
 
-            print(data)
 
             if data['name'].strip() == "":
                 return {'message': 'Name cannot be left blank'}, 400

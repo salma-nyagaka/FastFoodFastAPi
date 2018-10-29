@@ -22,10 +22,12 @@ class SignUp(Resource):
     parser.add_argument('password', type=str, required=True,
                         help="This field cannot be left blank")
 
+    # parser.add_argument('phoneNumber', type=int, required=True,
+    #                     help="This field cannot be left blank")
     parser.add_argument('confirm_password', type=str,
                         required=True, help="This field cannot be left blank")
-    parser.add_argument('phoneNumber', type=int,
-                    required=True, help="This field cannot be left blank")
+   
+   
 
     def post(self):
         ''' Add a new user '''
@@ -35,21 +37,21 @@ class SignUp(Resource):
         email = data['email']
         password = data['password']
         confirm_password = data['confirm_password']
-        phoneNumber = data['phoneNumber']
+        # phoneNumber = data['phoneNumber']
+
 
         if data['username'].strip() == "":
                 return {'message': 'Username cannot be left blank'}, 400                                
         if data['email'].strip() == "":
                 return {'message': 'Email cannot be left blank'}, 400                                              
         if data['password'].strip() == "":
-                return {'message': 'Password cannot be left blank'}, 400  
+                return {'message': 'Password cannot be left blank'}, 400 
+
 
         if password != confirm_password:
             return {'message': 'Password do not match'}, 400
         if (len(password) < 6):
             return {'message': 'Password is too short'}, 400
-        if (len(phoneNumber) > 13):
-            return {'message': 'Enter valid phone number'}, 400
         if (len(username) < 4):
             return {'message': 'Username is too short'}, 400
         if not Validators().valid_account(username):
@@ -58,14 +60,14 @@ class SignUp(Resource):
             return {'message': 'Enter valid password'}, 400
         if not Validators().valid_email(email):
             return {'message': 'Enter valid email'}, 400
-        if not Validators().valid_contact(phoneNumber):
-            return {'message': 'Phone number can only contain + and numbers'}, 400
+        # if not Validators().valid_phone(phoneNumber):
+        #     return {'message': 'Phone number can only contain + and numbers'}, 400
         if User().get_by_username(username):
             return {'message': 'Username exists'}, 409
         if User().get_by_email(email):
             return {'message': 'Email address exists'}, 409
 
-        user = User(username, email, password, phoneNumber)
+        user = User(username, email, password)
 
         user.add()
 
