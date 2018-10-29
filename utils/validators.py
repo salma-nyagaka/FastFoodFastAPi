@@ -6,7 +6,7 @@ class Validators:
     ''' The validaion method'''
     def valid_food(self, food):
         '''valid food item'''
-        regex = "^[a-zA-Z,_ ]+$"
+        regex = "^[a-zA-Z_ ]+$"
         return re.match(regex, food)
 
     def valid_destination(self, destination):
@@ -17,8 +17,13 @@ class Validators:
 
     def valid_contact(self, contact):
         '''valid contact'''
-        regex = "^[+1-10_]+$"
+        regex = "^[1-10+_]+$"
         return re.match(regex, contact)
+
+    def valid_price(self, price):
+        '''valid price'''
+        regex = "^[1-10]+$"
+        return re.match(regex, price)
 
     def valid_account(self, account):
         '''valid username'''

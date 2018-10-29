@@ -35,6 +35,8 @@ class PlaceNewMenu(Resource):
             price = data['price']
             image = data['image']
 
+            print(data)
+
             if data['name'].strip() == "":
                 return {'message': 'Name cannot be left blank'}, 400
             if data['description'].strip() == "":
@@ -44,8 +46,6 @@ class PlaceNewMenu(Resource):
                 return {'message': 'Enter valid food name'}, 400
             if not Validators().valid_food(description):
                 return {'message': 'Enter valid food description'}, 400
-            if not Validators().valid_contact(price):
-                return {'message': 'Enter valid food price'}, 400
             if FoodMenu().get_by_name(name):
                 return {'message': 'This food already exists'}, 409
             menu = FoodMenu(name=name, description=description, price=price, image=image)

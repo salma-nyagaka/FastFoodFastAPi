@@ -235,7 +235,7 @@ class FoodMenu(DatabaseConnection):
         ''' Map a fooditem to an object '''
         item = FoodMenu(name=data[1], description=data[3], price=data[2])
         item.id = data[0]
-        item.date_created = data[4]
+        item.date_created = str(data[4])
         item.image = data[5]
         self = item
         return self
