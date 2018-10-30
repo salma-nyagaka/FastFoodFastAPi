@@ -23,6 +23,7 @@ class PlaceNewMenu(Resource):
                         help="image cannot be left blank")
 
 
+
     @jwt_required
     def post(self):
         ''' place new menu'''

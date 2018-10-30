@@ -14,6 +14,9 @@ class PlaceOrder(Resource):
                         help="This field cannot be left blank")
     parser.add_argument('quantity', type=str, required=False,
                     help="This field cannot be left blank")
+    parser.add_argument('phonenumber', type=str, required=False,
+                    help="This field cannot be left blank")
+   
    
     @jwt_required
     def post(self):
@@ -25,13 +28,19 @@ class PlaceOrder(Resource):
         current_user = get_jwt_identity()['username']
         name = data['name']
         quantity = data['quantity']
+        phonenumber = data['phonenumber']
         meal_item = FoodMenu().get_by_name(name)
         
         if not meal_item:
             return {"message": "Food not found"}, 404
+        
+        if (len(str(phonenumber)) > 10):
+            return {'message': 'Enter valid phone number'}, 400
+        if not Validators().valid_phone(phonenumber):
+                return {'message': 'Phone number starts with a + and a number'}, 400
 
         order = FoodOrder(username=current_user, food_name=meal_item.name, description=meal_item.description,
-                      price=meal_item.price, quantity=quantity)
+                      price=meal_item.price, quantity=quantity, phonenumber=phonenumber)
         order.add()
 
         return {"food_order": "order placed sucessfully" }, 201 
