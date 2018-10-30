@@ -30,12 +30,17 @@ class PlaceOrder(Resource):
         quantity = data['quantity']
         phonenumber = data['phonenumber']
         meal_item = FoodMenu().get_by_name(name)
+
+        if data['phonenumber'].strip() == "":
+                return {'message': 'Phonenumber cannot be left blank'}, 400    
         
         if not meal_item:
             return {"message": "Food not found"}, 404
         
         if (len(str(phonenumber)) > 10):
-            return {'message': 'Enter valid phone number'}, 400
+            return {'message': 'Phone number should have 10 characters'}, 400
+        if (len(str(phonenumber)) < 10):
+            return {'message': 'Phone number should have 10 characters'}, 400
         if not Validators().valid_phone(phonenumber):
                 return {'message': 'Phone number starts with a + and a number'}, 400
 

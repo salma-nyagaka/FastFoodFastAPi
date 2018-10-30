@@ -143,8 +143,8 @@ class FilterOrdersByStatus(Resource):
 
                 if orders:
                     return {'Updated orders': orders}, 200
-                return {'message': "Not found"}, 404
-            return {'message': "Not found"}, 404
+                return {'message': "No orders found"}, 404
+            return {'message': "No orders found"}, 404
         return {"message": "Insufficient permissions to perform this actions"}, 403
 
 
