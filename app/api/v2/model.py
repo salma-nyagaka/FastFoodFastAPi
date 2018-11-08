@@ -4,7 +4,6 @@ from flask import current_app
 from werkzeug.security import generate_password_hash
 from app.api.v2.database import DatabaseConnection
 
-
 class User(DatabaseConnection):
     '''create an instance of the class'''
     def __init__(self, username=None, email=None,

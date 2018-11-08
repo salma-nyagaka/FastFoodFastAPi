@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 '''validators for input fields'''
 import re
 
@@ -23,6 +25,8 @@ class Validators:
         '''valid contact'''
         regex = "^[1-10_]+$"
         return re.match(regex, contact)
+
+    
 
     def valid_account(self, account):
         '''valid password and username'''
