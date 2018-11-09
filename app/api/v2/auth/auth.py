@@ -37,7 +37,6 @@ class SignUp(Resource):
         email = data['email']
         password = data['password']
         confirm_password = data['confirm_password']
-        # phoneNumber = data['phoneNumber']
 
 
         if data['username'].strip() == "":
@@ -87,6 +86,7 @@ class Login(Resource):
         data = Login.parser.parse_args()
 
         username = data['username']
+        username.lower()
         password = data['password']
         if data['username'].strip() == "":
                 return {'message': 'Username cannot be left blank'}, 400                                                                            
@@ -150,10 +150,4 @@ class UpdateProfile(Resource):
             return {'message': 'Enter valid password'}, 400
         if not Validators().valid_email(email):
             return {'message': 'Enter valid email'}, 400
-       
-
-        # if User().update(id):
-        #     user = User(username=username, email=email, password=password, phone_number=phone_number)
-        #     user.add()
-        #     user.update(id)
         return {"message": "profile has been updated"}, 201

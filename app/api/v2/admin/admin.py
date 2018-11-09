@@ -196,7 +196,7 @@ class UpdateMeal(Resource):
 
         if current_user['is_admin']:
             data = PlaceNewMenu.parser.parse_args()
-            name = data['name']
+            name = (data['name']).lower()
             description = data['description']
             image = data['image']
             price = data['price']

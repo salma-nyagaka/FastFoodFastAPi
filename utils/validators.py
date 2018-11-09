@@ -26,8 +26,6 @@ class Validators:
         regex = "^[1-10_]+$"
         return re.match(regex, contact)
 
-    
-
     def valid_account(self, account):
         '''valid password and username'''
         regex = "^[a-zA-Z0-9_ ]+$"
