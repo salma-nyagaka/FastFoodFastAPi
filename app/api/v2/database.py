@@ -8,10 +8,9 @@ class DatabaseConnection:
         try:
             self.connection = psycopg2.connect(current_app.config['DATABASE_URL'])
             self.cursor = self.connection.cursor()
-            print(connection.get_dsn_parameters())
 
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            print("\n\n\Error!!! : {}\n\n\n".format(error))
 
     def save(self):
         ''' method to call the connection'''

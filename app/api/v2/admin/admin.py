@@ -212,3 +212,15 @@ class UpdateMeal(Resource):
                 menu.update(id)
             return {"message": "Food menu updated"}, 201
         return {"message": "Insufficient permissions to perform this actions"}, 403
+
+
+class GetMeal(Resource):
+    '''get a specific meal'''
+    @jwt_required
+    def get(self, name):
+        ''' get a specific order '''
+
+        meal = FoodMenu().get_by_name(name)
+        if meal:
+            return {"message": "Specific meal", "meal":meal.serialize()}, 200
+        return {'message': "Not found"}, 404

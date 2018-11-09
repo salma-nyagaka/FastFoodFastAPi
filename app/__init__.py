@@ -6,7 +6,7 @@ from flask_cors import CORS, cross_origin
 
 from app.api.v2.admin import (PlaceNewMenu, AllMenu, SpecificMenu, GetSpecificOrder, 
                               AllUserOrders, UpdateStatus, DeleteMenu, FilterOrdersByStatus,
-                              UpdateMeal)
+                              UpdateMeal, GetMeal)
 
 from app.api.v2.auth import Login, SignUp, UpdateProfile
 from app.api.v2.user.users import PlaceOrder, GetOrders, GetAllMenu, GetNewOrders, DeleteOrder
@@ -62,6 +62,8 @@ def create_app(config_name):
     admin.add_resource(DeleteMenu, '/menu/<int:id>')
     admin.add_resource(UpdateMeal, '/menu/<int:id>')
     admin.add_resource(FilterOrdersByStatus, '/orders/<string:status>')
+    admin.add_resource(GetMeal, '/meal/<string:name>')
+    
 
 
     api.add_resource(SpecificOrder, '/api/v1/orders/<int:id>')
